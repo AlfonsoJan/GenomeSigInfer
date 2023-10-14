@@ -27,6 +27,32 @@ The project is organized into the following folders:
 
 ## Installation
 
+1. Clone the repository & Install dependencies:
+```bash
+$ git clone https://github.com/AlfonsoJan/DeepBayesMutSig
+```
+
+2. Set up a virtual environment (optional, but recommended):
+```bash
+$ pip install virtualenv
+$ virtualenv venv
+```
+
+3. Activate virtual environment
+* On Windows:e
+```bash
+$ venv/Scripts/activate
+```
+
+* On macOS/Linux:e
+```bash
+$ source venv/bin/activat
+```
+
+4. Install dependencies
+```bash
+$ pip install -r requirements.txt
+```
 
 
 ## Usage

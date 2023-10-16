@@ -5,11 +5,68 @@ This module contains small, common utility functions used across the project.
 Functions:
 - alphabet_list(amount: int, genome: str) -> list[str]: Generate a list of column labels.
 - create_signatures_df(W: np.ndarray, signatures: int) -> pd.DataFrame: Create a dataframe of the result of the NMF.
+- compress(df: pd.DataFrame, mutation: list) -> pd.DataFrame: Compress the DataFrame by summing every 16 rows for each column.
+- combinations() -> list[tuple[str, str]]: Generate combinations of initialization and beta loss.
+- read_file_decompose(file: str, dataframe: pd.DataFrame) -> None: Read the contents of a file and extract signature data.
 """
 import itertools
 import string
 import pandas as pd
 import numpy as np
+
+# Decomposition of 96
+SIGPROFILER_DECOMP = {
+    "SigProfiler": [
+        ["SBS5"],
+        ["SBS5", "SBS34"],
+        ["SBS5", "SBS17b"],
+        ["SBS22"],
+        ["SBS28", "SBS58"],
+        ["SBS7c"],
+        ["SBS1", "SBS5"],
+        ["SBS1", "SBS5", "SBS17b"],
+        ["SBS1", "SBS54"],
+        ["SBS1", "SBS5", "SBS17a"],
+        ["SBS5", "SBS86"],
+        ["SBS39"],
+        ["SBS5", "SBS10d", "SBS91"],
+        ["SBS5", "SBS21", "SBS60", "SBS91"],
+        ["SBS13", "SBS21"],
+        ["SBS5", "SBS43"],
+        ["SBS34", "SBS85"],
+        ["SBS17a", "SBS17b", "SBS31"],
+        ["SBS21"],
+        ["SBS5"],
+        ["SBS17a", "SBS35"],
+        ["SBS87"],
+        ["SBS7d", "SBS10a", "SBS13"],
+        ["SBS5", "SBS86"],
+        ["SBS50", "SBS51"],
+        ["SBS1", "SBS5", "SBS50"],
+        ["SBS5", "SBS39"],
+        ["SBS5", "SBS32"],
+        ["SBS1", "SBS5", "SBS19"],
+        ["SBS5"],
+        ["SBS1", "SBS5"],
+        ["SBS5", "SBS27"],
+        ["SBS39"],
+        ["SBS1", "SBS5", "SBS32"],
+        ["SBS2", "SBS9"],
+        ["SBS1", "SBS5", "SBS59"],
+        ["SBS39"],
+        ["SBS5"],
+        ["SBS1", "SBS3"],
+        ["SBS1", "SBS5"],
+        ["SBS1", "SBS5", "SBS24"],
+        ["SBS25"],
+        ["SBS57"],
+        ["SBS5", "SBS48"],
+        ["SBS1", "SBS16", "SBS45"],
+        ["SBS5", "SBS29"],
+        ["SBS5"],
+        ["SBS10b", "SBS33"],
+    ]
+}
 
 # List of the mutation in order
 MUTATION_LIST = [
@@ -178,3 +235,35 @@ def compress(df: pd.DataFrame, mutation: list) -> pd.DataFrame:
         chunk_sums = [chunk.sum() for chunk in chunks]
         results_1536[col] = chunk_sums
     return results_1536.set_index("MutationType").reindex(MUTATION_LIST).reset_index()
+
+
+def combinations() -> list[tuple[str, str]]:
+    """
+    Generate combinations of initialization and beta loss.
+
+    Returns:
+        list[tuple[str, str]]: List of tuples representing combinations.
+    """
+    inits = ["None", "random", "nndsvd", "nndsvda", "nndsvdar"]
+    beta_losses = ["frobenius", "kullback-leibler", "itakura-saito"]
+    return list(itertools.product(inits, beta_losses))
+
+
+def read_file_decompose(file: str, dataframe: pd.DataFrame) -> None:
+    """
+    Read the contents of a file and extract signature data.
+
+    Args:
+        file (Path): Path to the file to read.
+        df (pd.DataFrame): DataFrame to store the signature data.
+    """
+    sigs = []
+    with open(file, "r", encoding="UTF-8") as open_file:
+        final_composition = False
+        for line in open_file:
+            if line.startswith("#################### Final Composition"):
+                final_composition = True
+            elif final_composition:
+                sigs.append(eval(line.strip()))
+                final_composition = False
+    dataframe[file.parts[1]] = sigs

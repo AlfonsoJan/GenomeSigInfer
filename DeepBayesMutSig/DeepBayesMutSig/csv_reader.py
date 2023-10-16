@@ -4,6 +4,9 @@ CSV Reader
 
 This class provides a CSVReader class for formatting CSV files
 based on the presence of specific columns.
+
+Functions:
+- get_matrix_mut_sig(file_str: str, columns: int = None) -> pd.DataFrame: Format a CSV file based on the presence of specific columns.
 """
 import pandas as pd
 
@@ -35,6 +38,7 @@ class CSVReader:
 def get_matrix_mut_sig(file_str: str, columns: int = None) -> pd.DataFrame:
     """
     Format a CSV file based on the presence of specific columns.
+
     Args:
         file_str (str): The path to the input CSV file.
         columns (int, optional): Number of columns to limit in the output CSV (default: None).

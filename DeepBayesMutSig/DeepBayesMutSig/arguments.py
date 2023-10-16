@@ -2,6 +2,10 @@
 """
 This module provides a utility class for parsing command-line arguments and checking file existence.
 And functions for different files.
+
+Functions:
+- arguments_nmf() -> argparse.Namespace: Parse command-line arguments for when a file,
+    n signatures and iterations is needed.
 """
 import os.path
 import argparse
@@ -76,7 +80,7 @@ class Parser:
 
 def arguments_nmf() -> argparse.Namespace:
     """
-    Parse command-line arguments for the create_nmf_files script.
+    Parse command-line arguments for when a file, n signatures and iterations is needed.
 
     Returns:
         argparse.Namespace: An object containing the parsed command-line arguments.

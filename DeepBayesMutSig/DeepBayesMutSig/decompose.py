@@ -87,3 +87,21 @@ class Decompose:
             sample_reconstruction_plots=False,
             make_plots=False,
         )
+
+def quick_decompose(genomes, output, sigs):
+    decomp.spa_analyze(
+        genomes,
+        output,
+        signatures=sigs,
+        connected_sigs=True,
+        decompose_fit_option=True,
+        denovo_refit_option=False,
+        cosmic_fit_option=True,
+        signature_database=None,
+        cosmic_version=3.3,
+        exome=False,
+        export_probabilities=True,
+        export_probabilities_per_mutation=False,
+        sample_reconstruction_plots=False,
+        make_plots=False,
+    )

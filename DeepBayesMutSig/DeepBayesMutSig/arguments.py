@@ -79,6 +79,26 @@ class Parser:
             raise argparse.ArgumentTypeError(msg)
         return file_str
 
+def arguments_mutation_prob_cosine() -> argparse.Namespace:
+    """
+    Parse command-line arguments, when you need to calculate cosine on mutation probabilty file.
+
+    Returns:
+        argparse.Namespace: Parsed arguments.
+    """
+    parser = argparse.ArgumentParser(
+        description="Calculate cosine similarity between two text files."
+    )
+    parser.add_argument("-out", help="Folder", default="results")
+    parser.add_argument(
+        "-f",
+        "--folders",
+        nargs=2,
+        help="Folders to two text files for processing.",
+        required=True,
+        type=Parser.check_if_folder_exist,
+    )
+    return parser.parse_args()
 
 def arguments_nmf() -> argparse.Namespace:
     """

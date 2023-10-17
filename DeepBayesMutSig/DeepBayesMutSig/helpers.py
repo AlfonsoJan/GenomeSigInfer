@@ -11,6 +11,7 @@ Functions:
 """
 import itertools
 import string
+from pathlib import Path
 import pandas as pd
 import numpy as np
 
@@ -267,3 +268,36 @@ def read_file_decompose(file: str, dataframe: pd.DataFrame) -> None:
                 sigs.append(eval(line.strip()))
                 final_composition = False
     dataframe[file.parts[1]] = sigs
+
+def read_file_mut_prob(folder: str) -> pd.DataFrame:
+    """
+    Will get for every sample the normalized (between 0 and 1)
+    the chance for a mutation type in a SBS
+
+    Args:
+        folder (str): The path of the folder.
+
+    Returns:
+        pd.DataFrame: The df with the chances.
+    """
+    file_path = (
+        Path("result-nmf")
+        / "Assignment_Solution"
+        / "Activities"
+        / "Decomposed_MutationType_Probabilities.txt"
+    )
+    full_path = str(Path(folder).joinpath(file_path))
+    df = pd.read_csv(full_path, sep="\t")
+    df.drop(columns=df.columns[0], axis=1, inplace=True)
+    df = df.groupby("MutationType").sum().reset_index()
+
+    result = pd.DataFrame()
+    columns = df.columns[1:]
+
+    for index in range(len(df)):
+        row = {"MutationType": df.iloc[index, 0]}
+        averages = df.iloc[index, 1:].to_numpy() / df.iloc[index, 1:].to_numpy().sum()
+        for sbs, avg in list(zip(columns, averages)):
+            row[sbs] = avg
+        result = pd.concat([result, pd.DataFrame([row])], ignore_index=True)
+    return result

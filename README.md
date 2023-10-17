@@ -84,12 +84,49 @@ $ pip install -r requirements.txt
 This module provides classes and functions for performing Non-Negative Matrix Factorization (NMF)
 on genomic data and expanding mutation patterns. It can either run signature analysis (--spe) or perform matrix factorization (--nmf) on a CSV file.
 
+### Setup
+
+Create csv of the NMF results of genomic data. Using scikit NMF, with 1 signature. Using 10 iterations.
+
+```bash
+$ python scripts/create_nmf_files.py -i 10 -s 1 -f path/filename
+```
+
+### Extract Signatures from a CSV file
+
+Deconmpose mutational signatures from NMF results.
+
+```bash
+$ python scripts/mf_profiler.py -s 1 -f path/filename_nmf_result --nmf
+```
+
+If you want to extracts mutational signatures from an array of samples. Using SigProfilerExtractor, with 1 signature.
+
+```bash
+$ python scripts/nmf_profiler.py -s 1 -f path/filename --spe
+```
+
 ### Param tuning
 
 Run NMF with different combinations of initialization and beta loss and 1 signature.
 
 ```bash
 $ python scripts/nmf_combinations.py -f path/filename -s 1
+```
+
+Calculate the `cosine similarity` between each file's signature data and a reference column.
+
+```python
+from DeepBayesMutSig import cosine
+cosine.most_similarity_decompose("filepath")
+```
+
+### Cosine similarity
+
+Calculates `cosine similarity` from different results, in the results folder, of the scikit NMF function using different parameters.
+
+```bash
+$ python scripts/mutation_prob_cosine.py -f results
 ```
 
 ## References

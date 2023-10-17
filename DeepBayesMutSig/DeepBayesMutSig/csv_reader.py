@@ -61,3 +61,17 @@ def get_matrix_mut_sig(file_str: str, columns: int = None) -> pd.DataFrame:
         dataframe.drop(dataframe.columns[1], axis=1, inplace=True)
     n_columns = dataframe.shape[1] if not columns else columns
     return dataframe.iloc[:, :n_columns]
+
+def get_matrix_nmf_w(file_str: str) -> pd.DataFrame:
+    """
+    Format a CSV file based on the presence of specific columns.
+
+    Args:
+        file_str (str): The path to the input CSV file.
+
+    Returns:
+        pd.Dataframe: The matrix with the correct columns
+    """
+    dataframe = pd.read_csv(file_str, sep="\t", header=0)
+    dataframe.drop(dataframe.columns[0], axis=1, inplace=True)
+    return dataframe

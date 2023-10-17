@@ -6,6 +6,8 @@ And functions for different files.
 Functions:
 - arguments_nmf() -> argparse.Namespace: Parse command-line arguments for when a file,
     n signatures and iterations is needed.
+- arguments_profiler() -> argparse.Namespace: Parse command-line arguments for when you
+    want to run SigProfiler or on NMF.
 """
 import os.path
 import argparse
@@ -90,4 +92,23 @@ def arguments_nmf() -> argparse.Namespace:
     parser.add_argument("-i", "--iter", default=1, type=Parser.check_if_in_border)
     parser.add_argument("-s", "--signatures", default=1, type=Parser.check_if_in_border)
     parser.add_argument("-f", "--file", required=True, type=Parser.check_if_file_exist)
+    return parser.parse_args()
+
+def arguments_profiler() -> argparse.Namespace:
+    """
+    Parse command-line arguments for when you want to run SigProfiler or on NMF.
+
+    Returns:
+        argparse.Namespace: An object containing the parsed command-line arguments.
+    """
+    parser = argparse.ArgumentParser(description="")
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument(
+        "--spe", action="store_true", help="Run with SigProfilerExtractor"
+    )
+    group.add_argument("--nmf", action="store_true", help="Run with scikit NMF")
+    parser.add_argument("-o", "--out", default="results", help="Result folder")
+    parser.add_argument("-s", "--signatures", default=1, type=Parser.check_if_in_border)
+    parser.add_argument("-f", "--file", required=True, type=Parser.check_if_file_exist)
+    parser.add_argument("--genomes", required=True, type=Parser.check_if_file_exist)
     return parser.parse_args()

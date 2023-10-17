@@ -5,7 +5,8 @@ based on the command-line arguments provided.
 It can either run signature analysis (--spe) or perform matrix factorization (--nmf) on a CSV file.
 """
 import sys
-from DeepBayesMutSig import arguments, csv_reader, decompose
+from DeepBayesMutSig import arguments, csv_reader, decompose, sigprofiler
+
 
 def main() -> int:
     """
@@ -19,22 +20,20 @@ def main() -> int:
     """
     args = arguments.arguments_profiler()
     signatures = args.signatures
+    genomes = csv_reader.get_matrix_mut_sig(args.genomes)
     if args.spe:
         print("Running analysis with SigProfilerExtractor")
+        sigprofiler.RunSig.run(matrix=genomes, signatures=signatures, out=args.out)
     elif args.nmf:
         print("Running analysis with scikit NMF")
-        genomes = csv_reader.get_matrix_mut_sig(args.genomes)
         genomes.index = genomes[genomes.columns[0]]
         genomes.drop(columns=genomes.columns[0], axis=1, inplace=True)
         sigs = csv_reader.get_matrix_nmf_w(args.file)
-        decompose.quick_decompose(
-            genomes=genomes,
-            sigs=sigs,
-            output="hello/"
-        )
+        decompose.quick_decompose(genomes=genomes, sigs=sigs, output="hello/")
     else:
         raise ValueError("Please select one of '--spe' or '--nmf'")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

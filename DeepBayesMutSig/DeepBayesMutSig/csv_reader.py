@@ -35,18 +35,20 @@ class CSVReader:
         return f"{nucleotide_row[:index]}[{mutation}]{nucleotide_row[index + 1:]}"
 
 
-def get_matrix_mut_sig(file_str: str, columns: int = None) -> pd.DataFrame:
+def get_matrix_mut_sig(file_str: str, columns: int = None, sep: str = ",") -> pd.DataFrame:
     """
     Format a CSV file based on the presence of specific columns.
 
     Args:
         file_str (str): The path to the input CSV file.
         columns (int, optional): Number of columns to limit in the output CSV (default: None).
+        sep (str, optional): Seperator of the csv file.
+
     Returns:
         pd.Dataframe: The matrix with the correct columns
     """
     found_column = None
-    dataframe = pd.read_csv(file_str, sep=",", header=0)
+    dataframe = pd.read_csv(file_str, sep=sep, header=0)
     for column in CSVReader.columns_to_check:
         if column in dataframe.columns:
             found_column = column

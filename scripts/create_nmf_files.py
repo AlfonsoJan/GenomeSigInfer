@@ -18,7 +18,7 @@ def main() -> int:
         int: Exit status (0 for success).
     """
     args = arguments.arguments_nmf()
-    matrix = csv_reader.get_matrix_mut_sig(file_str=args.file)
+    matrix = csv_reader.get_matrix_mut_sig(file_str=args.file, sep=args.sep)
     mutations = matrix[matrix.columns[0]]
     signatures = args.signatures
     all_genomes = np.array(matrix.iloc[:, 1:])

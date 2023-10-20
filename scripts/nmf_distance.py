@@ -42,17 +42,20 @@ def main() -> int:
     Returns:
         int: Exit status (0 for success).
     """
+    cosmic_df = pd.read_csv("data\COSMIC_v3.3.1_SBS_GRCh37.txt", sep="\t")
+    cosmic_df = cosmic_df.set_index("Type").reindex(helpers.MUTATION_LIST).reset_index()
+    cosmic_df.drop(columns=cosmic_df.columns[0], axis=1, inplace=True)
+    
     nmf_w_file = "data\WGS_PCAWG.96.csv"
     nmw_w = process(nmf_w_file, 48)
     nmw_w.drop(columns=nmw_w.columns[0], axis=1, inplace=True)
+    nmw_w.columns = distance.get_optimal_columns(nmw_w, cosmic_df).values()
     files = [
         "output/nmf_files/nmf.WGS_PCAWG.1536.txt",
         "output/nmf_files/nmf.WGS_PCAWG.24576.txt",
         "output/nmf_files/nmf.WGS_PCAWG.393216.txt",
     ]
-    cosmic_df = pd.read_csv("data\COSMIC_v3.3.1_SBS_GRCh37.txt", sep="\t")
-    cosmic_df = cosmic_df.set_index("Type").reindex(helpers.MUTATION_LIST).reset_index()
-    cosmic_df.drop(columns=cosmic_df.columns[0], axis=1, inplace=True)
+    
     for file in files:
         jens_filename = Path("results") / f"jensen.{file.split('.')[-2]}.dist.txt"
         cosine_filename = Path("results") / f"cosine.{file.split('.')[-2]}.dist.txt"

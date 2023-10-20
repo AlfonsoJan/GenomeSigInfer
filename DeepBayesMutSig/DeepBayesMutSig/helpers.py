@@ -210,7 +210,7 @@ def create_signatures_df(W: np.ndarray, signatures: int) -> pd.DataFrame:
     return signatures
 
 
-def compress(df: pd.DataFrame, mutation: list) -> pd.DataFrame:
+def compress(df: pd.DataFrame) -> pd.DataFrame:
     """
     Compress the DataFrame by summing every 16 rows for each column.
     from {A,C,T,G}{A,C,T,G}[{A,C,T,G}>{A,C,T,G}]{A,C,T,G}{A,C,T,G}
@@ -218,24 +218,24 @@ def compress(df: pd.DataFrame, mutation: list) -> pd.DataFrame:
 
     Args:
         df: pd.DataFrame to be compressed.
-        mutation: List of the mutations.
 
     Returns:
         pd.DataFrame: Compressed DataFrame.
     """
     col = "MutationType"
-    df[col] = mutation
     df["sort_key"] = df[col].str.extract(r"(\w\[.*\]\w)")
     df = df.sort_values("sort_key")
     df_keys = df["sort_key"].copy()
-    df = df.drop(["sort_key", "MutationType"], axis=1)
-    results_1536 = pd.DataFrame()
-    results_1536[col] = df_keys[::16]
+    df = df.drop(["sort_key", col], axis=1)
+    steps = int(df.shape[0] / 96)
+    
+    compressed_df = pd.DataFrame()
+    compressed_df[col] = df_keys[::steps]
     for col in df.columns:
-        chunks = [df[col][i : i + 16] for i in range(0, len(df[col]), 16)]
+        chunks = [df[col][i : i + steps] for i in range(0, len(df[col]), steps)]
         chunk_sums = [chunk.sum() for chunk in chunks]
-        results_1536[col] = chunk_sums
-    return results_1536.set_index("MutationType").reindex(MUTATION_LIST).reset_index()
+        compressed_df[col] = chunk_sums
+    return compressed_df.set_index("MutationType").reindex(MUTATION_LIST).reset_index()
 
 
 def combinations() -> list[tuple[str, str]]:

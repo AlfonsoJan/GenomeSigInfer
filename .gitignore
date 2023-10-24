@@ -42,3 +42,4 @@ venv.bak/
 # Misch.
 buffer
 format.files.sh
+test.py

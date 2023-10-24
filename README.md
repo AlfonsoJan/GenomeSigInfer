@@ -48,36 +48,36 @@ The `results` folder is designated for storing output files, plots, or any resul
 
 1. Clone the repository & Install dependencies:
 
-```bash
-$ git clone https://github.com/AlfonsoJan/DeepBayesMutSig
-```
+    ```bash
+    $ git clone https://github.com/AlfonsoJan/DeepBayesMutSig
+    ```
 
 2. Set up a virtual environment (optional, but recommended):
 
-```bash
-$ pip install virtualenv
-$ virtualenv venv
-```
+    ```bash
+    $ pip install virtualenv
+    $ virtualenv venv
+    ```
 
 3. Activate virtual environment
 
-* On Windows:
+    On Windows:
 
-```bash
-$ venv/Scripts/activate
-```
+    ```bash
+    $ venv/Scripts/activate
+    ```
 
-* On macOS/Linux:
+    On macOS/Linux:
 
-```bash
-$ source venv/bin/activat
-```
+    ```bash
+    $ source venv/bin/activat
+    ```
 
 4. Install dependencies
 
-```bash
-$ pip install -r requirements.txt
-```
+    ```bash
+    $ pip install -r requirements.txt
+    ```
 
 ## Usage
 
@@ -85,6 +85,13 @@ This module provides classes and functions for performing Non-Negative Matrix Fa
 on genomic data and expanding mutation patterns. It can either run signature analysis (--spe) or perform matrix factorization (--nmf) on a CSV file.
 
 ### Setup
+
+Install your desired reference genome to the folder output/genome.
+
+```python
+from DeepBayesMutSig import install
+install.genome_install(genome="GRCh37", install_path=f"output/genome", bash=True)
+```
 
 Create csv of the NMF results of genomic data. Using scikit NMF, with 1 signature. Using 10 iterations.
 

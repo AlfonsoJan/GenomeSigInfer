@@ -69,6 +69,9 @@ SIGPROFILER_DECOMP = {
     ]
 }
 
+# MUTATION TYPES random order
+MUTATION_TYPES = ["[C>G]", "[C>A]", "[C>T]", "[T>G]", "[T>C]", "[T>A]"]
+
 # List of the mutation in order
 MUTATION_LIST = [
     "A[C>A]A",
@@ -228,7 +231,7 @@ def compress(df: pd.DataFrame) -> pd.DataFrame:
     df_keys = df["sort_key"].copy()
     df = df.drop(["sort_key", col], axis=1)
     steps = int(df.shape[0] / 96)
-    
+
     compressed_df = pd.DataFrame()
     compressed_df[col] = df_keys[::steps]
     for col in df.columns:
@@ -268,6 +271,7 @@ def read_file_decompose(file: str, dataframe: pd.DataFrame) -> None:
                 sigs.append(eval(line.strip()))
                 final_composition = False
     dataframe[file.parts[1]] = sigs
+
 
 def read_file_mut_prob(folder: str) -> pd.DataFrame:
     """

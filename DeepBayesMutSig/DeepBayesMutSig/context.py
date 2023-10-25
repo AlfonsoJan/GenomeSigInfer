@@ -11,6 +11,8 @@ Functions:
 """
 import itertools
 import pandas as pd
+import numpy as np
+from .helpers import MUTATION_TYPES
 
 
 def distribute_value(value: int, num_numbers: int) -> list[int]:
@@ -89,12 +91,12 @@ def create_vcf_file(files: list[str], genome: str) -> pd.DataFrame:
         filtered_df = df_vcf[
             (df_vcf[3] == genome) & ((df_vcf[4] == "SNP") | (df_vcf[4] == "SNV"))
         ]
-        sample_list = list(
-            filtered_df[0].astype(str) + ":" + filtered_df[1].astype(str)
-        )
-        chromosome_list = list(filtered_df[5])
-        positions = list(filtered_df[6] - 1)
-        mutations = list(filtered_df[8].astype(str) + ">" + filtered_df[9].astype(str))
+        mutations = list("[" + filtered_df[8].astype(str) + ">" + filtered_df[9].astype(str) + "]")
+        indices = [index for index, value in enumerate(mutations) if value in MUTATION_TYPES]
+        mutations = np.array(mutations)[indices]
+        sample_list = np.array(filtered_df[0].astype(str) + ":" + filtered_df[1].astype(str))[indices]
+        chromosome_list = np.array(filtered_df[5].astype(str))[indices]
+        positions = np.array(filtered_df[6] - 1)[indices]
         dfs.append(
             pd.DataFrame(
                 {

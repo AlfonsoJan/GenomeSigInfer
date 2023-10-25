@@ -93,6 +93,15 @@ from DeepBayesMutSig import install
 install.genome_install(genome="GRCh37", install_path=f"output/genome", bash=True)
 ```
 
+Create one big VCF file of multiple VCF files.
+
+```python
+from DeepBayesMutSig import context
+files = ["path/file.1.vcf", "path/file.2.vcf"]
+df = context.create_vcf_file(files=files, genome="GRCh37")
+df.to_csv("path/result.vcf", index=False, sep=",")
+```
+
 Create csv of the NMF results of genomic data. Using scikit NMF, with 1 signature. Using 10 iterations.
 
 ```bash

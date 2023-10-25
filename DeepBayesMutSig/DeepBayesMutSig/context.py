@@ -59,6 +59,8 @@ def increase_mutations(column: list[str], context: int) -> list[str]:
     Returns:
         list: A list of increased mutations based on the specified context.
     """
+    if context < 3:
+        raise ValueError("Context must be aleast 3")
     nucleotides = ["A", "C", "G", "T"]
     combinations = list(itertools.product(nucleotides, repeat=context - 3))
     new_mutations = [
@@ -67,6 +69,44 @@ def increase_mutations(column: list[str], context: int) -> list[str]:
         for combo in combinations
     ]
     return new_mutations
+
+
+def create_vcf_file(files: list[str], genome: str) -> pd.DataFrame:
+    """
+    Retrieves the wanted data from multiple VCF files and store them into 1 dataframe.
+
+    Args:
+        files list[str]: The list of vcf files.
+        genome (str): The ref genome.
+
+    Returns:
+        pd.DataFrame: A dataframe with the wanted data of VCf files.
+    """
+    dfs = []
+
+    for file in files:
+        df_vcf = pd.read_csv(file, sep="\t", header=None)
+        filtered_df = df_vcf[
+            (df_vcf[3] == genome) & ((df_vcf[4] == "SNP") | (df_vcf[4] == "SNV"))
+        ]
+        sample_list = list(
+            filtered_df[0].astype(str) + ":" + filtered_df[1].astype(str)
+        )
+        chromosome_list = list(filtered_df[5])
+        positions = list(filtered_df[6] - 1)
+        mutations = list(filtered_df[8].astype(str) + ">" + filtered_df[9].astype(str))
+        dfs.append(
+            pd.DataFrame(
+                {
+                    "sample": sample_list,
+                    "chromosome": chromosome_list,
+                    "position": positions,
+                    "mutations": mutations,
+                }
+            )
+        )
+
+    return pd.concat(dfs, ignore_index=True)
 
 
 def increase_context(df: pd.DataFrame, context: int = 3) -> pd.DataFrame:

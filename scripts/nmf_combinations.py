@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """
-Script for running NMF with different combinations of initialization and beta loss,
-and performing decomposition on the resulting matrices.
+This script is a command-line utility that creates a project.
 """
 import sys
 from pathlib import Path
 import numpy as np
-from DeepBayesMutSig import arguments, csv_reader, helpers, nmf
+from MutationalSignaturesTools import nmf, install, helpers, sigprofiler, arguments, cosine
 
 
 def main() -> int:
@@ -16,14 +15,23 @@ def main() -> int:
     Returns:
         int: Exit status (0 for success).
     """
-    filename = "param.tuning.decomp.txt"
     args = arguments.arguments_nmf()
-    matrix = csv_reader.get_matrix_mut_sig(args.file)
+    signatures = args.signatures
+    project = Path(args.project)
+    install.is_valid_project(project)
+    temp_folder = project / "results"
+    result_filename = temp_folder / "param.tuning.decomp.txt"
+    matrix = helpers.get_sbs_from_proj(project)
     all_genomes = np.array(matrix.iloc[:, 1:])
     nmf_combs = helpers.combinations()
-    result = nmf.run_nmfs(nmf_combs, all_genomes, args.signatures, matrix, args.out)
-    result["SigProfiler"] = helpers.SIGPROFILER_DECOMP["SigProfiler"]
-    result.to_csv(Path(args.out) / filename, index=False, sep="\t")
+    df = sigprofiler.RunSig.run(
+        matrix=matrix, signatures=signatures, out=temp_folder
+    )
+    df = nmf.run_nmfs(
+        nmf_combs, all_genomes, signatures, matrix, temp_folder, df
+    )
+    result_df = cosine.most_similarity_decompose(df)
+    result_df.to_csv(result_filename, index=False, sep="\t")
     return 0
 
 

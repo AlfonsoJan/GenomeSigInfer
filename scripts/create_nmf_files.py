@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """
-This script is a command-line utility that performs specific operations.
-For performing Non-Negative Matrix Factorization (NMF) n amount of times
-and get the average of it and write it to a file.
+This script is a command-line utility that creates a project.
 """
 import sys
 from pathlib import Path
 import numpy as np
-from DeepBayesMutSig import arguments, csv_reader, nmf, helpers
+import pandas as pd
+from MutationalSignaturesTools import nmf, install, helpers, arguments
 
 
 def main() -> int:
@@ -18,23 +17,23 @@ def main() -> int:
         int: Exit status (0 for success).
     """
     args = arguments.arguments_nmf()
-    matrix = csv_reader.get_matrix_mut_sig(file_str=args.file, sep=args.sep)
-    mutations = matrix[matrix.columns[0]]
     signatures = args.signatures
-    all_genomes = np.array(matrix.iloc[:, 1:])
-    W = nmf.run_multiple(
-        all_genomes=all_genomes, signatures=signatures, iters=args.iter
-    )
-    signatures_df = helpers.create_signatures_df(W=W, signatures=signatures)
-    signatures_df.insert(0, "MutationType", mutations)
-    filename = Path(args.file).name
-    cols = ".".join(filename.split(".")[:-1])
-    signatures_df.index = mutations
-    signatures_df.to_csv(
-        Path(args.out) / f"nmf.{cols}.txt",
-        index=False,
-        sep="\t",
-    )
+    project = Path(args.project)
+    install.is_valid_project(project)
+    file_extension = ["96", "1536", "24576", "393216"]
+    nmf_folder = project / "NMF"
+    for file in file_extension:
+        nmf_filename = nmf_folder / f"nmf.{file}.txt"
+        file_str = project / "SBS" / f"sbs.{file}.txt"
+        matrix = pd.read_csv(file_str, sep=",", header=0)
+        mutations = matrix[matrix.columns[0]]
+        all_genomes = np.array(matrix.iloc[:, 1:])
+        W = nmf.run_multiple(
+            all_genomes=all_genomes, signatures=signatures, iters=1
+        )
+        signatures_df = helpers.create_signatures_df(W=W, signatures=signatures)
+        signatures_df.insert(0, "MutationType", mutations)
+        signatures_df.to_csv(nmf_filename, index=False, sep="\t")
     return 0
 
 

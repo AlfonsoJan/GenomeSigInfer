@@ -1,37 +1,29 @@
 #!/usr/bin/env python3
 """
-This script is a command-line utility that creates a project.
+Run NMF with different combinations of initialization and beta loss and 1 signature.
+And calculates `cosine similarity` from different results, in the results folder, of the scikit NMF function using different parameters.
 """
 import sys
+import click
 from pathlib import Path
-import numpy as np
-from MutationalSignaturesTools import nmf, install, helpers, sigprofiler, arguments, cosine
+from DeepBayesMutSig import nmf
 
 
-def main() -> int:
+@click.command()
+@click.option(
+    "--project", type=click.Path(), default="project", help="The project folder name"
+)
+@click.option("--sigs", type=click.INT, prompt="The number of signatures")
+def main(project: Path, sigs: int) -> int:
     """
     Main entry point of the script.
 
     Returns:
         int: Exit status (0 for success).
     """
-    args = arguments.arguments_nmf()
-    signatures = args.signatures
-    project = Path(args.project)
-    install.is_valid_project(project)
-    temp_folder = project / "results"
-    result_filename = temp_folder / "param.tuning.decomp.txt"
-    matrix = helpers.get_sbs_from_proj(project)
-    all_genomes = np.array(matrix.iloc[:, 1:])
-    nmf_combs = helpers.combinations()
-    df = sigprofiler.RunSig.run(
-        matrix=matrix, signatures=signatures, out=temp_folder
-    )
-    df = nmf.run_nmfs(
-        nmf_combs, all_genomes, signatures, matrix, temp_folder, df
-    )
-    result_df = cosine.most_similarity_decompose(df)
-    result_df.to_csv(result_filename, index=False, sep="\t")
+    nmf_params = nmf.NMF_Combinations(project=project, sigs=sigs)
+    nmf_params.run_combinations()
+    nmf_params.cosine_sim()
     return 0
 
 

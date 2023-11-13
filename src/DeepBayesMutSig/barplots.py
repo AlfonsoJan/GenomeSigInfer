@@ -3,6 +3,18 @@
 This module provides functions for generating and visualizing mutation data
 related to larger context and 96 context mutations. It includes methods to
 create bar plots for different mutation contexts and save them in PDF files.
+
+Functions:
+    - larger_context_barplot(df_multi_contexct: pd.DataFrame, folder_path: Path) -> None:
+        Generate barplots for larger context mutations and save them in a PDF file.
+    - create_96_barplot(df: pd.DataFrame, figure_folder: Path) -> None:
+        Generate bar plots for 96 context mutations and save them in a PDF file.
+    - create_increased_context_barplot(df: pd.DataFrame, pdf: PdfPages) -> None:
+        Create a bar plot for increased context mutations and save it in a PDF file.
+    - parse_lager_context_df(df: pd.DataFrame, col: str) -> pd.DataFrame:
+        Parse the DataFrame to extract larger context mutation data.
+    - parse_96_df(df: pd.DataFrame, col: str, pdf: PdfPages) -> None:
+        Parse the DataFrame to extract 96 context mutation data and create a bar plot.
 """
 from pathlib import Path
 from tqdm import tqdm
@@ -16,24 +28,23 @@ from .helpers import (
     custom_sort_column_names,
     MUTATION_LIST,
     COLOR_DICT,
-    COLOR_DICT_MUTATION,
-    MUTATION_TYPES
+    COLOR_DICT_MUTATION
 )
 
 
-def larger_context_barplot(df_MNPRS: pd.DataFrame, folder_path: Path) -> None:
+def larger_context_barplot(df_multi_contexct: pd.DataFrame, folder_path: Path) -> None:
     """
     Generate bar plots for larger context mutations and save them in a PDF file.
 
     Parameters:
-    - df_MNPRS (pd.DataFrame): DataFrame containing mutation data.
+    - df_multi_contexct (pd.DataFrame): DataFrame containing mutation data.
     - folder_path (Path): Path to the folder where the PDF file will be saved.
     """
-    df_MNPRS["context"] = df_MNPRS["MutationType"].str.extract(r"(\w\[.*\]\w)")
-    sorted_columns = sorted(df_MNPRS.columns[1:-1], key=custom_sort_column_names)
-    with PdfPages(folder_path / f"signatures.{df_MNPRS.shape[0]}.pdf") as pdf:
+    df_multi_contexct["context"] = df_multi_contexct["MutationType"].str.extract(r"(\w\[.*\]\w)")
+    sorted_columns = sorted(df_multi_contexct.columns[1:-1], key=custom_sort_column_names)
+    with PdfPages(folder_path / f"signatures.{df_multi_contexct.shape[0]}.pdf") as pdf:
         for col in tqdm(sorted_columns):
-            result_df = parse_lager_context_df(df_MNPRS, col)
+            result_df = parse_lager_context_df(df_multi_contexct, col)
             create_increased_context_barplot(result_df, pdf)
 
 
@@ -46,7 +57,7 @@ def create_96_barplot(df: pd.DataFrame, figure_folder: Path) -> None:
     - figure_folder (Path): Path to the folder where the PDF file will be saved.
     """
     sorted_columns = sorted(df.columns[1:], key=custom_sort_column_names)
-    with PdfPages(figure_folder / f"signatures.96.pdf") as pdf:
+    with PdfPages(figure_folder / "signatures.96.pdf") as pdf:
         for col in tqdm(sorted_columns):
             parse_96_df(df, col, pdf)
 
@@ -139,7 +150,7 @@ def parse_lager_context_df(df: pd.DataFrame, col: str) -> pd.DataFrame:
     - pd.DataFrame: Resulting DataFrame with parsed data.
     """
     result_df = pd.DataFrame()
-    AMINO = ["A", "C", "T", "G"]
+    amino = ["A", "C", "T", "G"]
     col_df = pd.DataFrame(
         {
             "MutationType": df["MutationType"],
@@ -154,7 +165,7 @@ def parse_lager_context_df(df: pd.DataFrame, col: str) -> pd.DataFrame:
         seq = generate_sequence(len(df["MutationType"][0]) - 4)
         contex_name_generator = zip(context_index_list, seq)
         for idx, name in contex_name_generator:
-            for aa in AMINO:
+            for aa in amino:
                 row = {"name": name, "context": mut, "variable": aa, "sbs": col}
                 if total_sbs_mut == 0:
                     row["value"] = 0
@@ -210,11 +221,11 @@ def parse_96_df(df: pd.DataFrame, col: str, pdf: PdfPages) -> None:
             va="center",
             fontsize=20,
             fontweight="bold",
-         )
+        )
         # Skip the last line
         if i < len(groups) - 1:
             plt.axvline(x=idx + 0.5, color="black", linestyle="-", linewidth=2)
-            
+
     ax.set_xticks(x0)
     ax.set_xticklabels(muts, rotation=90, ha="right")
     ax.legend()

@@ -148,6 +148,16 @@ def run_nmfs(nmf_combs, all_genomes, sigs, matrix, out, result_df) -> pd.DataFra
 
 
 class NMF_SBS:
+    """
+    Create NMF files based on the specified number of signatures.
+
+    Args:
+        project (Path): project name.
+        sigs (int):L signatures.
+        cosmic (Path): path of the cosmic file.
+        init (str): init for the NMF
+        beta_loss (str): beta_loss for the NMF
+    """
     SIZES = SBS(Path(""), Path(""), "GRCh37")._sizes
     MAX_CONTEXT = SBS(Path(""), Path(""), "GRCh37").MAX_CONTEXT
 
@@ -337,7 +347,8 @@ class NMF_SBS:
         Create decompose dataframe.
 
         Args:
-            columns (dict): A dictionary where keys are column names from df1, and values are corresponding column names from df2.
+            columns (dict): A dictionary where keys are column names from df1,
+                and values are corresponding column names from df2.
             df (pd.DataFrame): The matrix for the new columns.
 
         Returns:

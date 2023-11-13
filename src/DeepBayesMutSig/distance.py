@@ -6,9 +6,14 @@ This module provides functions for calculating optimal column assignments betwee
 based on the linear sum assignment and calculating Jensen-Shannon distance for each pair of columns.
 
 Functions:
-    - get_optimal_columns(df1: pd.DataFrame, df2: pd.DataFrame) -> dict
-    - set_optimal_columns(control_df: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame
-    - get_jensen_shannon_distance(optimal_columns: dict, df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame
+    - get_optimal_columns(df1: pd.DataFrame, df2: pd.DataFrame) -> dict:
+        Get the optimal column assignments between two DataFrames
+        based on the linear sum assignment.
+    - set_optimal_columns(control_df: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
+        Set optimal column assignments for the control DataFrame based on the linear sum assignment.
+    - get_jensen_shannon_distance(optimal_columns: dict, df1: pd.DataFrame,df2: pd.DataFrame)
+        -> pd.DataFrame: Calculate Jensen-Shannon distance for each pair of columns
+        based on optimal column assignments.
 """
 import pandas as pd
 from scipy.spatial.distance import jensenshannon
@@ -24,7 +29,8 @@ def get_optimal_columns(df1: pd.DataFrame, df2: pd.DataFrame) -> dict:
         df2 (pd.DataFrame): The second DataFrame.
 
     Returns:
-        dict: A dictionary where keys are column names from df1, and values are corresponding column names from df2.
+        dict: A dictionary where keys are column names from df1,
+            and values are corresponding column names from df2.
     """
     cost_matrix = pd.DataFrame(index=df1.columns, columns=df2.columns)
     for col1 in df1.columns:
@@ -64,7 +70,8 @@ def get_jensen_shannon_distance(
     Calculate Jensen-Shannon distance for each pair of columns based on optimal column assignments.
 
     Parameters:
-        optimal_columns (dict): Dictionary containing optimal column assignments between df1 and df2.
+        optimal_columns (dict): Dictionary containing optimal
+            column assignments between df1 and df2.
         df1 (pd.DataFrame): The first DataFrame.
         df2 (pd.DataFrame): The second DataFrame.
 

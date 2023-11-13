@@ -11,7 +11,7 @@ from DeepBayesMutSig import nmf
 
 @click.command()
 @click.option(
-    "--project", type=click.Path(), default="project", help="The project folder name"
+    "--project", type=click.Path(path_type=Path), default="project", prompt="The project folder name"
 )
 @click.option("--sigs", type=click.INT, prompt="The number of signatures")
 def main(project: Path, sigs: int) -> int:

@@ -10,7 +10,7 @@ from DeepBayesMutSig import signature_plots
 
 @click.command()
 @click.option(
-    "--project", type=click.Path(), default="project", help="The project folder name"
+    "--project", type=click.Path(path_type=Path), default="project", prompt="The project folder name"
 )
 def main(project: Path) -> int:
     """

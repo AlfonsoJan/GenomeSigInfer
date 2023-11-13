@@ -41,6 +41,10 @@ venv.bak/
 
 # Misch.
 buffer
-format.files.sh
-test.py
-project
+results
+.vscode
+
+# Data
+WGS_Other.20180413.vcf
+test.vcf
+ref_genome

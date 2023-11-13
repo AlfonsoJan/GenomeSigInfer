@@ -28,9 +28,9 @@ The project is organized into the following folders:
 
 The `scripts` contains executable scripts that perform specific tasks or experiments within the project.
 
-### `DeepBayesMutSig/DeepBayesMutSig`
+### `src/DeepBayesMutSig`
 
-`DeepBayesMutSig/DeepBayesMutSig` contains modules, which are reusable units of code that perform specific functions or provide features. Each module focuses on a distinct aspect of the project's functionality.
+`src/DeepBayesMutSig` contains modules, which are reusable units of code that perform specific functions or provide features. Each module focuses on a distinct aspect of the project's functionality.
 
 ### `data`
 
@@ -84,66 +84,77 @@ The `results` folder is designated for storing output files, plots, or any resul
 This module provides classes and functions for performing Non-Negative Matrix Factorization (NMF)
 on genomic data and expanding mutation patterns. It can either run signature analysis (--spe) or perform matrix factorization (--nmf) on a CSV file.
 
-### Setup
+### Create SBS Files
 
-Install your desired reference genome to the folder output/genome.
+Create mutliple SBS files. With increasing context.
+
+The sbs.96.txt file contains all of the following the pyrimidine single nucleotide variants, N[{C > A, G, or T} or {T > A, G, or C}]N.
+*4 possible starting nucleotides x 6 pyrimidine variants x 4 ending nucleotides = 96 total combinations.*
+
+The sbs.1536.txt file contains all of the following the pyrimidine single nucleotide variants, NN[{C > A, G, or T} or {T > A, G, or C}]NN.
+*16 (4x4) possible starting nucleotides x 6 pyrimidine variants x 16 (4x4) possible ending nucleotides = 1536 total combinations.*
+
+The sbs.24576.txt file contains all of the following the pyrimidine single nucleotide variants, NNN[{C > A, G, or T} or {T > A, G, or C}]NNN.
+*16 (4x4) possible starting nucleotides x 16 (4x4) nucleotides x 6 pyrimidine variants x 16 (4x4) nucleotides x 16 (4x4) possible ending dinucleotides = 24576 total combinations.*
 
 ```python
-from DeepBayesMutSig import install
-install.genome_install(genome="GRCh37", install_path=f"output/genome", bash=True)
+from DeepBayesMutSig import sbs
+project = "project" # Folder name for the results (Path Object)
+vcf = "/path/to/vcf.file" # Path object to the VCF file
+genome = "GRCh37" # Reference Genome
+bash = False # If you want to download the ref genome using bash
+sbs_model = sbs.SBS(project=project, vcf=vcf, genome=genome, bash=bash)
+sbs_model.create_sbs_files()
 ```
 
-Create one big VCF file of multiple VCF files.
-
-```python
-from DeepBayesMutSig import context
-files = ["path/file.1.vcf", "path/file.2.vcf"]
-df = context.create_vcf_file(files=files, genome="GRCh37")
-df.to_csv("path/result.vcf", index=False, sep="\t")
-```
-
-Create csv of the NMF results of genomic data. Using scikit NMF, with 1 signature. Using 10 iterations.
-
-```bash
-$ python scripts/create_nmf_files.py -i 10 -s 1 -f path/filename
-```
-
-### Extract Signatures from a CSV file
-
-Deconmpose mutational signatures from NMF results.
-
-```bash
-$ python scripts/mf_profiler.py -s 1 -f path/filename_nmf_result --nmf
-```
-
-If you want to extracts mutational signatures from an array of samples. Using SigProfilerExtractor, with 1 signature.
-
-```bash
-$ python scripts/nmf_profiler.py -s 1 -f path/filename --spe
-```
+or run `scripts\create_sbs_files.py` file.
 
 ### Param tuning
 
 Run NMF with different combinations of initialization and beta loss and 1 signature.
-
-```bash
-$ python scripts/nmf_combinations.py -f path/filename -s 1
-```
-
-Calculate the `cosine similarity` between each file's signature data and a reference column.
+And calculates `cosine similarity` from different results, in the results folder, of the scikit NMF function using different parameters.
 
 ```python
-from DeepBayesMutSig import cosine
-cosine.most_similarity_decompose("filepath")
+from DeepBayesMutSig import nmf
+project = "project" # Folder name for the results (Path Object)
+sigs = 48 # Amount of mutational signatures
+nmf_params = nmf.NMF_Combinations(project=project, sigs=sigs)
+nmf_params.run_combinations()
+nmf_params.cosine_sim()
 ```
 
-### Cosine similarity
+or run `scripts\nmf_combinations.py` file.
 
-Calculates `cosine similarity` from different results, in the results folder, of the scikit NMF function using different parameters.
+### Extract Signatures from a CSV file
 
-```bash
-$ python scripts/mutation_prob_cosine.py -f results
+Create nmf files and deconmpose mutational signatures from NMF results.
+And calculates the `cosine similarity` between each file's signature data and a reference column.
+
+```python
+from DeepBayesMutSig import nmf
+project = "project" # Folder name for the results (Path Object)
+sigs = 48 # Amount of mutational signatures
+cosmic = "/path/to/cosmic.file" # Cosmic file name for the results (Path Object)
+init = "nndsvda" # Put here the best init from the last step
+beta_loss = "frobenius" # Put here the best beta_loss from the last step
+nmf_sbs = nmf.NMF_SBS(project, sigs, cosmic, , beta_loss)
+nmf_sbs.run_nmf()
 ```
+
+or run `scripts\create_nmf_files.py` file.
+
+### Create Signature Plots
+
+Create signature plots for all the decomposed signatures files.
+
+```python
+from DeepBayesMutSig import signature_plots
+project = "project" # Folder name for the results (Path Object)
+sig_plots = signature_plots.SigPlots(project)
+sig_plots.create_plots()
+```
+
+or run `scripts\create_signatures_plots.py` file.
 
 ## References
 

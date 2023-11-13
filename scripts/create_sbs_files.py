@@ -19,11 +19,11 @@ from DeepBayesMutSig import sbs
 
 @click.command()
 @click.option(
-    "--project", type=click.Path(), default="project", help="The project folder name"
+    "--project", type=click.Path(path_type=Path), default="project", prompt="The project folder name"
 )
 @click.option(
     "--vcf",
-    type=click.Path(file_okay=True, dir_okay=False, exists=True),
+    type=click.Path(file_okay=True, dir_okay=False, exists=True, path_type=Path),
     prompt="The VCF file",
 )
 @click.option(

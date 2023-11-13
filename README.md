@@ -82,7 +82,7 @@ The `results` folder is designated for storing output files, plots, or any resul
 ## Usage
 
 This module provides classes and functions for performing Non-Negative Matrix Factorization (NMF)
-on genomic data and expanding mutation patterns. It can either run signature analysis (--spe) or perform matrix factorization (--nmf) on a CSV file.
+on genomic data and expanding mutation patterns.
 
 ### Create SBS Files
 
@@ -137,7 +137,7 @@ sigs = 48 # Amount of mutational signatures
 cosmic = "/path/to/cosmic.file" # Cosmic file name for the results (Path Object)
 init = "nndsvda" # Put here the best init from the last step
 beta_loss = "frobenius" # Put here the best beta_loss from the last step
-nmf_sbs = nmf.NMF_SBS(project, sigs, cosmic, , beta_loss)
+nmf_sbs = nmf.NMF_SBS(project, sigs, cosmic, init, beta_loss)
 nmf_sbs.run_nmf()
 ```
 

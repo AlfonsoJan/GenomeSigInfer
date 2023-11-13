@@ -2,21 +2,22 @@
 """
 SigPlots class is responsible for creating signature plots based on mutation data.
 It utilizes the SBS class for accessing genome information and logging using SingletonLogger.
-The class provides a method 'create_plots' to generate signature plots for different mutation contexts.
+The class provides a method 'create_plots' to generate
+signature plots for different mutation contexts.
 """
 from pathlib import Path
-import re
 import pandas as pd
 from .sbs import SBS
 from .logging import SingletonLogger
 from .barplots import create_96_barplot, larger_context_barplot
 
-    
+
 class SigPlots:
     """
     This method sets up the SigPlots object with the provided project path. It initializes
     attributes for project, NMF folder, figures folder, and a SingletonLogger for logging.
     """
+
     SIZES = SBS(Path(""), Path(""), "GRCh37")._sizes
 
     def __init__(self, project: Path) -> None:

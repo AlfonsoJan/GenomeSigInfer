@@ -3,12 +3,22 @@
 This module contains small, common utility functions and common variables used across the project.
 
 Functions:
-- alphabet_list(amount: int, genome: str) -> list[str]: Generate a list of column labels.
-- combinations() -> list[tuple[str, str]]: Generate combinations of initialization and beta loss.
-- create_signatures_df(W: np.ndarray, signatures: int) -> pd.DataFrame: Create a dataframe of
-    the result of the NMF.
-- read_file_decompose(file: str, dataframe: pd.DataFrame) -> None: Read the contents of a file
-    and extract signature data.
+    - custom_sort_column_names(column_name: str) -> tuple: Custom sorting function for column names.
+    - generate_sequence(n: int) -> list[int]: Generates a list of the context
+        indices for the barplot.
+    - generate_numbers(n: int) -> list[int]: Generates a list of the context number
+        based of the context number.
+    - custom_sort(value: str) -> int | float: Custom sorting function for sorting the chromosomes.
+    - calculate_value(number): Calculate the value based on an iterative formula.
+        For SBS context/size matrices.
+    - alphabet_list(amount: int, genome: str) -> list[str]: Generate a list of column labels.
+    - create_signatures_df(W: np.ndarray, signatures: int) -> pd.DataFrame: Create a dataframe of
+        the result of the NMF.
+    - combinations() -> list[tuple[str, str]]: Generate combinations of
+        initialization and beta loss.
+    - get_96_matrix(filename: Path) -> pd.DataFrame: Get the 96-context matrix for comparison.
+    - read_file_decompose(file: str, dataframe: pd.DataFrame) -> None: Read the contents of a file
+        and extract signature data.
 """
 import re
 import string
@@ -162,6 +172,7 @@ MUTATION_LIST = [
     "T[T>G]T",
 ]
 
+
 def custom_sort_column_names(column_name: str) -> tuple:
     """
     Custom sorting function for column names.
@@ -172,17 +183,16 @@ def custom_sort_column_names(column_name: str) -> tuple:
     Returns:
     - tuple: A tuple used for sorting, containing (numeric_part, prefix, suffix).
     """
-    match = re.match(r'(\D+)(\d+)(\D*)', column_name)
+    match = re.match(r"(\D+)(\d+)(\D*)", column_name)
     if match:
         prefix, numeric_part, suffix = match.groups()
         return (int(numeric_part), prefix, suffix)
-    else:
-        return (float('inf'), column_name, '')
+    return (float("inf"), column_name, "")
 
 
 def generate_sequence(n: int) -> list[int]:
     """
-    Generates a list of the context indices for the barplot
+    Generates a list of the context indices for the barplot.
 
     Args:
         n (int): The context number
@@ -202,7 +212,7 @@ def generate_sequence(n: int) -> list[int]:
 
 def generate_numbers(n: int) -> list[int]:
     """
-    Generates a list of the context number based of the context number
+    Generates a list of the context number based of the context number.
 
     Args:
         n (int): The context number
@@ -212,11 +222,11 @@ def generate_numbers(n: int) -> list[int]:
     """
     if n == 5:
         return [0, 8]
-    elif n == 7:
+    if n == 7:
         return [0, 1, 9, 10]
-    elif n == 9:
+    if n == 9:
         return [0, 1, 2, 10, 11, 12]
-    elif n == 11:
+    if n == 11:
         return [0, 1, 2, 3, 11, 12, 13, 14]
     raise ValueError
 
@@ -315,7 +325,7 @@ def get_96_matrix(filename: Path) -> pd.DataFrame:
         pd.DataFrame: 96-context matrix.
     """
     if not filename.is_file():
-        raise Exception
+        raise FileNotFoundError(f"{filename} does not exist")
     df = pd.read_csv(filename, sep=",", header=0)
     return df.set_index("MutationType").reindex(MUTATION_LIST).reset_index()
 

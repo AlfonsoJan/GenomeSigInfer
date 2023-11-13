@@ -8,11 +8,16 @@ compressing dataframes, and creating
 SBS (Single Base Substitution) matrices based on context.
 
 Functions:
-    - df2csv(df: pd.DataFrame, fname: str, formats: list[str] = [], sep: str = "\t") -> None
-    - compress_to_96(df: pd.DataFrame) -> pd.DataFrame
-    - init_mutation_df(samples: np.ndarray, context_num: int = 3) -> pd.DataFrame
-    - compress(df: pd.DataFrame, regex_str: str) -> pd.DataFrame
-    - increase_mutations(context: int) -> list[str]
+    - compress_to_96(df: pd.DataFrame) -> pd.DataFrame:
+        Compress the DataFrame to 96 rows.
+    - df2csv(df: pd.DataFrame, fname: str, formats: list[str] = [], sep: str = "\t") -> None:
+        Write a DataFrame to a CSV file using a custom format.
+    - compress(df: pd.DataFrame, regex_str: str) -> pd.DataFrame:
+        Compress the dataframe down by grouping rows based on the regular pattern.
+    - init_mutation_df(samples: np.ndarray, context_num: int = 3) -> pd.DataFrame:
+        Initialize the samples mutation DataFrame.
+    - increase_mutations(context: int) -> list[str]:
+        Increases mutations in a given column based on a specified context.
 """
 from pathlib import Path
 import itertools
@@ -111,7 +116,7 @@ def compress(df: pd.DataFrame, regex_str: str) -> pd.DataFrame:
 
 def init_mutation_df(samples: np.ndarray, context_num: int = 3) -> pd.DataFrame:
     """
-    Initialize the mutation DataFrame.
+    Initialize the samples mutation DataFrame.
 
     Args:
         samples (np.ndarray): The array of unique sample names.

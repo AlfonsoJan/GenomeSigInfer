@@ -4,7 +4,10 @@ This module contains functions that calculates the most similar column
 based on cosine similarity for a given DataFrame containing signature data.
 
 Functions:
-- most_similarity_decompose(filename: str) -> np.ndarray: Calculate the most similar column based on cosine similarity.
+    - most_similarity_decompose(filename: str) -> np.ndarray:
+        Calculate the most similar column based on cosine similarity.
+    - cosine_nmf_w(optimal_columns: dict, df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
+        Calculate the cosine similarity on the most optimal columns on (decompressed) nmf result.
 """
 from ast import literal_eval
 import numpy as np

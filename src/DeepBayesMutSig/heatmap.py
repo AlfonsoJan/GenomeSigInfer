@@ -2,7 +2,8 @@
 """
 Visualization Module
 
-This module provides functions for generating heatmaps based on cosine similarity and Jensen Shannon Distance.
+This module provides functions for generating heatmaps
+based on cosine similarity and Jensen Shannon Distance.
 It includes methods for visualizing the best parameters, cosine similarity for different contexts,
 and Jensen Shannon Distance for different contexts.
 
@@ -96,7 +97,8 @@ def heatmap_jens_shan(
     Generate a set of heatmaps based on Jensen Shannon Distance for different contexts.
 
     Args:
-        jens_shan_df_list (List[pd.DataFrame]): List of DataFrames containing Jensen Shannon Distance values.
+        jens_shan_df_list (List[pd.DataFrame]): List of DataFrames
+            containing Jensen Shannon Distance values.
         figure_folder (Path): Path to the folder where the heatmap image will be saved.
 
     Returns:

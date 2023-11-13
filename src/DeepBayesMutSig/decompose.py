@@ -4,34 +4,10 @@ This module defines a class for performing signature decomposition on given geno
 It utilizes SigProfilerAssignment.decomposition for the decomposition process and outputs
 the results in a formatted text file.
 """
-import itertools
-import string
 from pathlib import Path
 import pandas as pd
 from SigProfilerAssignment import decomposition as decomp
-
-
-def alphabet_list(amount: int, genome: str) -> list[str]:
-    """
-    Generate a list of column labels in the format [genome + letter(s)].
-
-    Args:
-        amount (int): Number of labels to generate.
-        genome (str): Prefix for each label.
-
-    Returns:
-        list[str]: List of column labels.
-    """
-    columns = list(
-        itertools.chain(
-            string.ascii_uppercase,
-            (
-                "".join(pair)
-                for pair in itertools.product(string.ascii_uppercase, repeat=2)
-            ),
-        )
-    )
-    return [genome + columns[i] for i in range(amount)]
+from .helpers import alphabet_list
 
 
 class Decompose:

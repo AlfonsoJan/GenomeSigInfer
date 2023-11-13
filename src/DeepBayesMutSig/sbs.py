@@ -168,7 +168,8 @@ class SBS:
         Group the VCF DataFrame by chromosome.
 
         Returns:
-            tuple[pd.DataFrame, list[str], dict]: Tuple containing filtered DataFrame, sorted chromosomes, and grouped chromosomes.
+            tuple[pd.DataFrame, list[str], dict]: Tuple containing filtered DataFrame,
+                sorted chromosomes, and grouped chromosomes.
         """
         filtered_df: pd.DataFrame = self.get_vcf_matrix()
         grouped_chromosomes: dict = filtered_df.groupby(5).groups
@@ -191,7 +192,8 @@ class SBS:
         """
         self._check_programms()
         self._logger.log_info(
-            f"Beginning installation of reference {self.genome}. This may take up to 40 minutes to complete."
+            f"Beginning installation of reference {self.genome}. "
+            "This may take up to 40 minutes to complete."
         )
         self._download_ref_genome()
 

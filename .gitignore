@@ -41,10 +41,8 @@ venv.bak/
 
 # Misch.
 buffer
-project
 results
 .vscode
-run.sh
 
 # Data
 vcf/

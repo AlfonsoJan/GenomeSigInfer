@@ -15,6 +15,9 @@ from DeepBayesMutSig import signature_plots
 def main(project: Path) -> int:
     """
     Main entry point of the script.
+    
+    Args:
+        project (Path): Path of the project folder.
 
     Returns:
         int: Exit status (0 for success).

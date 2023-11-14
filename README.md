@@ -109,6 +109,10 @@ sbs_model.create_sbs_files()
 
 or run `scripts\create_sbs_files.py` file.
 
+```bash
+$ python scripts/create_sbs_files.py --project project --vcf data/vcf/WES_Other.20180327.simple --vcf data/vcf/WGS_Other.20180413.vcf
+```
+
 ### Param tuning
 
 Run NMF with different combinations of initialization and beta loss and 1 signature.

@@ -7,7 +7,7 @@ signature plots for different mutation contexts.
 """
 from pathlib import Path
 import pandas as pd
-from .sbs import SBS
+from .helpers import MutationalSigantures
 from .logging import SingletonLogger
 from .barplots import create_96_barplot, larger_context_barplot
 
@@ -18,7 +18,6 @@ class SigPlots:
     attributes for project, NMF folder, figures folder, and a SingletonLogger for logging.
     """
 
-    SIZES = SBS(Path(""), Path(""), "GRCh37")._sizes
 
     def __init__(self, project: Path) -> None:
         """
@@ -36,7 +35,7 @@ class SigPlots:
         """
         Create signature plots based on mutation data.
         """
-        for size in self.SIZES:
+        for size in MutationalSigantures.SIZES:
             decompose_file = self.nmf_folder / f"decompose.{size}.txt"
             df = pd.read_csv(decompose_file, sep="\t")
             if df.shape[0] != 96:

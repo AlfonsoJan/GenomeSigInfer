@@ -13,7 +13,6 @@ from .distance import (
     get_optimal_columns,
     get_jensen_shannon_distance,
 )
-from .sbs import SBS
 from .heatmap import heatmap_best_param, heatmap_cosine, heatmap_jens_shan
 from .logging import SingletonLogger
 from .sigprofiler import RunSig
@@ -21,6 +20,7 @@ from .data_processing import Preprocessing
 from .decompose import Decompose
 from .cosine import most_similarity_decompose, cosine_nmf_w
 from .helpers import (
+    MutationalSigantures,
     combinations,
     read_file_decompose,
     get_96_matrix,
@@ -158,8 +158,6 @@ class NMF_SBS:
         init (str): init for the NMF
         beta_loss (str): beta_loss for the NMF
     """
-    SIZES = SBS(Path(""), Path(""), "GRCh37")._sizes
-    MAX_CONTEXT = SBS(Path(""), Path(""), "GRCh37").MAX_CONTEXT
 
     def __init__(
         self,
@@ -193,7 +191,6 @@ class NMF_SBS:
         self.nmf_folder = project / "NMF"
         self.figure_folder = self.project / "figures"
         self._prepare_folder()
-        self._context_list: list[int] = list(range(self.MAX_CONTEXT, 2, -2))
         self._cosmic_df = (
             pd.read_csv(cosmic, sep="\t")
             .set_index("Type")
@@ -205,7 +202,7 @@ class NMF_SBS:
         """
         Create NMF files based on the specified number of signatures.
         """
-        for index, size in enumerate(self.SIZES, -1):
+        for index, size in enumerate(MutationalSigantures.SIZES, -1):
             signatures_df = self.perform_nmf(size)
             self._process_figures(size, signatures_df, index)
         self._logger.log_info("Creating cosine and Jensen Shannon Distance plots")
@@ -252,10 +249,10 @@ class NMF_SBS:
             )
             decomposed_df.to_csv(decompose_filename, sep="\t", index=False)
             self.cosine_similarities.append(
-                {"data": result_cosine_df, "context": self._context_list[index]}
+                {"data": result_cosine_df, "context": MutationalSigantures.CONTEXT_LIST[index]}
             )
             self.jens_shannon_distances.append(
-                {"data": result_jens_df, "context": self._context_list[index]}
+                {"data": result_jens_df, "context": MutationalSigantures.CONTEXT_LIST[index]}
             )
 
     def calculate_distances(

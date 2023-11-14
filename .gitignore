@@ -41,10 +41,11 @@ venv.bak/
 
 # Misch.
 buffer
+project
 results
 .vscode
+run.sh
 
 # Data
-WGS_Other.20180413.vcf
-test.vcf
+vcf/
 ref_genome

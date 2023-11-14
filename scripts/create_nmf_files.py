@@ -19,14 +19,33 @@ from DeepBayesMutSig import nmf
     type=click.Path(file_okay=True, dir_okay=False, exists=True, path_type=Path),
     prompt="The cosmic file",
 )
-def main(project: Path, sigs: int, cosmic: Path) -> int:
+@click.option(
+    "--nmf-init",
+    type=click.Choice(["random", "nndsvd", "nndsvda", "nndsvdar", "custom"]),
+    default="nndsvda",
+    help="NMF initialization method. Choose from 'random', 'nndsvd', 'nndsvda', 'nndsvdar', or 'custom'.",
+)
+@click.option(
+    "--beta-loss",
+    type=click.Choice(['frobenius', 'kullback-leibler', 'itakura-saito']),
+    default='frobenius',
+    help="Beta loss function for NMF. Choose from 'frobenius', 'kullback-leibler', or 'itakura-saito'.",
+)
+def main(project: Path, sigs: int, cosmic: Path, nmf_init: str, beta_loss: str) -> int:
     """
     Main entry point of the script.
+    
+    Args:
+        project (Path): Path of the project folder.
+        sigs (int): Number of signatures.
+        cosmic (Path): Path of the cosmic file.
+        nmf_init (str): NMF initialization method.
+        beta_loss (str): Beta loss function for NMF.
 
     Returns:
         int: Exit status (0 for success).
     """
-    nmf_sbs = nmf.NMF_SBS(project, sigs, cosmic, "nndsvda", "frobenius")
+    nmf_sbs = nmf.NMF_SBS(project, sigs, cosmic, nmf_init, beta_loss)
     nmf_sbs.run_nmf()
     return 0
 

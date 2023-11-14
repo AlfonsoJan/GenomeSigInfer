@@ -353,3 +353,21 @@ def read_file_decompose(
         dataframe[file.parts[-5]] = sigs
     else:
         dataframe[col] = sigs
+
+# Class for default stuff
+class MutationalSigantures:
+    """
+    Class for storing parameters for the analysis, used in multiple scripts
+    """
+    REF_GENOMES: list = ["GRCh37", "GRCh38"]
+    MAX_CONTEXT: int = 7
+    SORT_REGEX: dict = {
+        13: r"(\w\w\w\w\w\w\[.*\]\w\w\w\w\w\w)",
+        11: r"(\w\w\w\w\w\[.*\]\w\w\w\w\w)",
+        9: r"(\w\w\w\w\[.*\]\w\w\w\w)",
+        7: r"(\w\w\w\[.*\]\w\w\w)",
+        5: r"(\w\w\[.*\]\w\w)",
+        3: r"(\w\[.*\]\w)",
+    }
+    CONTEXT_LIST: list[int] = list(range(MAX_CONTEXT, 2, -2))
+    SIZES: list[int] = [calculate_value(i) for i in CONTEXT_LIST[::-1]]

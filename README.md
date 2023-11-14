@@ -109,6 +109,10 @@ sbs_model.create_sbs_files()
 
 or run `scripts\create_sbs_files.py` file.
 
+```bash
+$ python scripts/create_sbs_files.py --project project --vcf path/to/vcf_file --vcf path/to/vcf_file
+```
+
 ### Param tuning
 
 Run NMF with different combinations of initialization and beta loss and 1 signature.
@@ -124,6 +128,10 @@ nmf_params.cosine_sim()
 ```
 
 or run `scripts\nmf_combinations.py` file.
+
+```bash
+$ python scripts/nmf_combinations.py --project project --sigs 48
+```
 
 ### Extract Signatures from a CSV file
 
@@ -143,6 +151,10 @@ nmf_sbs.run_nmf()
 
 or run `scripts\create_nmf_files.py` file.
 
+```bash
+$ python scripts/create_nmf_files.py --project project --sigs 48 --cosmic path/to/cosmic_file
+```
+
 ### Create Signature Plots
 
 Create signature plots for all the decomposed signatures files.
@@ -155,6 +167,10 @@ sig_plots.create_plots()
 ```
 
 or run `scripts\create_signatures_plots.py` file.
+
+```bash
+$ python scripts/create_signatures_plots.py --project project
+```
 
 ## References
 

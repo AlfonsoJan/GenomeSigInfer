@@ -24,7 +24,10 @@ from DeepBayesMutSig import sbs
 @click.option(
     "--vcf",
     type=click.Path(file_okay=True, dir_okay=False, exists=True, path_type=Path),
-    prompt="The VCF file",
+    multiple=True,
+    prompt="The VCF file(s)",
+    required=True,
+    help="The VCF file(s). At least one file is required.",
 )
 @click.option(
     "--genome",
@@ -33,9 +36,15 @@ from DeepBayesMutSig import sbs
     help="Choose genome version.",
 )
 @click.option("--bash", is_flag=True, help="Download using bash")
-def main(project: Path, vcf: Path, genome: str, bash: bool) -> int:
+def main(project: Path, vcf: tuple, genome: str, bash: bool) -> int:
     """
     Main entry point of the script.
+    
+    Args:
+        project (Path): Path of the project folder.
+        vcf (tuple): Tuple pf the vcf files list.
+        genome (str): Reference genome.
+        bash (bool): If you want to download using bash.
 
     Returns:
         int: Exit status (0 for success).

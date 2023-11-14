@@ -45,6 +45,5 @@ results
 .vscode
 
 # Data
-WGS_Other.20180413.vcf
-test.vcf
+vcf/
 ref_genome

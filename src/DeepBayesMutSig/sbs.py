@@ -17,7 +17,7 @@ from tqdm import tqdm
 from .matrix_operations import init_mutation_df, df2csv, compress
 from .logging import SingletonLogger
 from .errors import RefGenomeNotCorrectError
-from .helpers import calculate_value, custom_sort, MUTATION_TYPES, TSB_REF
+from .helpers import custom_sort, MUTATION_TYPES, TSB_REF, MutationalSigantures
 
 
 class SBS:
@@ -27,48 +27,27 @@ class SBS:
     Create a max context SBS file and decompress the context down.
     """
 
-    REF_GENOMES: list = ["GRCh37", "GRCh38"]
-    MAX_CONTEXT: int = 7
-    SORT_REGEX: dict = {
-        13: r"(\w\w\w\w\w\w\[.*\]\w\w\w\w\w\w)",
-        11: r"(\w\w\w\w\w\[.*\]\w\w\w\w\w)",
-        9: r"(\w\w\w\w\[.*\]\w\w\w\w)",
-        7: r"(\w\w\w\[.*\]\w\w\w)",
-        5: r"(\w\w\[.*\]\w\w)",
-        3: r"(\w\[.*\]\w)",
-    }
-
     def __init__(
-        self, project: Path, vcf: Path, genome: str, bash: bool = True
+        self, project: Path, vcf: tuple[Path], genome: str, bash: bool = True
     ) -> None:
         """
         Initialize SBS with the specified project path.
 
         Args:
             project (Path): Path of the project.
-            vcf_files (Path): List of VCF files.
+            vcf_files (tuple[Path]): tuple of VCF files.
             genome (str): Reference genome.
-            bash (bool, optional): Use bash for installation. Defaults to True.
         """
-        self._context_list: list[int] = list(range(SBS.MAX_CONTEXT, 2, -2))
-        self._sizes: list[int] = [calculate_value(i) for i in self._context_list[::-1]]
-        if genome not in SBS.REF_GENOMES:
+        if genome not in MutationalSigantures.REF_GENOMES:
             raise RefGenomeNotCorrectError(genome)
         self.genome: str = genome
         self.project: Path = project
         self._logger: SingletonLogger = SingletonLogger()
-        self.vcf: Path = vcf
+        self.vcf_list: tuple[Path] = vcf
+        self.vcf = None
         self.bash: bool = bash
         self.ref_genome_folder: Path = self.project / "ref_genome" / self.genome
-
-    def _prepare_folder(self) -> None:
-        """
-        Prepare main folder for SBS files.
-        """
-        if self.project.exists():
-            shutil.rmtree(self.project)
-        self._logger.log_info(f"Creating a clean project in: '{self.project}'")
-        self.project.mkdir(parents=True, exist_ok=True)
+        self.sbs_folder: Path = self.project / "SBS"
 
     def create_sbs_files(self) -> None:
         """
@@ -76,9 +55,26 @@ class SBS:
         """
         self._prepare_folder()
         self.download_ref_genome()
-        self._prepare_sbs_folder()
+        self.create_one_vcf_file()
         self.parse_vcf()
         self._compress_one_down()
+
+    def _compress_one_down(self):
+        """
+        Compress the SBS data to lower context sizes.
+        """
+        sampled_one_down = pd.DataFrame()
+        for context in MutationalSigantures.CONTEXT_LIST:
+            self._logger.log_info(f"Creating a SBS matrix with context: {context}")
+            if context == MutationalSigantures.MAX_CONTEXT:
+                sampled_one_down = self.samples_df
+            else:
+                sampled_one_down = compress(
+                    sampled_one_down, MutationalSigantures.SORT_REGEX[context]
+                )
+            filename = self.project / "SBS" / f"sbs.{sampled_one_down.shape[0]}.txt"
+            df2csv(sampled_one_down, filename, sep=",")
+            self._logger.log_info(f"Created a SBS matrix with context: {context}")
 
     def parse_vcf(self) -> None:
         """
@@ -86,13 +82,15 @@ class SBS:
 
         Create a max context SBS file and decompress the context down.
         """
-        self._logger.log_info(f"Processing VCF file: {self.vcf}")
-        filtered_df, sorted_chr, grouped_chromosomes = self.group_vcf_chromosome()
+        self._logger.log_info(
+            f"Processing VCF files: {', '.join(map(str, self.vcf_list))}"
+        )
+        sorted_chr, grouped_chromosomes = self.group_vcf_chromosome()
         samples: np.ndarray = np.array(
-            filtered_df[0].astype(str) + "::" + filtered_df[1].astype(str)
+            self.vcf[0].astype(str) + "::" + self.vcf[1].astype(str)
         )
         self.samples_df: pd.DataFrame = init_mutation_df(
-            np.unique(samples), self._context_list[0]
+            np.unique(samples), MutationalSigantures.CONTEXT_LIST[0]
         )
         for chrom_start in sorted_chr:
             indices = grouped_chromosomes[chrom_start]
@@ -103,7 +101,7 @@ class SBS:
             print("\n")
             self._logger.log_info(f"Starting on chromosome {chrom_start}\n")
             for idx in tqdm(indices):
-                df_row = filtered_df.loc[idx]
+                df_row = self.vcf.loc[idx]
                 sample = f"{df_row[0]}::{df_row[1]}"
                 pos = df_row[6] - 1
                 mut = df_row[8] + ">" + df_row[9]
@@ -111,13 +109,17 @@ class SBS:
                 left_context = "".join(
                     [
                         TSB_REF[chrom_string[_]]
-                        for _ in range(pos - self._context_list[0] // 2, pos)
+                        for _ in range(
+                            pos - MutationalSigantures.CONTEXT_LIST[0] // 2, pos
+                        )
                     ]
                 )
                 right_context = "".join(
                     [
                         TSB_REF[chrom_string[_]]
-                        for _ in range(pos + 1, pos + self._context_list[0] // 2 + 1)
+                        for _ in range(
+                            pos + 1, pos + MutationalSigantures.CONTEXT_LIST[0] // 2 + 1
+                        )
                     ]
                 )
                 mutation_type = f"{left_context}[{mut}]{right_context}"
@@ -128,30 +130,27 @@ class SBS:
             print("\n")
             self._logger.log_info(f"Finished chromosome {chrom_start}\n")
 
-    def _compress_one_down(self):
+    def group_vcf_chromosome(self) -> tuple[list[str], dict]:
         """
-        Compress the SBS data to lower context sizes.
-        """
-        sampled_one_down = pd.DataFrame()
-        for context in self._context_list:
-            self._logger.log_info(f"Creating a SBS matrix with context: {context}")
-            if context == self.MAX_CONTEXT:
-                sampled_one_down = self.samples_df
-                print(sampled_one_down)
-            else:
-                sampled_one_down = compress(sampled_one_down, self.SORT_REGEX[context])
-            filename = self.project / "SBS" / f"sbs.{sampled_one_down.shape[0]}.txt"
-            df2csv(sampled_one_down, filename, sep=",")
-            self._logger.log_info(f"Created a SBS matrix with context: {context}")
+        Group the VCF DataFrame by chromosome.
 
-    def get_vcf_matrix(self) -> pd.DataFrame:
+        Returns:
+            tuple[list[str], dict]: Tuple containing
+                sorted chromosomes, and grouped chromosomes.
         """
-        Read and filter the VCF file.
+        grouped_chromosomes: dict = self.vcf.groupby(5).groups
+        chromosomes: list[str] = list(grouped_chromosomes.keys())
+        sorted_chr: list[str] = sorted(chromosomes, key=custom_sort)
+        return sorted_chr, grouped_chromosomes
+
+    def read_vcf_file(self, vcf_file: Path) -> pd.DataFrame:
+        """
+        Filter the vcf file
         """
         df = None
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore", category=pd.errors.DtypeWarning)
-            df = pd.read_csv(self.vcf, sep="\t", header=None)
+            df = pd.read_csv(vcf_file, sep="\t", header=None)
         mutations = np.array(df[8].astype(str) + ">" + df[9].astype(str))
         filtered_df = df[
             (df.iloc[:, 3] == self.genome)
@@ -163,28 +162,23 @@ class SBS:
         filtered_df = filtered_df.astype({5: str})
         return filtered_df
 
-    def group_vcf_chromosome(self) -> tuple[pd.DataFrame, list[str], dict]:
+    def create_one_vcf_file(self):
         """
-        Group the VCF DataFrame by chromosome.
+        Create one large VCF file
+        """
+        self._logger.log_info("Creating one large VCF file")
+        dfs = [self.read_vcf_file(vcf_file) for vcf_file in self.vcf_list]
+        self.vcf = pd.concat(dfs, ignore_index=True)
 
-        Returns:
-            tuple[pd.DataFrame, list[str], dict]: Tuple containing filtered DataFrame,
-                sorted chromosomes, and grouped chromosomes.
+    def _prepare_folder(self) -> None:
         """
-        filtered_df: pd.DataFrame = self.get_vcf_matrix()
-        grouped_chromosomes: dict = filtered_df.groupby(5).groups
-        chromosomes: list[str] = list(grouped_chromosomes.keys())
-        sorted_chr: list[str] = sorted(chromosomes, key=custom_sort)
-        return filtered_df, sorted_chr, grouped_chromosomes
-
-    def _prepare_sbs_folder(self) -> None:
+        Prepare main folder for SBS files.
         """
-        Prepare folders for SBS files.
-        """
-        sbs_folder: Path = self.project / "SBS"
-        if sbs_folder.exists():
-            shutil.rmtree(sbs_folder)
-        sbs_folder.mkdir(parents=True, exist_ok=True)
+        if self.project.exists():
+            shutil.rmtree(self.project)
+        self._logger.log_info(f"Creating a clean project in: '{self.project}'")
+        self.project.mkdir(parents=True, exist_ok=True)
+        self.sbs_folder.mkdir(parents=True, exist_ok=True)
 
     def download_ref_genome(self) -> None:
         """
@@ -251,4 +245,7 @@ class SBS:
         Returns:
             str: String representation.
         """
-        return f"SBS(project={str(self.project)})"
+        return (
+            f"SBS(project={str(self.project)}, genome={self.genome}, "
+            f"vcf={', '.join(map(str, self.vcf_list))}, bash={self.bash})"
+        )

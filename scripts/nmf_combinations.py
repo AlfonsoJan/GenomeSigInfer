@@ -17,6 +17,10 @@ from DeepBayesMutSig import nmf
 def main(project: Path, sigs: int) -> int:
     """
     Main entry point of the script.
+    
+    Args:
+        project (Path): Path of the project folder.
+        sigs (int): Number of signatures.
 
     Returns:
         int: Exit status (0 for success).

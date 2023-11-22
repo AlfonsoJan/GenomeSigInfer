@@ -26,6 +26,9 @@ share/python-wheels/
 *.egg
 MANIFEST
 
+# Testing
+.pytest_cache
+
 # Jupyter Notebook
 .ipynb_checkpoints
 

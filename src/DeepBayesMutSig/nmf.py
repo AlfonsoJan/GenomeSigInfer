@@ -7,6 +7,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from sklearn.decomposition import NMF
+from sklearn.metrics import silhouette_score, silhouette_samples
+from sklearn.cluster import KMeans
 from .matrix_operations import compress_to_96
 from .distance import (
     set_optimal_columns,
@@ -68,6 +70,7 @@ class RunNMF:
         self._beta_loss: str = beta_loss
         self._signatures: int = signatures
         self._W: np.ndarray = None
+        self._Err: np.ndarray = None
 
     def fit(self):
         """
@@ -80,10 +83,11 @@ class RunNMF:
             init=self._init,
             beta_loss=self._beta_loss,
             solver=self._solver,
-            max_iter=1000,
+            max_iter=1_000,
             tol=1e-15,
         )
         self._W: np.ndarray = nmf.fit_transform(self._genomes)
+        self._Err: np.ndarray = nmf.reconstruction_err_
 
     @property
     def W(self) -> np.ndarray:
@@ -91,6 +95,13 @@ class RunNMF:
         self._W (np.ndarray): NMF factorization matrix.
         """
         return self._W
+
+    @property
+    def reconstruction_err(self) -> np.ndarray:
+        """
+        self._Err (np.ndarray): Reconstruction Error.
+        """
+        return self._Err
 
     @property
     def W_norm(self) -> np.ndarray:
@@ -202,11 +213,22 @@ class NMF_SBS:
         """
         Create NMF files based on the specified number of signatures.
         """
+        self.stats_nmf_list = []
         for index, size in enumerate(MutationalSigantures.SIZES, -1):
             signatures_df = self.perform_nmf(size)
             self._process_figures(size, signatures_df, index)
         self._logger.log_info("Creating cosine and Jensen Shannon Distance plots")
         self._create_distance_figures()
+        self.write_stats()
+    
+    def write_stats(self):
+        """
+        Write NMF stats to a file.
+        """
+        results_df = pd.DataFrame(self.stats_nmf_list)
+        filename = self.project / "results" / "nmf.stats.txt"
+        self._logger.log_info(f"Written the NMF files to {filename}")
+        results_df.to_csv(filename, index=False, sep="\t")
 
     def _create_distance_figures(self):
         """
@@ -281,8 +303,8 @@ class NMF_SBS:
             optimal_columns, control_df, df_compare
         )
 
-        jens_filename = result_folder / f"jensen.{df_compare.shape[0]}.txt"
-        cosine_filename = result_folder / f"cosine.{df_compare.shape[0]}.txt"
+        jens_filename = result_folder / f"jensen.{df_not_compressed.shape[0]}.txt"
+        cosine_filename = result_folder / f"cosine.{df_not_compressed.shape[0]}.txt"
         result_cosine_df.to_csv(
             cosine_filename,
             sep="\t",
@@ -366,9 +388,11 @@ class NMF_SBS:
         matrix = pd.read_csv(file, sep=",", header=0)
         mutations = matrix[matrix.columns[0]]
         all_genomes = np.array(matrix.iloc[:, 1:])
+        self._logger.log_info("Preprocessing the data")
+        preprocessed = Preprocessing(all_genomes)
         # Create NMF model and fit
         nmf_model = RunNMF(
-            genomes=all_genomes,
+            genomes=preprocessed.norm_genomes,
             signatures=self.sigantures,
             init=self.init,
             beta_loss=self.beta_loss,
@@ -378,12 +402,32 @@ class NMF_SBS:
         self._logger.log_info("Done fitting")
         # Get NMF results and save to file
         W = nmf_model.W_norm
+        # Calculate silhouette scores for each sample
+        silhouette_scores, silhouette_avg = self.calculate_sil_score(W=W)
         signatures_df = create_signatures_df(W=W, signatures=self.sigantures)
         signatures_df.insert(0, "MutationType", mutations)
 
         nmf_filename = self.project / "NMF" / f"nmf.{size}.txt"
         signatures_df.to_csv(nmf_filename, sep="\t", index=False)
+        # Save stats of the NMF results
+        result = {
+            "context": matrix.shape[0],
+            "Reconstruction Err": nmf_model.reconstruction_err,
+            "Silhouette Scores": silhouette_scores,
+            "Silhouette Avg": silhouette_avg
+        }
+        self.stats_nmf_list.append(result)
         return signatures_df
+    
+    def calculate_sil_score(self, W: np.ndarray) -> None:
+        """
+        Calculate the silhouette scores for each sample
+        """
+        kmeans = KMeans(n_clusters=self.sigantures, n_init=10)
+        cluster_labels = kmeans.fit_predict(W)
+        silhouette_scores = silhouette_samples(W, cluster_labels).tolist()
+        silhouette_avg = silhouette_score(W, cluster_labels)
+        return silhouette_scores, silhouette_avg
 
     def _prepare_folder(self):
         """

@@ -21,6 +21,7 @@ from tqdm import tqdm
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FuncFormatter
 from matplotlib.backends.backend_pdf import PdfPages
 from .helpers import (
     generate_numbers,
@@ -31,14 +32,40 @@ from .helpers import (
     COLOR_DICT_MUTATION
 )
 
+def format_xlabels(x_labels: list) -> list:
+    """
+    Format the x labels for the plots.
+    To go from A[C>A]A to ACA
+
+    Args:
+        x_labels (list): The mutations to be formatted.
+
+    Returns:
+        list: The formatted x labels.
+    """
+    return [f"{label[0]}{label[2]}{label[-1]}" for label in x_labels]
+
+def percentage_formatter(x: float, pos: int) -> str:
+    """
+    Format a numeric value as a percentage.
+
+    Args:
+        x (float): The numeric value to be formatted.
+        pos (int): The tick position (unused in this function).
+
+    Returns:
+        str: The formatted percentage string.
+    """
+    return f'{x:.0%}'
+
 
 def larger_context_barplot(df_multi_contexct: pd.DataFrame, folder_path: Path) -> None:
     """
     Generate bar plots for larger context mutations and save them in a PDF file.
 
-    Parameters:
-    - df_multi_contexct (pd.DataFrame): DataFrame containing mutation data.
-    - folder_path (Path): Path to the folder where the PDF file will be saved.
+    Args:
+        df_multi_contexct (pd.DataFrame): DataFrame containing mutation data.
+        folder_path (Path): Path to the folder where the PDF file will be saved.
     """
     df_multi_contexct["context"] = df_multi_contexct["MutationType"].str.extract(r"(\w\[.*\]\w)")
     sorted_columns = sorted(df_multi_contexct.columns[1:-1], key=custom_sort_column_names)
@@ -52,9 +79,9 @@ def create_96_barplot(df: pd.DataFrame, figure_folder: Path) -> None:
     """
     Generate bar plots for 96 context mutations and save them in a PDF file.
 
-    Parameters:
-    - df (pd.DataFrame): DataFrame containing mutation data.
-    - figure_folder (Path): Path to the folder where the PDF file will be saved.
+    Args:
+        df (pd.DataFrame): DataFrame containing mutation data.
+        figure_folder (Path): Path to the folder where the PDF file will be saved.
     """
     sorted_columns = sorted(df.columns[1:], key=custom_sort_column_names)
     with PdfPages(figure_folder / "signatures.96.pdf") as pdf:
@@ -66,9 +93,9 @@ def create_increased_context_barplot(df: pd.DataFrame, pdf: PdfPages) -> None:
     """
     Create a bar plot for increased context mutations and save it in a PDF file.
 
-    Parameters:
-    - df (pd.DataFrame): DataFrame containing mutation data.
-    - pdf: PdfPages object for saving the plot.
+    Args:
+        df (pd.DataFrame): DataFrame containing mutation data.
+        pdf: PdfPages object for saving the plot.
     """
     title = df["sbs"].unique()[0]
     labels = df["context"].drop_duplicates()
@@ -125,14 +152,18 @@ def create_increased_context_barplot(df: pd.DataFrame, pdf: PdfPages) -> None:
         )
         if i < len(mutation_types) - 1:
             plt.axvline(x=idx + 0.5, color="black", linestyle="-", linewidth=2)
+    # SBS NAME ON THE PLOT
+    plt.text(-.05, 0.99, title, rotation=0, ha="left", va="top", fontsize=24, fontweight="heavy")
+    # Formatted x labels
+    x_labels_ticks = format_xlabels(labels)
     ax.set_xticks(x0)
-    ax.set_xticklabels(labels, rotation=90, ha="right")
+    ax.set_xticklabels(x_labels_ticks, rotation=90, ha="center", fontfamily="monospace")
     ax.legend()
-    ax.set_xlabel("Context")
-    ax.set_ylabel("Value")
+    ax.set_xlabel("Context", weight="bold")
+    ax.set_ylabel("Percentage OF Single Base Substitution", weight="bold")
     plt.xlim(-1, len(labels))
+    plt.gca().yaxis.set_major_formatter(FuncFormatter(percentage_formatter))
     plt.ylim(0, 1)
-    plt.title(title, fontweight="bold")
     plt.tight_layout()
     pdf.savefig(bbox_inches="tight")
     plt.close()
@@ -142,12 +173,12 @@ def parse_lager_context_df(df: pd.DataFrame, col: str) -> pd.DataFrame:
     """
     Parse the DataFrame to extract larger context mutation data.
 
-    Parameters:
-    - df (pd.DataFrame): DataFrame containing mutation data.
-    - col (str): Name of the column to parse.
+    Args:
+        df (pd.DataFrame): DataFrame containing mutation data.
+        col (str): Name of the column to parse.
 
     Returns:
-    - pd.DataFrame: Resulting DataFrame with parsed data.
+        pd.DataFrame: Resulting DataFrame with parsed data.
     """
     result_df = pd.DataFrame()
     amino = ["A", "C", "T", "G"]
@@ -183,10 +214,10 @@ def parse_96_df(df: pd.DataFrame, col: str, pdf: PdfPages) -> None:
     """
     Parse the DataFrame to extract 96 context mutation data and create a bar plot.
 
-    Parameters:
-    - df (pd.DataFrame): DataFrame containing mutation data.
-    - col (str): Name of the column to parse.
-    - pdf: PdfPages object for saving the plot.
+    Args:
+        df (pd.DataFrame): DataFrame containing mutation data.
+        col (str): Name of the column to parse.
+        pdf: PdfPages object for saving the plot.
     """
     sort_col = "mutation"
     mut_col = "MutationType"
@@ -195,6 +226,7 @@ def parse_96_df(df: pd.DataFrame, col: str, pdf: PdfPages) -> None:
     muts = temp_df.MutationType.unique()
     x0 = np.arange(len(muts))
     _, ax = plt.subplots(figsize=(20, 10))
+    # plt.rcParams['font.family'] = 'monospace'
     w = 0.8
     added_labels = set()
     for x, mutation in zip(x0, temp_df.mutation):
@@ -225,14 +257,17 @@ def parse_96_df(df: pd.DataFrame, col: str, pdf: PdfPages) -> None:
         # Skip the last line
         if i < len(groups) - 1:
             plt.axvline(x=idx + 0.5, color="black", linestyle="-", linewidth=2)
-
+    # SBS NAME ON THE PLOT
+    plt.text(-.05, 0.99, col, rotation=0, ha="left", va="top", fontsize=24, fontweight="heavy")
+    # Formatted x labels
+    x_labels_ticks = format_xlabels(muts)
     ax.set_xticks(x0)
-    ax.set_xticklabels(muts, rotation=90, ha="right")
+    ax.set_xticklabels(x_labels_ticks, rotation=90, ha="center", fontfamily="monospace")
     ax.legend()
-    ax.set_xlabel("Context")
-    ax.set_ylabel("Value")
-    plt.title(col, fontweight="bold")
+    ax.set_xlabel("Context", weight="bold")
+    ax.set_ylabel("Percentage OF Single Base Substitution", weight="bold")
     plt.xlim(-1, len(temp_df[mut_col]))
+    plt.gca().yaxis.set_major_formatter(FuncFormatter(percentage_formatter))
     plt.ylim(0, 1)
     plt.tight_layout()
     pdf.savefig(bbox_inches="tight")

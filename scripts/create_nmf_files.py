@@ -6,8 +6,7 @@ And calculates the `cosine similarity` between each file's signature data and a 
 import sys
 import click
 from pathlib import Path
-from DeepBayesMutSig import nmf
-
+from DeepBayesMutSig.nmf import nmf_sbs
 
 @click.command()
 @click.option(
@@ -45,10 +44,9 @@ def main(project: Path, sigs: int, cosmic: Path, nmf_init: str, beta_loss: str) 
     Returns:
         int: Exit status (0 for success).
     """
-    nmf_sbs = nmf.NMF_SBS(project, sigs, cosmic, nmf_init, beta_loss)
-    nmf_sbs.run_nmf()
+    nmf_sbs_cls = nmf_sbs.NMF_SBS(project, sigs, cosmic, nmf_init, beta_loss)
+    nmf_sbs_cls.run_nmf()
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

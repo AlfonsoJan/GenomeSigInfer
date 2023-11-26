@@ -14,12 +14,15 @@ The sbs.24576.txt file contains all of the following the pyrimidine single nucle
 import sys
 import click
 from pathlib import Path
-from DeepBayesMutSig import sbs
+from DeepBayesMutSig.sbs import SBSMatrixGenerator
 
 
 @click.command()
 @click.option(
-    "--project", type=click.Path(path_type=Path), default="project", prompt="The project folder name"
+    "--project",
+    type=click.Path(path_type=Path),
+    default="project",
+    prompt="The project folder name",
 )
 @click.option(
     "--vcf",
@@ -39,7 +42,7 @@ from DeepBayesMutSig import sbs
 def main(project: Path, vcf: tuple, genome: str, bash: bool) -> int:
     """
     Main entry point of the script.
-    
+
     Args:
         project (Path): Path of the project folder.
         vcf (tuple): Tuple pf the vcf files list.
@@ -49,9 +52,10 @@ def main(project: Path, vcf: tuple, genome: str, bash: bool) -> int:
     Returns:
         int: Exit status (0 for success).
     """
-    sbs_model = sbs.SBS(project=project, vcf=vcf, genome=genome, bash=bash)
-    sbs_model.create_sbs_files()
-    return 0
+    # Create SBS files
+    SBSMatrixGenerator.generate_sbs_matrix(
+        project=project, vcf=vcf, genome=genome, bash=bash
+    )
 
 
 if __name__ == "__main__":

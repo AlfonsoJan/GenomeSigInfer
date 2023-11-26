@@ -5,7 +5,7 @@ Create signature plots for all the decomposed signatures files.
 import sys
 import click
 from pathlib import Path
-from DeepBayesMutSig import signature_plots
+from DeepBayesMutSig.figures import signature_plots
 
 
 @click.command()
@@ -24,6 +24,7 @@ def main(project: Path) -> int:
     """
     sig_plots = signature_plots.SigPlots(project)
     sig_plots.create_plots()
+    sig_plots.create_expected_plots()
     return 0
 
 

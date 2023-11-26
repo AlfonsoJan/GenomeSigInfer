@@ -48,5 +48,4 @@ results
 .vscode
 
 # Data
-vcf/
-ref_genome
+data/vcf/

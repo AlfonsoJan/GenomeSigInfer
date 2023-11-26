@@ -1,4 +1,4 @@
 src/
 click==8.1.7
-pylint
-pytest
+pylint==3.0.2
+pytest==7.4.2

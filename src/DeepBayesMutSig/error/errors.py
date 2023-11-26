@@ -19,6 +19,7 @@ Attributes:
     - SBSNotCorrectError.file (str): The file name
 """
 
+
 class RefGenomeChromosomeNotFound(Exception):
     """
     Exception raised when ref chromosome file is not found.

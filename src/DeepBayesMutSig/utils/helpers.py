@@ -166,6 +166,7 @@ MUTATION_LIST = [
     "T[T>G]T",
 ]
 
+
 def prepare_folder(folder: Path) -> None:
     """
     Prepare folder by cleaning it.
@@ -176,6 +177,7 @@ def prepare_folder(folder: Path) -> None:
     if folder.exists():
         shutil.rmtree(folder)
     folder.mkdir(parents=True, exist_ok=True)
+
 
 def custom_sort_column_names(column_name: str) -> tuple:
     """
@@ -358,11 +360,13 @@ def read_file_decompose(
     else:
         dataframe[col] = sigs
 
+
 # Class for default stuff
 class MutationalSigantures:
     """
     Class for storing parameters for the analysis, used in multiple scripts
     """
+
     REF_GENOMES: list = ["GRCh37", "GRCh38"]
     MAX_CONTEXT: int = 7
     SORT_REGEX: dict = {

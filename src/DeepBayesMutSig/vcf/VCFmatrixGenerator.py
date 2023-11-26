@@ -1,4 +1,17 @@
 #!/usr/bin/env python3
+"""
+The VCFGenerator module facilitates the filtering of VCF files
+and the generation of maximum context Single Base Substitution (SBS) files.
+
+It processes input VCF files, creating a comprehensive matrix while decreasing the context.
+
+The class offers methods for filtering files, parsing VCF data,
+and processing mutations on specific chromosomes.
+
+Leveraging custom sorting functions and mutation context creation,
+the module contributes to genomic analysis by organizing
+and interpreting genetic information efficiently.
+"""
 from pathlib import Path
 import warnings
 import pandas as pd
@@ -27,6 +40,20 @@ def custom_sort(value: str) -> int | float:
 
 
 class VCFGenerator:
+    """
+    VCFGenerator class for filtering VCF files and
+    creating maximum context Single Base Substitution (SBS) files.
+
+    Attributes:
+        - project: Path object representing the project directory.
+        - vcf_files: Tuple of Path objects representing input VCF files.
+        - genome: String specifying the reference genome.
+        - samples_df: DataFrame containing information about samples.
+        - ref_genome_folder: Path object representing the reference genome folder.
+        - vcf: DataFrame containing the filtered VCF data.
+        - _samples_df: Private attribute storing processed sample data.
+    """
+
     def __init__(self, project: Path, vcf: tuple[Path], genome: str) -> None:
         self.project = project
         self.ref_genome_folder: Path = project / "ref_genome" / genome
@@ -38,17 +65,33 @@ class VCFGenerator:
 
     @property
     def samples_df(self) -> None | pd.DataFrame:
-        if self._samples_df is None: return pd.DataFrame()
+        """
+        Private attribute storing processed sample data.
+
+        Returns:
+            pd.DataFrame: Max context samples dataframe.
+        """
+        if self._samples_df is None:
+            return pd.DataFrame()
         return self._samples_df.loc[(self._samples_df != 0).any(axis=1)]
 
     def filter_files(self) -> None:
+        """
+        Filters VCF files based on specified criteria.
+        """
         self._logger.log_info("Creating one large VCF matrix")
         dfs = [self.read_vcf_file(vcf_file) for vcf_file in self.vcf_files]
         self.vcf = pd.concat(dfs, ignore_index=True)
 
     def read_vcf_file(self, vcf_file: Path) -> pd.DataFrame:
         """
-        Filter the vcf file
+        Reads and filters a single VCF file.
+
+        Args:
+            vcf_file (Path): Path object representing the input VCF file.
+
+        Returns:
+            pd.DataFrame: Filtered VCF data as a DataFrame.
         """
         df = None
         with warnings.catch_warnings():
@@ -67,9 +110,8 @@ class VCFGenerator:
 
     def parse_vcf(self) -> None:
         """
-        Parse the VCF file and process mutations.
-
-        Create a max context SBS file and decompress the context down.
+        Parses the VCF file and processes mutations,
+        creating a max context SBS file.
         """
         self._logger.log_info(
             f"Processing VCF files: {', '.join(map(str, self.vcf_files))}"

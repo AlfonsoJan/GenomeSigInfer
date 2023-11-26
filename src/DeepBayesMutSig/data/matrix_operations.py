@@ -27,6 +27,7 @@ import numpy as np
 from ..utils.helpers import MutationalSigantures, MUTATION_LIST, prepare_folder
 from ..utils.logging import SingletonLogger
 
+
 def compress_to_96(df: pd.DataFrame) -> pd.DataFrame:
     """
     Compress the DataFrame to 96 rows.

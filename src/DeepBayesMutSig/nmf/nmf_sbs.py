@@ -12,11 +12,16 @@ from sklearn.cluster import KMeans
 from ..utils.helpers import MutationalSigantures, create_signatures_df, MUTATION_LIST
 from ..utils.logging import SingletonLogger
 from ..figures.heatmap import heatmap_cosine, heatmap_jens_shan
-from ..distance.distance import set_optimal_columns, get_optimal_columns, get_jensen_shannon_distance
+from ..distance.distance import (
+    set_optimal_columns,
+    get_optimal_columns,
+    get_jensen_shannon_distance,
+)
 from ..distance.cosine import cosine_nmf_w
 from ..data.matrix_operations import compress_to_96
 from ..data.data_processing import Preprocessing
 from .run_nmf import RunNMF
+
 
 class NMF_SBS:
     """
@@ -80,7 +85,7 @@ class NMF_SBS:
         self._logger.log_info("Creating cosine and Jensen Shannon Distance plots")
         self._create_distance_figures()
         self.write_stats()
-    
+
     def write_stats(self):
         """
         Write NMF stats to a file.
@@ -131,10 +136,16 @@ class NMF_SBS:
             )
             decomposed_df.to_csv(decompose_filename, sep="\t", index=False)
             self.cosine_similarities.append(
-                {"data": result_cosine_df, "context": MutationalSigantures.CONTEXT_LIST[index]}
+                {
+                    "data": result_cosine_df,
+                    "context": MutationalSigantures.CONTEXT_LIST[index],
+                }
             )
             self.jens_shannon_distances.append(
-                {"data": result_jens_df, "context": MutationalSigantures.CONTEXT_LIST[index]}
+                {
+                    "data": result_jens_df,
+                    "context": MutationalSigantures.CONTEXT_LIST[index],
+                }
             )
 
     def calculate_distances(
@@ -274,11 +285,11 @@ class NMF_SBS:
             "context": matrix.shape[0],
             "Reconstruction Err": nmf_model.reconstruction_err,
             "Silhouette Scores": silhouette_scores,
-            "Silhouette Avg": silhouette_avg
+            "Silhouette Avg": silhouette_avg,
         }
         self.stats_nmf_list.append(result)
         return signatures_df
-    
+
     def calculate_sil_score(self, W: np.ndarray) -> None:
         """
         Calculate the silhouette scores for each sample

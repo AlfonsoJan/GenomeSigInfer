@@ -9,6 +9,7 @@ import pandas as pd
 from SigProfilerExtractor import sigpro as sig
 from ..utils.helpers import read_file_decompose
 
+
 class RunSig:
     """
     A class for running SigProfilerExtractor to extract genomic signatures.

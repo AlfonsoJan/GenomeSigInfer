@@ -62,6 +62,7 @@ def run_nmfs(nmf_combs, all_genomes, sigs, matrix, out, result_df) -> pd.DataFra
         shutil.rmtree(outpath)
     return result_df
 
+
 class NMF_Combinations:
     """
     Run NMF combinations and generate results.
@@ -69,7 +70,7 @@ class NMF_Combinations:
     """
 
     NMF_COMBS = combinations()
-    
+
     def __init__(self, project: Path, sigs: int) -> None:
         """
         Run NMF combinations and generate results.
@@ -85,7 +86,7 @@ class NMF_Combinations:
         self._prepare_folder()
         self.matrix = self.load_and_process_matrix()
         self.all_genomes = np.array(self.matrix.iloc[:, 1:])
-    
+
     def run_combinations(self):
         """
         Run NMF on the matrix.
@@ -102,13 +103,13 @@ class NMF_Combinations:
             df_decompose,
         )
         self.df_decompose = df_decompose
-    
+
     def _prepare_folder(self):
         """
         Prepare folders for results.
         """
         self.results_folder.mkdir(parents=True, exist_ok=True)
-    
+
     def load_and_process_matrix(self):
         """
         Load and process the matrix.
@@ -119,7 +120,7 @@ class NMF_Combinations:
         matrix_file_name = self.project / "SBS" / "sbs.96.txt"
         matrix = get_96_matrix(matrix_file_name)
         return matrix
-    
+
     def cosine_sim(self):
         """
         Calculates and creates a dataframe with the cosine similarity
@@ -129,7 +130,7 @@ class NMF_Combinations:
         cosine_df.to_csv(param_filename, index=False, sep="\t")
         self._logger.log_info(f"Written the results to: {param_filename}")
         self.create_heatmap(cosine_df)
-    
+
     def create_heatmap(self, cosine_df: pd.DataFrame):
         """
         Create a heatmap plot of the results.

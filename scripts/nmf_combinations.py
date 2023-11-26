@@ -6,8 +6,7 @@ And calculates `cosine similarity` from different results, in the results folder
 import sys
 import click
 from pathlib import Path
-from DeepBayesMutSig import nmf
-
+from DeepBayesMutSig.nmf import nmf_fucntions
 
 @click.command()
 @click.option(
@@ -25,11 +24,10 @@ def main(project: Path, sigs: int) -> int:
     Returns:
         int: Exit status (0 for success).
     """
-    nmf_params = nmf.NMF_Combinations(project=project, sigs=sigs)
+    nmf_params = nmf_fucntions.NMF_Combinations(project=project, sigs=sigs)
     nmf_params.run_combinations()
     nmf_params.cosine_sim()
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

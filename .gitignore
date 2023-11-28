@@ -29,9 +29,6 @@ MANIFEST
 # Testing
 .pytest_cache
 
-# Jupyter Notebook
-.ipynb_checkpoints
-
 # Environments
 output/
 .env
@@ -41,11 +38,3 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-
-# Misch.
-buffer
-results
-.vscode
-
-# Data
-data/vcf/

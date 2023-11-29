@@ -1,17 +1,5 @@
 #!/usr/bin/env python3
 """
-This module contains small, common utility functions and common variables used across the project.
-
-Functions:
-    - alphabet_list(amount: int, genome: str) -> list[str]: Generate a list of column labels.
-    - read_file_decompose(file: str, dataframe: pd.DataFrame) -> None: Read the contents of a file
-        and extract signature data.
-    - combinations() -> list[tuple[str, str]]: Generate combinations of
-        initialization and beta loss.
-    - get_96_matrix(filename: Path) -> pd.DataFrame: Get the 96-context matrix for comparison.
-    - prepare_folder_new_proj(folder: Path) -> None: Prepare folder by cleaning it.
-    - calculate_value(number): Calculate the value based on an iterative formula.
-        For SBS context/size matrices.
 """
 import re
 import shutil
@@ -20,6 +8,7 @@ import string
 from pathlib import Path
 import pandas as pd
 import numpy as np
+from ..errors import error
 
 # Color dict for the mutations
 COLOR_DICT_MUTATION = {
@@ -166,18 +155,8 @@ MUTATION_LIST = [
     "T[T>G]T",
 ]
 
-
-def prepare_folder_new_proj(folder: Path) -> None:
-    """
-    Prepare folder by cleaning it.
-
-    Args:
-        folder (Path): Folder that needs to be prepared.
-    """
-    if folder.exists():
-        shutil.rmtree(folder)
-    folder.mkdir(parents=True, exist_ok=True)
-
+NMF_INITS = ["random", "nndsvd", "nndsvda", "nndsvdar", "custom"]
+BETA_LOSS = ["frobenius", "kullback-leibler", "itakura-saito"]
 
 def custom_sort_column_names(column_name: str) -> tuple:
     """
@@ -236,41 +215,6 @@ def generate_numbers(n: int) -> list[int]:
         return [0, 1, 2, 3, 11, 12, 13, 14]
     raise ValueError
 
-
-def custom_sort(value: str) -> int | float:
-    """
-    Custom sorting function for sorting the chromosomes.
-
-    Args:
-        value (str): The chromosome value to be sorted.
-
-    Returns:
-        int | float: The sorted value. If the value is numeric, it is returned as an integer;
-                    otherwise, it is assigned a large float value.
-    """
-    if value.isdigit():
-        return int(value)
-    return float("inf")
-
-
-def calculate_value(number):
-    """
-    Calculate the value based on an iterative formula.
-    For SBS context/size matrices.
-
-    Args:
-        number: An uneven integer greater than or equal to 3.
-
-    Returns:
-        int: Calculated value.
-    """
-    if number % 2 == 0 or number < 3:
-        raise ValueError("Input must be an uneven integer greater than or equal to 3.")
-    if number == 3:
-        return 96
-    return calculate_value(number - 2) * 16
-
-
 def alphabet_list(amount: int, genome: str) -> list[str]:
     """
     Generate a list of column labels in the format [genome + letter(s)].
@@ -310,71 +254,42 @@ def create_signatures_df(W: np.ndarray, signatures: int) -> pd.DataFrame:
     )
     return signatures_df
 
-
-def combinations() -> list[tuple[str, str]]:
+def must_be_int(func: callable) -> callable:
     """
-    Generate combinations of initialization and beta loss.
-
-    Returns:
-        list[tuple[str, str]]: List of tuples representing combinations.
-    """
-    inits = ["None", "random", "nndsvd", "nndsvda", "nndsvdar"]
-    beta_losses = ["frobenius", "kullback-leibler", "itakura-saito"]
-    return list(itertools.product(inits, beta_losses))
-
-
-def get_96_matrix(filename: Path) -> pd.DataFrame:
-    """
-    Get the 96-context matrix for comparison.
-
-    Returns:
-        pd.DataFrame: 96-context matrix.
-    """
-    if not filename.is_file():
-        raise FileNotFoundError(f"{filename} does not exist")
-    df = pd.read_csv(filename, sep=",", header=0)
-    return df.set_index("MutationType").reindex(MUTATION_LIST).reset_index()
-
-
-def read_file_decompose(
-    file: Path, dataframe: pd.DataFrame, col: str | None = None
-) -> None:
-    """
-    Read the contents of a file and extract signature data.
+    Decorator to ensure that the argument passed to the decorated function is an integer.
 
     Args:
-        file (Path): Path to the file to read.
-        df (pd.DataFrame): DataFrame to store the signature data.
-    """
-    sigs = []
-    with open(file, "r", encoding="UTF-8") as open_file:
-        final_composition = False
-        for line in open_file:
-            if line.startswith("#################### Final Composition"):
-                final_composition = True
-            elif final_composition:
-                sigs.append(eval(line.strip()))
-                final_composition = False
-    if col is None:
-        dataframe[file.parts[-5]] = sigs
-    else:
-        dataframe[col] = sigs
+        func (callable): The function to be decorated.
 
-
-def check_file_existence(file_path_tuple: tuple[Path]) -> None:
-    """
-    Check if the file specified by the Path object in the tuple exists.
-
-    Args:
-        file_path_tuple (tuple): A tuple containing a Path object representing the file path.
+    Returns:
+        callable: The decorated function.
 
     Raises:
-        FileNotFoundError: If the file does not exist.
+        TypeError: If the argument is not an integer.
     """
-    for file_path in file_path_tuple:
-        if not file_path.exists():
-            raise FileNotFoundError(f"{file_path} not found.")
+    def wrapper(number):
+        if not isinstance(number, int):
+            raise TypeError("Input must be an integer.")
+        return func(number)
+    return wrapper
 
+@must_be_int
+def calculate_value(number):
+    """
+    Calculate the value based on an iterative formula.
+    For SBS context/size matrices.
+
+    Args:
+        number: An uneven integer greater than or equal to 3.
+
+    Returns:
+        int: Calculated value.
+    """
+    if number % 2 == 0 or number < 3:
+        raise ValueError("Input must be an uneven integer greater than or equal to 3.")
+    if number == 3:
+        return 96
+    return calculate_value(number - 2) * 16
 
 def check_supported_genome(genome: str) -> None:
     """
@@ -387,8 +302,7 @@ def check_supported_genome(genome: str) -> None:
         ValueError: If the provided genome is not in the list of supported genomes.
     """
     if genome not in MutationalSigantures.REF_GENOMES:
-        raise ValueError(f"Unsupported genome: {genome}")
-
+        raise error.RefGenomeNotSUpported(genome)
 
 # Class for default stuff
 class MutationalSigantures:
@@ -408,3 +322,4 @@ class MutationalSigantures:
     }
     CONTEXT_LIST: list[int] = list(range(MAX_CONTEXT, 2, -2))
     SIZES: list[int] = [calculate_value(i) for i in CONTEXT_LIST[::-1]]
+    SIZES_CONTEXT_GROUPED: list[int, int] = list(zip(SIZES, CONTEXT_LIST[::-1]))

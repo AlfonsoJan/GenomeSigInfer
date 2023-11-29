@@ -15,14 +15,13 @@ class SigPlots:
     This method sets up the SigPlots object with the provided project path. It initializes
     attributes for project, NMF folder, figures folder, and a SingletonLogger for logging.
     """
-
     def __init__(self, nmf_folder: Path, result_folder: Path) -> None:
         self.nmf_folder = Path(nmf_folder)
-        self.result_folder = Path(result_folder)
-        self.figures = self.result_folder / "figures"
+        self.figures = result_folder / "figures"
+        self.figures.mkdir(parents=True, exist_ok=True)
         self._logger = logging.SingletonLogger()
         self._dfs = {}
-
+    
     def create_plots(self):
         """
         Create signature plots based on mutation data.

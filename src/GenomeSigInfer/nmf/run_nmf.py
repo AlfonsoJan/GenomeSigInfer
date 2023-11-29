@@ -54,7 +54,7 @@ class RunNMF:
             init=self._init,
             beta_loss=self._beta_loss,
             solver=self._solver,
-            max_iter=1000,
+            max_iter=100,
             tol=1e-15,
         )
         self._W: np.ndarray = nmf.fit_transform(self._genomes)

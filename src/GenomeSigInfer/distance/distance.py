@@ -19,8 +19,9 @@ import pandas as pd
 import numpy as np
 from scipy.spatial.distance import jensenshannon
 from scipy.optimize import linear_sum_assignment
-from ..data import matrix_operations
+from ..matrix import matrix_operations
 from . import cosine
+
 
 def calculate_distances(control_df: pd.DataFrame, df_not_compressed: pd.DataFrame) -> tuple:
     """

@@ -7,21 +7,19 @@ initializing mutation DataFrames, parsing VCF files,
 compressing dataframes, and creating
 SBS (Single Base Substitution) matrices based on context.
 Functions:
-    - compress_to_96(df: pd.DataFrame) -> pd.DataFrame:
-        Compress the DataFrame to 96 rows.
     - df2csv(df: pd.DataFrame, fname: str, formats: list[str] = [], sep: str = "\t") -> None:
         Write a DataFrame to a CSV file using a custom format.
     - compress_matrix_stepwise(project: Path, samples_df: pd.DataFrame) -> None:
         Compress the SBS data to lower context sizes.
     - compress(df: pd.DataFrame, regex_str: str) -> pd.DataFrame:
         Compress the dataframe down by grouping rows based on the regular pattern.
-    - init_mutation_df(samples: np.ndarray, context_num: int = 3) -> pd.DataFrame:
+    - create_mutation_samples_df(filtered_vcf: pd.DataFrame) -> pd.DataFrame:
         Initialize the samples mutation DataFrame.
     - increase_mutations(context: int) -> list[str]:
         Increases mutations in a given column based on a specified context.
 """
-from pathlib import Path
 import itertools
+from pathlib import Path
 import pandas as pd
 import numpy as np
 from ..utils import helpers, logging
@@ -92,7 +90,6 @@ def df2csv(
                     ss += sep
             fh.write(ss + "\n")
 
-
 def compress_matrix_stepwise(sbs_folder: Path, samples_df: pd.DataFrame) -> None:
     """
     Compress the SBS data to lower context sizes.
@@ -119,7 +116,6 @@ def compress_matrix_stepwise(sbs_folder: Path, samples_df: pd.DataFrame) -> None
             f"Written the SBS matrix with context {context} to '{filename}'"
         )
 
-
 def compress(df: pd.DataFrame, regex_str: str) -> pd.DataFrame:
     """
     Compress the dataframe down by grouping rows based on the regular pattern.
@@ -139,27 +135,30 @@ def compress(df: pd.DataFrame, regex_str: str) -> pd.DataFrame:
     compressed_df.columns = [col] + list(compressed_df.columns[1:])
     return compressed_df
 
-
-def init_mutation_df(samples: np.ndarray, context_num: int = 3) -> pd.DataFrame:
+def create_mutation_samples_df(filtered_vcf: pd.DataFrame) -> pd.DataFrame:
     """
     Initialize the samples mutation DataFrame.
 
     Args:
-        samples (np.ndarray): The array of unique sample names.
-        context_num (int): The number of context positions on each side of the mutation.
+        filtered_vcf (pd.DataFrame): Filtered VCF data.
 
     Returns:
         pd.DataFrame: The initialized mutation DataFrame.
     """
+    # The array of unique sample names.
+    samples: np.ndarray = np.array(
+        filtered_vcf[0].astype(str) + "::" + filtered_vcf[1].astype(str)
+    )
+    samples = np.unique(samples)
     # Increase the mutations based on the context
-    new_mut = increase_mutations(context_num)
-    final_df = pd.DataFrame({"MutationType": new_mut})
+    new_mut = increase_mutations(helpers.MutationalSigantures.CONTEXT_LIST[0])
+    init_df = pd.DataFrame({"MutationType": new_mut})
     # Create DataFrames for each sample with zero values
-    dfs_init = [final_df]
+    dfs_init = [init_df]
     for sample in samples:
-        dfs_init.append(pd.DataFrame({sample: np.zeros(final_df.shape[0])}))
-    return pd.concat(dfs_init, axis=1)
-
+        dfs_init.append(pd.DataFrame({sample: np.zeros(init_df.shape[0])}))
+    samples_df = pd.concat(dfs_init, axis=1)
+    return samples_df
 
 def increase_mutations(context: int) -> list[str]:
     """

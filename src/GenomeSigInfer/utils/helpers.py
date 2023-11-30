@@ -1,11 +1,42 @@
 #!/usr/bin/env python3
 """
+This module provides utility functions, dictionaries, and classes for genomic analysis.
+It includes color dictionaries for mutations, decoding reference genomes, sorting functions,
+and classes for storing parameters used in multiple scripts.
+
+Attributes:
+    - COLOR_DICT_MUTATION: Dictionary mapping mutation types to colors.
+    - COLOR_DICT: Dictionary mapping genomic elements to colors.
+    - TSB_REF: Dictionary for decoding reference genomes files.
+    - MUTATION_TYPES: Array of mutation types in random order.
+    - MUTATION_LIST: List of mutation types in a specific order.
+    - NMF_INITS: List of supported NMF initialization methods.
+    - BETA_LOSS: List of supported beta loss methods for NMF.
+    - MutationalSignatures: Class for storing parameters for genomic analysis.
+
+Functions:
+    - custom_sort_column_names(column_name: str) -> tuple:
+        Custom sorting function for column names.
+    - generate_sequence(n: int) -> list[int]:
+        Generates a list of context indices for barplots.
+    - generate_numbers(n: int) -> list[int]:
+        Generates a list of extra context indices based on context number.
+    - alphabet_list(amount: int, genome: str) -> list[str]:
+        Generates a list of column labels with a specified prefix.
+    - create_signatures_df(W: np.ndarray, signatures: int) -> pd.DataFrame:
+        Creates a DataFrame from NMF results.
+    - must_be_int(func: callable) -> callable:
+        Decorator to ensure input is an integer.
+    - calculate_value(number: int) -> int:
+        Calculates a value based on an iterative formula.
+    - check_supported_genome(genome: str) -> None:
+        Checks if the provided genome is supported.
+
+Author: J.A. Busker
 """
 import re
-import shutil
 import itertools
 import string
-from pathlib import Path
 import pandas as pd
 import numpy as np
 from ..errors import error
@@ -158,6 +189,7 @@ MUTATION_LIST = [
 NMF_INITS = ["random", "nndsvd", "nndsvda", "nndsvdar", "custom"]
 BETA_LOSS = ["frobenius", "kullback-leibler", "itakura-saito"]
 
+
 def custom_sort_column_names(column_name: str) -> tuple:
     """
     Custom sorting function for column names.
@@ -215,6 +247,7 @@ def generate_numbers(n: int) -> list[int]:
         return [0, 1, 2, 3, 11, 12, 13, 14]
     raise ValueError
 
+
 def alphabet_list(amount: int, genome: str) -> list[str]:
     """
     Generate a list of column labels in the format [genome + letter(s)].
@@ -254,6 +287,7 @@ def create_signatures_df(W: np.ndarray, signatures: int) -> pd.DataFrame:
     )
     return signatures_df
 
+
 def must_be_int(func: callable) -> callable:
     """
     Decorator to ensure that the argument passed to the decorated function is an integer.
@@ -267,14 +301,17 @@ def must_be_int(func: callable) -> callable:
     Raises:
         TypeError: If the argument is not an integer.
     """
+
     def wrapper(number):
         if not isinstance(number, int):
             raise TypeError("Input must be an integer.")
         return func(number)
+
     return wrapper
 
+
 @must_be_int
-def calculate_value(number):
+def calculate_value(number: int) -> int:
     """
     Calculate the value based on an iterative formula.
     For SBS context/size matrices.
@@ -291,6 +328,7 @@ def calculate_value(number):
         return 96
     return calculate_value(number - 2) * 16
 
+
 def check_supported_genome(genome: str) -> None:
     """
     Check if the provided genome is supported.
@@ -303,6 +341,7 @@ def check_supported_genome(genome: str) -> None:
     """
     if genome not in MutationalSigantures.REF_GENOMES:
         raise error.RefGenomeNotSUpported(genome)
+
 
 # Class for default stuff
 class MutationalSigantures:

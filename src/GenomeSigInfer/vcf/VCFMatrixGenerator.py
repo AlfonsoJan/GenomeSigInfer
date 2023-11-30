@@ -17,10 +17,13 @@ import numpy as np
 from pathlib import Path
 from ..utils import helpers, logging
 
-def filter_vcf_files(vcf_files: tuple[Path], genome: helpers.MutationalSigantures.REF_GENOMES) -> pd.DataFrame:
+
+def filter_vcf_files(
+    vcf_files: tuple[Path], genome: helpers.MutationalSigantures.REF_GENOMES
+) -> pd.DataFrame:
     """
     Filters VCF files based on specified criteria.
-    
+
     Args:
         vcf_files (tuple[Path]): tuple of VCF files.
         genome (MutationalSigantures.REF_GENOMES): Reference genome.
@@ -33,12 +36,13 @@ def filter_vcf_files(vcf_files: tuple[Path], genome: helpers.MutationalSiganture
     # Combining dataframes from individual files into one large dataframe
     filtered_vcf = pd.concat(dfs, ignore_index=True)
     logger = logging.SingletonLogger()
-    logger.log_info(
-         f"Created a large VCF containing {filtered_vcf.shape[0]} mutations"
-    )
+    logger.log_info(f"Created a large VCF containing {filtered_vcf.shape[0]} mutations")
     return filtered_vcf
 
-def read_vcf_file(vcf_file: Path, genome: helpers.MutationalSigantures.REF_GENOMES) -> pd.DataFrame:
+
+def read_vcf_file(
+    vcf_file: Path, genome: helpers.MutationalSigantures.REF_GENOMES
+) -> pd.DataFrame:
     """
     Reads and filters a single VCF file.
 

@@ -1,3 +1,22 @@
+#!/usr/bin/env python3
+"""
+This module defines the RunNMF class, which is responsible for running Non-Negative Matrix Factorization (NMF)
+on genomic data. It uses the scikit-learn library for NMF implementation.
+
+Attributes:
+    genomes (np.ndarray): Genomic data for NMF.
+    signatures (int): Number of signatures to extract.
+    init (str): Initialization method for NMF.
+    beta_loss (str): Beta loss function for NMF.
+
+Attributes:
+    W (np.ndarray): NMF factorization matrix.
+
+Methods:
+    fit(): Fit NMF to the genomic data.
+
+Author: J.A. Busker
+"""
 import numpy as np
 from sklearn.decomposition import NMF
 
@@ -49,12 +68,14 @@ class RunNMF:
 
         This method performs NMF factorization on the genomic data.
         """
+        # Run NMF model
+        # And fit the model
         nmf = NMF(
             n_components=self._signatures,
             init=self._init,
             beta_loss=self._beta_loss,
             solver=self._solver,
-            max_iter=100,
+            max_iter=1_000,
             tol=1e-15,
         )
         self._W: np.ndarray = nmf.fit_transform(self._genomes)

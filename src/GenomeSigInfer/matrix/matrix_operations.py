@@ -6,8 +6,11 @@ It includes functionality for sorting chromosomes,
 initializing mutation DataFrames, parsing VCF files,
 compressing dataframes, and creating
 SBS (Single Base Substitution) matrices based on context.
+
 Functions:
-    - df2csv(df: pd.DataFrame, fname: str, formats: list[str] = [], sep: str = "\t") -> None:
+    - compress_to_96(df: pd.DataFrame) -> pd.DataFrame:
+        Compress the DataFrame to 96 rows
+    - df2csv(df: pd.DataFrame, fname: str, formats: list[str] = [], sep: str = '\t') -> None:
         Write a DataFrame to a CSV file using a custom format.
     - compress_matrix_stepwise(project: Path, samples_df: pd.DataFrame) -> None:
         Compress the SBS data to lower context sizes.
@@ -17,12 +20,15 @@ Functions:
         Initialize the samples mutation DataFrame.
     - increase_mutations(context: int) -> list[str]:
         Increases mutations in a given column based on a specified context.
+
+Author: J.A. Busker
 """
 import itertools
 from pathlib import Path
 import pandas as pd
 import numpy as np
 from ..utils import helpers, logging
+
 
 def compress_to_96(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -34,23 +40,37 @@ def compress_to_96(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: The compressed DataFrame with 96 rows.
     """
+    # Check if the DataFrame is already compressed
     if df.shape[0] == 96:
         return df
+    # Define columns for sorting
     col = "MutationType"
     sort_col = "sort_key"
+    # Extract sorting key based on a regular expression
     df[sort_col] = df[col].str.extract(r"(\w\[.*\]\w)")
+    # Sort the DataFrame based on the sorting key
     df = df.sort_values(sort_col)
+    # Extract the sorted keys
     df_keys = df[sort_col].copy()
+    # Drop unnecessary columns
     df = df.drop([sort_col, col], axis=1)
+    # Determine the compression steps
     steps = int(df.shape[0] / 96)
-
+    # Initialize the compressed DataFram
     compressed_df = pd.DataFrame()
     compressed_df[col] = df_keys[::steps]
+    # Compress the remaining columns
     for col in df.columns:
         chunks = [df[col][i : i + steps] for i in range(0, len(df[col]), steps)]
         chunk_sums = [chunk.sum() for chunk in chunks]
         compressed_df[col] = chunk_sums
-    return compressed_df.set_index("MutationType").reindex(helpers.MUTATION_LIST).reset_index()
+    # Reindex the compressed DataFrame
+    return (
+        compressed_df.set_index("MutationType")
+        .reindex(helpers.MUTATION_LIST)
+        .reset_index()
+    )
+
 
 def df2csv(
     df: pd.DataFrame, fname: Path, formats: list[str] = [], sep: str = "\t"
@@ -72,6 +92,7 @@ def df2csv(
     Nd_1 = Nd
     Nf = 0
     formats.append("%s")
+    # Determine formats for each column if not provided
     if Nf < Nd:
         for ii in range(Nf, Nd, 1):
             coltype = df[df.columns[ii]].dtype
@@ -79,6 +100,7 @@ def df2csv(
             if coltype == np.int64 or coltype == np.float64:
                 ff = "%d"
             formats.append(ff)
+    # Write header and rows to the CSV file
     header = list(df.columns)
     with open(fname, "w", buffering=200000) as fh:
         fh.write(sep.join(header) + "\n")
@@ -90,6 +112,7 @@ def df2csv(
                     ss += sep
             fh.write(ss + "\n")
 
+
 def compress_matrix_stepwise(sbs_folder: Path, samples_df: pd.DataFrame) -> None:
     """
     Compress the SBS data to lower context sizes.
@@ -98,23 +121,29 @@ def compress_matrix_stepwise(sbs_folder: Path, samples_df: pd.DataFrame) -> None
         sbs_folder (Path): The sbs folder path.
         samples_df (pd.DataFrame): The max context SBS dataframe.
     """
+    # Initialize the logger
     logger = logging.SingletonLogger()
     sampled_one_down = pd.DataFrame()
+    # Create the output folder if it doesn't exist
     if not sbs_folder.is_dir():
         sbs_folder.mkdir(parents=True, exist_ok=True)
+    # Iterate through different contexts
     for context in helpers.MutationalSigantures.CONTEXT_LIST:
         logger.log_info(f"Creating a SBS matrix with context: {context}")
+        # Update the sampled DataFrame based on the context
         if context == helpers.MutationalSigantures.MAX_CONTEXT:
             sampled_one_down = samples_df
         else:
             sampled_one_down = compress(
                 sampled_one_down, helpers.MutationalSigantures.SORT_REGEX[context]
             )
+        # Write the compressed SBS matrix to a CSV file
         filename = sbs_folder / f"sbs.{sampled_one_down.shape[0]}.txt"
         df2csv(sampled_one_down, filename, sep=",")
         logger.log_info(
             f"Written the SBS matrix with context {context} to '{filename}'"
         )
+
 
 def compress(df: pd.DataFrame, regex_str: str) -> pd.DataFrame:
     """
@@ -127,13 +156,19 @@ def compress(df: pd.DataFrame, regex_str: str) -> pd.DataFrame:
     Returns:
         pd.DataFrame: The compressed DataFrame.
     """
+    # Define columns for sorting
     col = "MutationType"
     sort_col = "sort_key"
+    # Extract sorting key based on the provided regular expressio
     df[sort_col] = df[col].str.extract(regex_str)
+    # Sort the DataFrame based on the sorting key
     df = df.sort_values(sort_col)
+    # Group rows based on the sorting key and sum values
     compressed_df = df.groupby(sort_col).sum().reset_index()
+    # Rename columns
     compressed_df.columns = [col] + list(compressed_df.columns[1:])
     return compressed_df
+
 
 def create_mutation_samples_df(filtered_vcf: pd.DataFrame) -> pd.DataFrame:
     """
@@ -157,8 +192,10 @@ def create_mutation_samples_df(filtered_vcf: pd.DataFrame) -> pd.DataFrame:
     dfs_init = [init_df]
     for sample in samples:
         dfs_init.append(pd.DataFrame({sample: np.zeros(init_df.shape[0])}))
+    # Concatenate DataFrames to create the samples mutation DataFrame
     samples_df = pd.concat(dfs_init, axis=1)
     return samples_df
+
 
 def increase_mutations(context: int) -> list[str]:
     """
@@ -174,6 +211,7 @@ def increase_mutations(context: int) -> list[str]:
         raise ValueError("Context must be aleast 3")
     nucleotides = ["A", "C", "G", "T"]
     combinations = list(itertools.product(nucleotides, repeat=context - 3))
+    # Generate new mutations based on the context and combinations
     new_mutations = [
         f"{''.join(combo[:len(combo)//2])}{mut}{''.join(combo[len(combo)//2:])}"
         for mut in helpers.MUTATION_LIST

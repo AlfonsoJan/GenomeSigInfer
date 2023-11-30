@@ -17,7 +17,8 @@ import tarfile
 from functools import wraps
 from pathlib import Path
 import shutil
-from . utils import helpers, logging
+from .utils import helpers, logging
+
 
 def download_ref_genome_arg_checker(func: callable) -> callable:
     """
@@ -25,19 +26,24 @@ def download_ref_genome_arg_checker(func: callable) -> callable:
 
     Args:
         func (callable): download_ref_genome function.
-    
+
     Returns:
         wrapper (callable): function with the correct type arguments.
     """
+
     @wraps(func)
     def wrapper(folder, genome, *args, **kwargs):
         folder = Path(folder)
         helpers.check_supported_genome(genome)
         return func(folder, genome, *args, **kwargs)
+
     return wrapper
 
+
 @download_ref_genome_arg_checker
-def download_ref_genome(folder: Path, genome: helpers.MutationalSigantures.REF_GENOMES) -> None:
+def download_ref_genome(
+    folder: Path, genome: helpers.MutationalSigantures.REF_GENOMES
+) -> None:
     """
     Download the desired reference genome.
 
@@ -59,7 +65,10 @@ def download_ref_genome(folder: Path, genome: helpers.MutationalSigantures.REF_G
     url = f"https://ngs.sanger.ac.uk/scratch/project/mutographs/SigProf/{genome}.tar.gz"
     download_tar_url(url, download_path, folder)
 
-def download_tar_url(url: str, download_path: Path, extracted_path: Path, genome: str) -> None:
+
+def download_tar_url(
+    url: str, download_path: Path, extracted_path: Path, genome: str
+) -> None:
     """
     Download a tar.gz file from the provided URL, extract its contents, and clean up.
 
@@ -76,10 +85,10 @@ def download_tar_url(url: str, download_path: Path, extracted_path: Path, genome
     if response.status_code == 200:
         logger.log_info("Finished downloading the file")
         # Save the downloaded tar.gz file
-        with open(download_path, 'wb') as file:
+        with open(download_path, "wb") as file:
             file.write(response.content)
         # Extract the contents of the tar.gz file
-        with tarfile.open(download_path, 'r:gz') as tar:
+        with tarfile.open(download_path, "r:gz") as tar:
             tar.extractall(extracted_path)
         logger.log_info(f"Finished downloading {genome} to {extracted_path}!")
         # Clean up by removing the downloaded tar.gz file

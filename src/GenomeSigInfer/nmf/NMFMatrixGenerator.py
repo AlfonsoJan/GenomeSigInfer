@@ -1,3 +1,35 @@
+#!/usr/bin/env python3
+"""
+NMFMatrixGenerator Module
+
+This module defines the NMFMatrixGenerator class, responsible for generating NMF matrices
+from Single Base Substitution (SBS) data. It utilizes the RunNMF class for the NMF process.
+
+Attributes:
+    sbs_folder (Path): Path to the folder containing SBS data.
+    signatures (int): Number of signatures to extract.
+    cosmic (pd.DataFrame): Cosmic mutation data.
+    result_folder (Path): Path to the folder where result files will be stored.
+    figure_folder (Path): Path to the folder where figure files will be stored.
+    nmf_folder (Path): Path to the folder where NMF files will be stored.
+    init (str): Initialization method for NMF.
+    beta_loss (str): Beta loss function for NMF.
+    control_df (pd.DataFrame): Dataframe for the smallest context file.
+    cosine_similarities (list): List to store cosine similarity data.
+    jens_shannon_distances (list): List to store Jensen Shannon Distance data.
+
+Methods:
+    run_nmf_on_sbs_files(): Perform the NMF process on all SBS files.
+    sbs_read_and_extract(sbs_path: Path): Read data from an SBS file.
+    _prepare_folders(): Create necessary result folders.
+    _create_distance_figures(): Create cosine and Jensen Shannon Distance figures.
+    _process_results(size: int, signatures_df: pd.DataFrame, index: int): Analyze the NMF results.
+    _run_nmf_file(filename: Path) -> pd.DataFrame: Run NMF on a single SBS file.
+    write_df_file(df: pd.DataFrame, name: Path, sep: str = "\t") -> None: Write a DataFrame to a file.
+    _run_nmf(preprocessed: data_processing.Preprocessing, context: int) -> np.ndarray: Run NMF on preprocessed data.
+
+Author: J.A. Busker
+"""
 from functools import wraps
 from pathlib import Path
 import pandas as pd
@@ -9,7 +41,17 @@ from ..figures import heatmap
 from .run_nmf import RunNMF
 
 
-def generate_nmf_matrix_arg_checker(func):
+def generate_nmf_matrix_arg_checker(func: callable) -> callable:
+    """
+    Decorator for argument checking in the `generate_nmf_matrix` function.
+
+    Args:
+        func (callable): The function to be decorated.
+
+    Returns:
+        callable: Decorated function.
+    """
+
     @wraps(func)
     def wrapper(
         sbs_folder: Path,
@@ -20,6 +62,21 @@ def generate_nmf_matrix_arg_checker(func):
         result_folder: Path,
         nmf_folder: Path,
     ):
+        """
+        Ensure the validity of input arguments for the `generate_nmf_matrix` function.
+
+        Args:
+            sbs_folder (Path): Path to the SBS folder.
+            signatures (int): Number of signatures to extract.
+            cosmic (Path): Path to the cosmic data file.
+            nmf_init (str): Initialization method for NMF.
+            beta_los (str): Beta loss function for NMF.
+            result_folder (Path): Path to the result folder.
+            nmf_folder (Path): Path to the NMF folder.
+
+        Raises:
+            TypeError: If input types are not valid or within expected values.
+        """
         # Ensure Path object are actually Path objects and exist
         cosmic = Path(cosmic)
         sbs_folder = Path(sbs_folder)
@@ -27,6 +84,7 @@ def generate_nmf_matrix_arg_checker(func):
         result_folder = Path(result_folder)
         if not isinstance(signatures, int) or signatures < 1:
             raise TypeError("Input 'signatures' must be a positive integer.")
+        # Make sure the init and betaloss are correct
         if nmf_init not in helpers.NMF_INITS:
             raise TypeError(f"NMF init must be one of: {', '.join(helpers.NMF_INITS)}")
         if beta_los not in helpers.BETA_LOSS:
@@ -46,7 +104,6 @@ def generate_nmf_matrix_arg_checker(func):
     return wrapper
 
 
-
 @generate_nmf_matrix_arg_checker
 def generate_nmf_matrix(
     sbs_folder: Path,
@@ -57,18 +114,40 @@ def generate_nmf_matrix(
     result_folder: Path,
     nmf_folder: Path,
 ):
-    # logger = logging.SingletonLogger()
+    """
+    Generate NMF matrix from SBS data and perform analysis.
+
+    Args:
+        sbs_folder (Path): Path to the SBS folder.
+        signatures (int): Number of signatures to extract.
+        cosmic (Path): Path to the cosmic data file.
+        nmf_init (str): Initialization method for NMF.
+        beta_los (str): Beta loss function for NMF.
+        result_folder (Path): Path to the result folder.
+        nmf_folder (Path): Path to the NMF folder.
+
+    Raises:
+        FileNotFoundError: If any of the required folders or files are not found.
+    """
+    # Read the COSMIC file
     cosmic = (
         pd.read_csv(cosmic, sep="\t")
         .set_index("Type")
         .reindex(helpers.MUTATION_LIST)
         .reset_index()
     )
-    # sbs_data = [sbs_96, *sbs_lg]
     nmfmatrixgen = NMFMatrixGenerator(
-        sbs_folder=sbs_folder, signatures=signatures, cosmic=cosmic, result_folder=result_folder, nmf_folder=nmf_folder, init=nmf_init, beta_loss=beta_los
+        sbs_folder=sbs_folder,
+        signatures=signatures,
+        cosmic=cosmic,
+        result_folder=result_folder,
+        nmf_folder=nmf_folder,
+        init=nmf_init,
+        beta_loss=beta_los,
     )
     nmfmatrixgen.run_nmf_on_sbs_files()
+
+
 def sbs_read_and_extract(sbs_path: Path):
     """
     Read data from an SBS file.
@@ -89,7 +168,13 @@ def sbs_read_and_extract(sbs_path: Path):
     all_genomes = np.array(matrix.iloc[:, 1:])
     return mutations, all_genomes
 
+
 class NMFMatrixGenerator:
+    """
+    NMFMatrixGenerator class is responsible for generating NMF matrices from Single Base Substitution (SBS) data.
+    It uses the RunNMF class for the NMF process and performing analysis.
+    """
+
     def __init__(
         self,
         sbs_folder: Path,
@@ -100,6 +185,18 @@ class NMFMatrixGenerator:
         init: str = "nndsvda",
         beta_loss: str = "frobenius",
     ):
+        """
+        Initialize the NMFMatrixGenerator.
+
+        Args:
+            sbs_folder (Path): Path to the folder containing SBS data.
+            signatures (int): Number of signatures to extract.
+            cosmic (pd.DataFrame): Cosmic mutation data.
+            result_folder (Path): Path to the folder where result files will be stored.
+            nmf_folder (Path): Path to the folder where NMF files will be stored.
+            init (str): Initialization method for NMF.
+            beta_loss (str): Beta loss function for NMF.
+        """
         self._logger = logging.SingletonLogger()
         self.signatures = signatures
         self.sbs_folder = sbs_folder
@@ -116,27 +213,31 @@ class NMFMatrixGenerator:
         # List to store Jensen Shannon Distance data
         self.jens_shannon_distances = []
         self._prepare_folders()
-    
-    def _prepare_folders(self):
+
+    def _prepare_folders(self) -> None:
+        """
+        Create necessary result folders.
+        """
         # Create the folder if it does not exist yet
         self.result_folder.mkdir(parents=True, exist_ok=True)
         self.nmf_folder.mkdir(parents=True, exist_ok=True)
         self.figure_folder.mkdir(parents=True, exist_ok=True)
-    
-    def run_nmf_on_sbs_files(self):
+
+    def run_nmf_on_sbs_files(self) -> None:
         """
-        Perform the NMF process.
+        Perform the NMF process on all SBS files.
         """
         self._logger.log_info(f"Creating NMF files with {self.signatures} signatures")
         # For every file run nmf
         for index, context in enumerate(helpers.MutationalSigantures.SIZES, -1):
             filename = self.sbs_folder / f"sbs.{context}.txt"
             signatures_df = self._run_nmf_file(filename)
+            # Process the NMF results
             self._process_results(context, signatures_df, index)
         self._logger.log_info("Creating cosine and Jensen Shannon Distance plots")
         # Create figures
         self._create_distance_figures()
-    
+
     def _create_distance_figures(self) -> None:
         """
         Create cosine and Jensen Shannon Distance figures.
@@ -149,8 +250,10 @@ class NMFMatrixGenerator:
         self._logger.log_info(
             "Created Jensen Shannon Distance plots from the NMF results"
         )
-    
-    def _process_results(self, size: int, signatures_df: pd.DataFrame, index: int) -> None:
+
+    def _process_results(
+        self, size: int, signatures_df: pd.DataFrame, index: int
+    ) -> None:
         """
         Analyze the NMF results.
 
@@ -175,7 +278,11 @@ class NMFMatrixGenerator:
             self.control_df = control_df.iloc[:, 1:]
         else:
             # Calculate distances and store in lists
-            result_jens_df, result_cosine_df, decomposed_df = distance.calculate_distances(self.control_df, signatures_df)
+            (
+                result_jens_df,
+                result_cosine_df,
+                decomposed_df,
+            ) = distance.calculate_distances(self.control_df, signatures_df)
             self.cosine_similarities.append(
                 {
                     "data": result_cosine_df,
@@ -196,6 +303,15 @@ class NMFMatrixGenerator:
             self.write_df_file(decomposed_df, decompose_filename)
 
     def _run_nmf_file(self, filename):
+        """
+        Run NMF on a single SBS file.
+
+        Args:
+            filename (Path): Path to the SBS file.
+
+        Returns:
+            pd.DataFrame: DataFrame containing NMF results.
+        """
         self._logger.log_info(f"Performing NMF on '{filename}'")
         mutations, all_genomes = sbs_read_and_extract(filename)
         context = mutations.shape[0]
@@ -210,7 +326,7 @@ class NMFMatrixGenerator:
         # Write to a file
         self.write_df_file(signatures_df, nmf_filename)
         return signatures_df
-    
+
     def write_df_file(self, df: pd.DataFrame, name: Path, sep: str = "\t") -> None:
         """
         Write a DataFrame to a file.
@@ -222,8 +338,10 @@ class NMFMatrixGenerator:
         """
         self._logger.log_info(f"Written the results to '{name}'")
         df.to_csv(name, sep=sep, index=False)
-    
-    def _run_nmf(self, preprocessed: data_processing.Preprocessing, context: int) -> np.ndarray:
+
+    def _run_nmf(
+        self, preprocessed: data_processing.Preprocessing, context: int
+    ) -> np.ndarray:
         """
         Run NMF on preprocessed data.
 

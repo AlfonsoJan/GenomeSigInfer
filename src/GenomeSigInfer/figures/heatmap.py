@@ -11,6 +11,8 @@ Functions:
     - heatmap_best_param(cosine_df: pd.DataFrame, figure_folder: Path) -> str
     - heatmap_cosine(cosine_df_list: List[pd.DataFrame], figure_folder: Path) -> str
     - heatmap_jens_shan(jens_shan_df_list: List[pd.DataFrame], figure_folder: Path) -> str
+
+Author: J.A. Busker
 """
 from pathlib import Path
 import seaborn as sns
@@ -30,10 +32,13 @@ def heatmap_best_param(cosine_df: pd.DataFrame, figure_folder: Path) -> str:
     Returns:
         str: Image name of the saved heatmap.
     """
+    # Extract data from the input DataFrame
     data = cosine_df.values
     values = data[:, 0].astype(float)
     labels = data[:, 1]
+    # Create a DataFrame for visualization
     df = pd.DataFrame({"Cosine Similarity": values}, index=labels)
+    # Generate heatmap using Seabor
     ax = sns.heatmap(
         df,
         linewidth=0.5,
@@ -46,6 +51,7 @@ def heatmap_best_param(cosine_df: pd.DataFrame, figure_folder: Path) -> str:
         vmax=1,
     )
     ax.set(ylabel="Parameters: (Init, Beta loss)")
+    # Save the generated heatmap as an image
     image_name = figure_folder / "cosine.params.similarity.png"
     plt.savefig(image_name, bbox_inches="tight", format="png", dpi=300, pad_inches=0.1)
     return image_name
@@ -62,7 +68,9 @@ def heatmap_cosine(cosine_df_list: list[pd.DataFrame], figure_folder: Path) -> s
     Returns:
         str: Image name of the saved heatmap.
     """
+    # Create subplots for multiple heatmaps
     _, axes = plt.subplots(1, len(cosine_df_list), figsize=(15, 15))
+    # Iterate through the provided DataFrame list
     for index, data_set in enumerate(cosine_df_list):
         cosine_df = data_set["data"]
         data = cosine_df.values.flatten()
@@ -70,7 +78,9 @@ def heatmap_cosine(cosine_df_list: list[pd.DataFrame], figure_folder: Path) -> s
         sorted_values = data.astype(float)[sorted_indices]
         sorted_labels = np.array(cosine_df.columns)[sorted_indices]
         context = data_set["context"]
+        # Create a DataFrame for visualization
         df = pd.DataFrame({"Cosine Similarity": sorted_values}, index=sorted_labels)
+        # Generate heatmap using Seaborn
         sns.heatmap(
             df,
             linewidth=0.5,
@@ -85,6 +95,7 @@ def heatmap_cosine(cosine_df_list: list[pd.DataFrame], figure_folder: Path) -> s
             vmax=1,
         )
         axes[index].set_title(f"Context of {context}")
+    # Save the generated heatmaps as an imag
     plt.savefig(
         figure_folder / "cosine.similarity.increased.context.png", bbox_inches="tight"
     )
@@ -104,7 +115,9 @@ def heatmap_jens_shan(
     Returns:
         str: Image name of the saved heatmap.
     """
+    # Create subplots for multiple heatmaps
     _, axes = plt.subplots(1, len(jens_shan_df_list), figsize=(15, 15))
+    # Iterate through the provided DataFrame list
     for index, data_set in enumerate(jens_shan_df_list):
         dist_df = data_set["data"]
         data = dist_df.values.flatten()
@@ -112,9 +125,11 @@ def heatmap_jens_shan(
         sorted_values = data.astype(float)[sorted_indices]
         sorted_labels = np.array(dist_df.columns)[sorted_indices]
         context = data_set["context"]
+        # Create a DataFrame for visualization
         df = pd.DataFrame(
             {"Jensen Shannon Distance": sorted_values}, index=sorted_labels
         )
+        # Generate heatmap using Seaborn
         sns.heatmap(
             df,
             linewidth=0.5,
@@ -129,6 +144,7 @@ def heatmap_jens_shan(
             vmax=1,
         )
         axes[index].set_title(f"Context of {context}")
+    # Save the generated heatmaps as an image
     plt.savefig(
         figure_folder / "jens_shannon.dist.increased.context.png", bbox_inches="tight"
     )

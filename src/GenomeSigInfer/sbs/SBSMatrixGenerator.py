@@ -1,10 +1,25 @@
 #!/usr/bin/env python3
 """
-SBS Module
-
 This module defines the SBS class, which is responsible for parsing VCF files,
 processing mutations, creating SBS files, and performing various operations on
 genomic data.
+
+Classes:
+    - SBSMatrixGenerator: A class for creating maximum context Single Base Substitution (SBS) files.
+
+Functions:
+    - custom_chromosome_sort: Custom sorting function for sorting chromosome values.
+    - generate_sbs_matrix_arg_checker: Decorator function for checking arguments before calling 'generate_sbs_matrix'.
+    - generate_sbs_matrix: Initializes SBS with the specified project path.
+
+Attributes:
+    - helpers: Module containing utility functions.
+    - logging: Module for logging information.
+    - error: Module defining custom error classes.
+    - matrix_operations: Module providing matrix operations.
+    - VCFMatrixGenerator: Module for generating VCF matrices.
+
+Author: J.A. Busker
 """
 from functools import wraps
 from pathlib import Path
@@ -14,6 +29,7 @@ from ..utils import helpers, logging
 from ..errors import error
 from ..matrix import matrix_operations
 from ..vcf.VCFMatrixGenerator import filter_vcf_files
+
 
 def custom_chromosome_sort(value: str) -> int | float:
     """
@@ -30,19 +46,34 @@ def custom_chromosome_sort(value: str) -> int | float:
         return int(value)
     return float("inf")
 
-def generate_sbs_matrix_arg_checker(func):
+
+def generate_sbs_matrix_arg_checker(func: callable) -> callable:
+    """
+    Decorator function for checking arguments before calling the 'generate_sbs_matrix' function.
+
+    Args:
+        func: The function to be wrapped.
+
+    Returns:
+        wrapper: The wrapped function.
+    """
+
     @wraps(func)
     def wrapper(folder, vcf_files, ref_genome, genome):
         # Ensure folder is a Path object
         folder = Path(folder)
         # Check if the file exist
-        vcf_files = tuple(Path(vcf_file) for vcf_file in vcf_files if Path(vcf_file).exists)
+        vcf_files = tuple(
+            Path(vcf_file) for vcf_file in vcf_files if Path(vcf_file).exists
+        )
         # Ensure ref_genome is a Path object
         ref_genome = Path(ref_genome)
         # Check if the genome is supported
         helpers.check_supported_genome(genome)
         return func(folder, vcf_files, ref_genome, genome)
+
     return wrapper
+
 
 @generate_sbs_matrix_arg_checker
 def generate_sbs_matrix(
@@ -65,9 +96,7 @@ def generate_sbs_matrix(
     logger.log_info("Creating SBS matrices!")
     # Create the folder if it does not exist yet
     folder.mkdir(parents=True, exist_ok=True)
-    logger.log_info(
-        f"Processing VCF files: {', '.join(map(str, vcf_files))}"
-    )
+    logger.log_info(f"Processing VCF files: {', '.join(map(str, vcf_files))}")
     # Filter the VCF files on chosen genome
     filtered_vcf = filter_vcf_files(vcf_files, genome)
     sbsmatrixgen = SBSMatrixGenerator(
@@ -110,7 +139,7 @@ class SBSMatrixGenerator:
         self.ref_genome = ref_genome
         self._logger: logging.SingletonLogger = logging.SingletonLogger()
         self._samples_df = None
-    
+
     def parse_vcf(self) -> None:
         """
         Parses the VCF file and processes mutations,
@@ -119,12 +148,14 @@ class SBSMatrixGenerator:
         # Group the VCF per chromosome
         sorted_chr, grouped_chromosomes = self.group_vcf_chromosome()
         # Init of the sampled dataframe
-        self._samples_df: pd.DataFrame = matrix_operations.create_mutation_samples_df(self.vcf)
+        self._samples_df: pd.DataFrame = matrix_operations.create_mutation_samples_df(
+            self.vcf
+        )
         # loop over the dataframe based on the chromosome
         for chrom_start in sorted_chr:
             indices = grouped_chromosomes[chrom_start]
             self.process_chromosome(chrom_start, indices)
-    
+
     def process_chromosome(self, chrom_start: str, indices: list[int]) -> None:
         """
         Process mutations on a specific chromosome.
@@ -141,7 +172,7 @@ class SBSMatrixGenerator:
             # Process each row in the VCF file for the current chromosome
             self.process_vcf_row(idx, chrom_string)
         self._logger.log_info(f"Finished chromosome {chrom_start}\n")
-    
+
     def process_vcf_row(self, idx: int, chrom_string: bytes) -> None:
         """
         Process a single row from the VCF file.
@@ -166,7 +197,7 @@ class SBSMatrixGenerator:
         self._samples_df.loc[
             self._samples_df["MutationType"] == mutation_type, sample
         ] += 1
-    
+
     def create_mutation_context(self, pos: int, chrom_string: bytes) -> tuple[str, str]:
         """
         Create mutation context for a given position in the chromosome.
@@ -197,7 +228,7 @@ class SBSMatrixGenerator:
             ]
         )
         return left_context, right_context
-    
+
     def get_chromosome_file(self, chromosome: str) -> bytes:
         """
         Retrieve the content of a chromosome file.

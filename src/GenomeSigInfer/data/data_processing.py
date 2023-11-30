@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """
-This class provides a preprocessing class for parsing pre-processing the data
+This module is designed for preprocessing Single Base Substitution (SBS) genomic data, offering a comprehensive set of tools through the Preprocessing class.
+The workflow begins with class initialization, where genomic data is provided, and a cutoff value is computed based on a percentile of the data.
+In essence, this module encapsulates a streamlined pipeline for preprocessing SBS genomic data, encompassing initialization, data preprocessing, normalization, and denormalization.
+
+Author: J.A. Busker
 """
 import pandas as pd
 import numpy as np
@@ -24,9 +28,9 @@ class Preprocessing:
     Methods:
         normalize(genomes, total_mut, cutoff): Normalize genomic data.
         denormalize_samples(genomes, original_totals): Denormalize normalized data.
-
     """
 
+    # Lambda function to calculate the cutoff value
     get_cutoff = lambda data, manual_cutoff: max(np.percentile(data, 95), manual_cutoff)
 
     def __init__(self, genomes: np.ndarray):
@@ -36,13 +40,17 @@ class Preprocessing:
         Args:
             genomes (np.ndarray): A DataFrame containing genomic data.
         """
+        # Compute the cutoff value based on the provided genomic data
         self._cutoff = Preprocessing.get_cutoff(
             genomes, manual_cutoff=100 * genomes.shape[0]
         )
+        # Generate a random seed for reproducibility
         seed = np.array(np.random.SeedSequence().entropy)
         seed = np.random.SeedSequence(int(seed)).spawn(1)[0]
         self._seed = np.random.Generator(np.random.PCG64DXSM(seed))
+        # Convert input data to a DataFrame
         self._genomes = pd.DataFrame(genomes)
+        # Perform initial data processing
         self._init()
 
     def _init(self) -> None:
@@ -52,10 +60,13 @@ class Preprocessing:
         This private method performs data preprocessing, including normalization.
 
         """
+        # Calculate the sum of each column in the genomic data
         sum_row_genomes = pd.DataFrame(self._genomes.sum(0)).transpose()
+        # Create a matrix to repeat the sum values for each sample
         rep_mat = np.array(
             sum_row_genomes.values.repeat(self._genomes.shape[0], axis=0)
         )
+        # Normalize the genomic data using a random number generator
         n_genomes = self._genomes / rep_mat
         dataframes_list = [
             pd.DataFrame(
@@ -66,8 +77,10 @@ class Preprocessing:
             for index in range(n_genomes.shape[1])
         ]
         genomes = pd.concat(dataframes_list, axis=1)
+        # Adjust small values in the data for stability
         genomes[genomes < 0.0001] = 0.0001
         genomes = genomes.astype(float)
+        # Calculate total mutations per sample and normalize the genomic data
         self._total_mutations = np.sum(genomes, axis=1)
         self._norm_genomes = Preprocessing.normalize(
             genomes, self._total_mutations, self._cutoff
@@ -102,8 +115,11 @@ class Preprocessing:
         Returns:
             np.ndarray: Normalized genomic data.
         """
+        # Convert DataFrame to NumPy array for efficient computations
         genomes = np.array(genomes)
+        # Identify indices where total mutations exceed the cutoff
         indices = np.where(total_mut > cutoff)[0]
+        # Normalize genomic data based on total mutations and cutoff
         norm_genome = (
             genomes[:, list(indices)]
             / total_mut.ravel()[list(indices)][:, np.newaxis].T
@@ -126,9 +142,13 @@ class Preprocessing:
         Returns:
             np.ndarray: Denormalized genomic data.
         """
+        # Calculate normalized totals from the normalized genomic data
         normalized_totals = np.sum(genomes, axis=0)
+        # Convert original totals to NumPy array
         original_totals = np.array(original_totals)
+        # Denormalize the genomic data using the original and normalized totals
         results = genomes / normalized_totals * original_totals
+        # Round and cast the results to integers for a discrete representation
         results = np.round(results, 0)
         results = results.astype(int)
         return results

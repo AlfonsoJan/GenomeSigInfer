@@ -5,6 +5,13 @@ related to larger context and 96 context mutations. It includes methods to
 create bar plots for different mutation contexts and save them in PDF files.
 
 Functions:
+    - format_xlabels(x_labels: list) -> list:
+        Format the x labels for the plots. To go from A[C>A]A to ACA.
+    - percentage_formatter(x: float, pos: int) -> str:
+        Format a numeric value as a percentage.
+    - create_expected_larger(df_dict: pd.DataFrame, expected_larger_sbs: list, folder_path: Path):
+        Create a page with all three plots (parse_96_df, create_increased_context_barplot)
+        for every SBS in expected_larger_sbs for every DataFrame in df_dict.
     - larger_context_barplot(df_multi_contexct: pd.DataFrame, folder_path: Path) -> None:
         Generate barplots for larger context mutations and save them in a PDF file.
     - create_96_barplot(df: pd.DataFrame, figure_folder: Path) -> None:
@@ -15,6 +22,8 @@ Functions:
         Parse the DataFrame to extract larger context mutation data.
     - parse_96_df(df: pd.DataFrame, col: str, pdf: PdfPages) -> None:
         Parse the DataFrame to extract 96 context mutation data and create a bar plot.
+
+Author: J.A. Busker
 """
 from pathlib import Path
 from tqdm import tqdm
@@ -78,10 +87,15 @@ def create_expected_larger(
     logger = SingletonLogger()
     # Check if all dataframes contains the columns
     # Return a list of the SBS columns that are in all
-    expected_larger_sbs = [sbs for sbs in expected_larger_sbs if all([sbs in list(df.columns) for df in df_dict.values()])]
-    # Message
+    expected_larger_sbs = [
+        sbs
+        for sbs in expected_larger_sbs
+        if all([sbs in list(df.columns) for df in df_dict.values()])
+    ]
+    # If none of the SBS that benefit larger context are in the
+    # Raise error
     if len(expected_larger_sbs) == 0:
-        return
+        raise ValueError("No of the SBS are in all the dataframes")
     plot_name = folder_path / "signatures.expected_larger.pdf"
     num_subplots = len(df_dict)
     with PdfPages(plot_name) as pdf:
@@ -90,15 +104,19 @@ def create_expected_larger(
             # Create a num_subplotsx1 grid for subplots using GridSpec
             gs = GridSpec(num_subplots, 1, height_ratios=[0.8] * num_subplots)
             _ = plt.figure(figsize=(20, 10 * num_subplots))
+            # Create for every context a plot and add it to the page
             for index, size in enumerate(df_dict.keys()):
                 ax = plt.subplot(gs[index])
                 data = df_dict[size]
                 if size == 96:
                     parse_96_df(data, sbs, pdf, ax)
                 else:
+                    # Ectract the smallest context of the mutation
+                    # eg: smalles context of AAG[C>A]TGA is G[C>A]T
                     data["context"] = data["MutationType"].str.extract(r"(\w\[.*\]\w)")
                     result_df = parse_lager_context_df(data, sbs)
                     create_increased_context_barplot(result_df, pdf, ax)
+            # Save the plots to the PDF page
             plt.tight_layout()
             pdf.savefig(bbox_inches="tight")
             plt.close()
@@ -113,9 +131,12 @@ def larger_context_barplot(df_multi_context: pd.DataFrame, folder_path: Path) ->
         df_multi_context (pd.DataFrame): DataFrame containing mutation data.
         folder_path (Path): Path to the folder where the PDF file will be saved.
     """
+    # Ectract the smallest context of the mutation
+    # eg: smalles context of AAG[C>A]TGA is G[C>A]T
     df_multi_context["context"] = df_multi_context["MutationType"].str.extract(
         r"(\w\[.*\]\w)"
     )
+    # Sort the columns
     sorted_columns = sorted(
         df_multi_context.columns[1:-1], key=custom_sort_column_names
     )
@@ -133,6 +154,7 @@ def create_96_barplot(df: pd.DataFrame, figure_folder: Path) -> None:
         df (pd.DataFrame): DataFrame containing mutation data.
         figure_folder (Path): Path to the folder where the PDF file will be saved.
     """
+    # Sort the columns
     sorted_columns = sorted(df.columns[1:], key=custom_sort_column_names)
     with PdfPages(figure_folder / "signatures.96.pdf") as pdf:
         for col in tqdm(sorted_columns):
@@ -150,6 +172,7 @@ def parse_lager_context_df(df: pd.DataFrame, col: str) -> pd.DataFrame:
     Returns:
         pd.DataFrame: Resulting DataFrame with parsed data.
     """
+    # Result df
     result_df = pd.DataFrame()
     amino = ["A", "C", "T", "G"]
     col_df = pd.DataFrame(
@@ -159,10 +182,17 @@ def parse_lager_context_df(df: pd.DataFrame, col: str) -> pd.DataFrame:
             "context": df["context"],
         }
     )
+    # For every uniqe mutation
     for mut in MUTATION_LIST:
+        # Create temp df
         temp_df = col_df[(col_df["context"] == mut)]
         total_sbs_mut = temp_df[col].sum()
+        # These are the indices of the extra context
+        # eg: CA[C>A]AG return [0,8] those are the indices of C and G
         context_index_list = generate_numbers(len(df["MutationType"][0]) - 4)
+        # These are the position for the bars
+        # eg: CA[C>A]AG return -1, 1
+        # So that C is ploitted before G
         seq = generate_sequence(len(df["MutationType"][0]) - 4)
         contex_name_generator = zip(context_index_list, seq)
         for idx, name in contex_name_generator:
@@ -174,6 +204,10 @@ def parse_lager_context_df(df: pd.DataFrame, col: str) -> pd.DataFrame:
                     filtered_df = temp_df[temp_df["MutationType"].str[idx] == aa]
                     total_filtered = filtered_df[col].sum()
                     row["value"] = total_filtered
+                # Create a df of the values for every extra context
+                # eg: CA[C>A]AG
+                # eg: C: 0.05
+                # eg: G: 0.1
                 result_df = pd.concat(
                     [result_df, pd.DataFrame(row, index=[0])], ignore_index=True
                 )
@@ -190,11 +224,13 @@ def create_increased_context_barplot(
         df (pd.DataFrame): DataFrame containing mutation data.
         pdf: PdfPages object for saving the plot.
     """
+    # If axe is not none than this plots if one of many on a page
     ax_none = False
     if ax is None:
         ax_none = True
     if ax_none:
         _, ax = plt.subplots(figsize=(20, 10))
+    # Get the title and the labels
     title = df["sbs"].unique()[0]
     labels = df["context"].drop_duplicates()
     x0 = np.arange(len(labels))
@@ -206,6 +242,8 @@ def create_increased_context_barplot(
     stacks = len(names)
     variable = df.variable.unique()
     x1 = []
+    # These are for the position for the plots
+    # The indices of every small bar for the extra context
     w = 0.45
     if stacks == 2:
         x1 = [x0 - w / stacks, x0 + w / stacks]
@@ -218,11 +256,14 @@ def create_increased_context_barplot(
             x0 + w * 4 / stacks + w / 2,
         ]
     added_labels = set()
+    # Add for every context a bar
     for x, name in zip(x1, names):
         bottom = 0
         for var in variable:
             height = data[f"{name}{var}"].value.to_numpy()
             color = COLOR_DICT[var]
+            # Otherwise you get a very large legend
+            # With duplicate labels
             if var not in added_labels:
                 ax.bar(
                     x=x, height=height, width=w, bottom=bottom, color=color, label=var
@@ -234,6 +275,8 @@ def create_increased_context_barplot(
     sublist_length = len(x0) // 6
     indices = [x0[i : i + sublist_length] for i in range(0, len(x0), sublist_length)]
     mutation_types = df["context"].str.extract(r"\[(.*?)\]")[0].unique()
+    # Add the mutations add the top of each group
+    # eg: C>A
     for i, (mutation_type, indices_list) in enumerate(zip(mutation_types, indices)):
         idx = indices_list[-1]
         text_x = indices_list[len(indices_list) // 2]
@@ -247,6 +290,7 @@ def create_increased_context_barplot(
             fontsize=20,
             fontweight="bold",
         )
+        # Add a line between each group
         if i < len(mutation_types) - 1:
             plt.axvline(x=idx + 0.5, color="black", linestyle="-", linewidth=2)
     # SBS NAME ON THE PLOT
@@ -268,6 +312,7 @@ def create_increased_context_barplot(
     ax.set_xlabel("Context", weight="bold")
     ax.set_ylabel("Percentage OF Single Base Substitution", weight="bold")
     plt.xlim(-1, len(labels))
+    # Format the ylabels to percentages
     plt.gca().yaxis.set_major_formatter(FuncFormatter(percentage_formatter))
     plt.ylim(0, 1)
     if ax_none:
@@ -285,6 +330,7 @@ def parse_96_df(df: pd.DataFrame, col: str, pdf: PdfPages, ax: plt.axes = None) 
         col (str): Name of the column to parse.
         pdf: PdfPages object for saving the plot.
     """
+    # If axe is not none than this plots if one of many on a page
     ax_none = False
     if ax is None:
         ax_none = True
@@ -296,9 +342,9 @@ def parse_96_df(df: pd.DataFrame, col: str, pdf: PdfPages, ax: plt.axes = None) 
     temp_df[sort_col] = temp_df[mut_col].str.extract(r"\[(.*?)\]")
     muts = temp_df.MutationType.unique()
     x0 = np.arange(len(muts))
-    # plt.rcParams['font.family'] = 'monospace'
     w = 0.8
     added_labels = set()
+    # Add for every context a bar
     for x, mutation in zip(x0, temp_df.mutation):
         bottom = 0
         color = COLOR_DICT_MUTATION[mutation]
@@ -310,6 +356,8 @@ def parse_96_df(df: pd.DataFrame, col: str, pdf: PdfPages, ax: plt.axes = None) 
             added_labels.add(mutation)
         else:
             ax.bar(x=x, height=value, width=w, bottom=bottom, color=color)
+    # Add the mutations add the top of each group
+    # eg: C>A
     groups = temp_df.groupby(sort_col).groups.items()
     for i, (mutation_type, indices) in enumerate(groups):
         idx = indices[-1]
@@ -326,6 +374,7 @@ def parse_96_df(df: pd.DataFrame, col: str, pdf: PdfPages, ax: plt.axes = None) 
         )
         # Skip the last line
         if i < len(groups) - 1:
+            # Add line between each group
             plt.axvline(x=idx + 0.5, color="black", linestyle="-", linewidth=2)
     # SBS NAME ON THE PLOT
     plt.text(
@@ -346,6 +395,7 @@ def parse_96_df(df: pd.DataFrame, col: str, pdf: PdfPages, ax: plt.axes = None) 
     ax.set_xlabel("Context", weight="bold")
     ax.set_ylabel("Percentage OF Single Base Substitution", weight="bold")
     plt.xlim(-1, len(temp_df[mut_col]))
+    # Format the ylabels to percentages
     plt.gca().yaxis.set_major_formatter(FuncFormatter(percentage_formatter))
     plt.ylim(0, 1)
     if ax_none:

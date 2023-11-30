@@ -11,6 +11,8 @@ Usage:
     logger.log_warning("This is a warning message.")
     logger.log_error("This is an error message.")
     logger.log_exception("This is an exception message.", exc_info=True)
+
+Author: J.A. Busker
 """
 import logging
 

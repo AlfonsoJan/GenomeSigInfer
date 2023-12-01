@@ -23,7 +23,11 @@
 
             <h2>Contents</h2>
             <ul>
-  <li><a href="#genomesiginfer">GenomeSigInfer</a></li>
+  <li><a href="#genomesiginfer">GenomeSigInfer</a>
+  <ul>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#functions">Functions</a></li>
+  </ul></li>
 </ul>
 
 
@@ -55,9 +59,123 @@
                     <h1 class="modulename">
 GenomeSigInfer    </h1>
 
-                        <div class="docstring"><h1 id="genomesiginfer">GenomeSigInfer</h1>
+                        <div class="docstring"><p><a href="https://osf.io/t6j7u/wiki/home/"><img src="https://img.shields.io/badge/docs-latest-blue.svg" alt="Docs" /></a> 
+<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a></p>
 
-<p>Write DOCS</p>
+<h1 id="genomesiginfer">GenomeSigInfer</h1>
+
+<p>GenomeSigInfer is a powerful Python framework designed for the efficient creation of mutational matrices from somatic mutations. The tool excels at identifying and categorizing mutations, specifically focusing on Single Nucleotide Variants (SNVs) and Single Nucleotide Polymorphisms (SNPs). Its primary functionality lies in the ability to unveil mutational signatures within Single Base Substitution (SBS) data, leveraging advanced techniques such as Non-Negative Matrix Factorization (NMF). Beyond signature extraction, GenomeSigInfer goes a step further, offering functionality to calculate key metrics like <code>cosine similarities</code> and <code>Jensen Shannon divergence</code> on the decompressed context sizes. And offers a seamless visualization experience. With the ability to create detailed plots for each identified mutational signature, researchers can effortlessly explore the proportion of mutations associated with specific signatures.</p>
+
+<p>Detailed documentation can be found at: <a href="https://alfonsojan.github.io/GenomeSigInfer/GenomeSigInfer.html">docs</a></p>
+
+<ul>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#functions">Functions</a>
+<ul>
+<li><a href="#create-sbs-files">Create SBS Files</a></li>
+<li><a href="#create-nmf-files">Create NMF Files</a></li>
+<li><a href="#create-signature-plots">Create Signature Plots</a></li>
+</ul></li>
+</ul>
+
+<h2 id="installation">Installation</h2>
+
+<ol>
+<li>Clone the repository &amp; Install dependencies:</li>
+</ol>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/AlfonsoJan/GenomeSigInfer
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>GenomeSigInfer
+$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.
+</code></pre>
+</div>
+
+<ol start="2">
+<li>Install your desired reference genome as follows:</li>
+</ol>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="kn">from</span> <span class="nn">GenomeSigInfer</span> <span class="kn">import</span> <span class="n">download</span>
+<span class="n">ref_genome</span> <span class="o">=</span> <span class="s2">&quot;project/ref_genome&quot;</span> <span class="c1"># Folder where the ref genome will be downloaded</span>
+<span class="n">genome</span> <span class="o">=</span> <span class="s2">&quot;GRCh37&quot;</span> <span class="c1"># Reference Genome</span>
+<span class="n">download</span><span class="o">.</span><span class="n">download_ref_genome</span><span class="p">(</span><span class="n">ref_genome</span><span class="p">,</span> <span class="n">genome</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h2 id="functions">Functions</h2>
+
+<p>The list of available functions are:</p>
+
+<ul>
+<li>SBSMatrixGenerator.generate_sbs_matrix</li>
+<li>NMFMatrixGenerator.generate_nmf_matrix</li>
+<li>signature_plots.SigPlots</li>
+</ul>
+
+<h3 id="create-sbs-files">Create SBS Files</h3>
+
+<p>Create mutliple SBS files. With increasing context.</p>
+
+<p>The sbs.96.txt file contains all of the following the pyrimidine single nucleotide variants, N[{C &gt; A, G, or T} or {T &gt; A, G, or C}]N.
+<em>4 possible starting nucleotides x 6 pyrimidine variants x 4 ending nucleotides = 96 total combinations.</em></p>
+
+<p>The sbs.1536.txt file contains all of the following the pyrimidine single nucleotide variants, NN[{C &gt; A, G, or T} or {T &gt; A, G, or C}]NN.
+<em>16 (4x4) possible starting nucleotides x 6 pyrimidine variants x 16 (4x4) possible ending nucleotides = 1536 total combinations.</em></p>
+
+<p>The sbs.24576.txt file contains all of the following the pyrimidine single nucleotide variants, NNN[{C &gt; A, G, or T} or {T &gt; A, G, or C}]NNN.
+<em>16 (4x4) possible starting nucleotides x 16 (4x4) nucleotides x 6 pyrimidine variants x 16 (4x4) nucleotides x 16 (4x4) possible ending dinucleotides = 24576 total combinations.</em></p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="kn">from</span> <span class="nn"><a href="GenomeSigInfer/sbs.html">GenomeSigInfer.sbs</a></span> <span class="kn">import</span> <span class="n">SBSMatrixGenerator</span>
+<span class="n">sbs_out</span> <span class="o">=</span> <span class="s2">&quot;project/SBS&quot;</span> <span class="c1"># Where the SBS files will be saved to</span>
+<span class="n">ref_genome</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;project/ref_genome&quot;</span><span class="p">)</span> <span class="c1"># Parent folder of the Ref genome</span>
+<span class="n">vcf</span> <span class="o">=</span> <span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;test/files/test<a href="GenomeSigInfer/vcf.html">GenomeSigInfer.vcf</a>&quot;</span><span class="p">),)</span> <span class="c1"># Tuple of the VCF file(s)</span>
+<span class="n">genome</span> <span class="o">=</span> <span class="s2">&quot;GRCh37&quot;</span> <span class="c1"># Ref genome</span>
+<span class="n">SBSMatrixGenerator</span><span class="o">.</span><span class="n">generate_sbs_matrix</span><span class="p">(</span>
+    <span class="n">folder</span><span class="o">=</span><span class="n">sbs_out</span><span class="p">,</span> <span class="n">ref_genome</span><span class="o">=</span><span class="n">ref_genome</span><span class="p">,</span> <span class="n">vcf_files</span><span class="o">=</span><span class="n">vcf</span><span class="p">,</span> <span class="n">genome</span><span class="o">=</span><span class="n">genome</span>
+<span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="create-nmf-files">Create NMF Files</h3>
+
+<p>Create nmf files and deconmpose mutational signatures from NMF results. And calculate the similarities between each file's signature data and the cosmic columns.</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="kn">from</span> <span class="nn"><a href="GenomeSigInfer/nmf.html">GenomeSigInfer.nmf</a></span> <span class="kn">import</span> <span class="n">NMFMatrixGenerator</span>
+<span class="n">sbs_dir</span> <span class="o">=</span> <span class="s2">&quot;project/SBS&quot;</span>  <span class="c1"># Folder where the SBS files are located</span>
+<span class="n">nmf_dir</span> <span class="o">=</span> <span class="s2">&quot;project/NMF&quot;</span> <span class="c1"># Folder where the NMF files are saved to</span>
+<span class="n">sigs</span> <span class="o">=</span> <span class="mi">48</span> <span class="c1"># Amount of mutational signatures</span>
+<span class="n">cosmic</span> <span class="o">=</span> <span class="s2">&quot;/path/to/cosmic.file&quot;</span> <span class="c1"># Cosmic file name for the results (Path Object)</span>
+<span class="n">res_dir</span> <span class="o">=</span> <span class="s2">&quot;project/results&quot;</span> <span class="c1"># Folder where results from the analysis will be saved to</span>
+<span class="n">nmf_init</span> <span class="o">=</span> <span class="s2">&quot;nndsvda&quot;</span> <span class="c1"># Put here the best init from the last step</span>
+<span class="n">beta_loss</span> <span class="o">=</span> <span class="s2">&quot;frobenius&quot;</span> <span class="c1"># Put here the best beta_loss from the last step</span>
+<span class="n">NMFMatrixGenerator</span><span class="o">.</span><span class="n">generate_nmf_matrix</span><span class="p">(</span>
+    <span class="n">sbs_folder</span><span class="o">=</span><span class="n">sbs_dir</span><span class="p">,</span>
+    <span class="n">signatures</span><span class="o">=</span><span class="n">sigs</span><span class="p">,</span>
+    <span class="n">cosmic</span><span class="o">=</span><span class="n">cosmic</span><span class="p">,</span>
+    <span class="n">nmf_folder</span><span class="o">=</span><span class="n">nmf_dir</span><span class="p">,</span>
+    <span class="n">nmf_init</span><span class="o">=</span><span class="n">nmf_init</span><span class="p">,</span>
+    <span class="n">beta_los</span><span class="o">=</span><span class="n">beta_loss</span><span class="p">,</span>
+    <span class="n">result_folder</span><span class="o">=</span><span class="n">res_dir</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="create-signature-plots">Create Signature Plots</h3>
+
+<p>Create signature plots for all the decomposed signatures files.</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="kn">from</span> <span class="nn"><a href="GenomeSigInfer/figures.html">GenomeSigInfer.figures</a></span> <span class="kn">import</span> <span class="n">signature_plots</span>
+<span class="n">nmf_folder</span> <span class="o">=</span> <span class="s2">&quot;project/NMF&quot;</span> <span class="c1"># Folder where the NMF files are located</span>
+<span class="n">result_folder</span> <span class="o">=</span> <span class="s2">&quot;project/results&quot;</span> <span class="c1"># Folder where the plots are saved to</span>
+<span class="n">sig_plots</span> <span class="o">=</span> <span class="n">signature_plots</span><span class="o">.</span><span class="n">SigPlots</span><span class="p">(</span><span class="n">nmf_folder</span><span class="p">,</span> <span class="n">result_folder</span><span class="p">)</span>
+<span class="n">sig_plots</span><span class="o">.</span><span class="n">create_plots</span><span class="p">()</span>
+<span class="n">sig_plots</span><span class="o">.</span><span class="n">create_expected_plots</span><span class="p">()</span>
+</code></pre>
+</div>
 </div>
 
                         <input id="mod-GenomeSigInfer-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">

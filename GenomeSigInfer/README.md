@@ -1,3 +1,0 @@
-# GenomeSigInfer
-
-Write DOCS

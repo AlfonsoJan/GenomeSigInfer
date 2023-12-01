@@ -21,6 +21,12 @@ jobs:
     - name: Install Dependencies
       run: |
         pip install .
+    
+    - name: Check if docs folder exists
+      run: |
+        if [ -d "docs" ]; then
+          rm -rf docs
+        fi
 
     - name: Generate Docs
       run: |

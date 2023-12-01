@@ -31,12 +31,16 @@ jobs:
     #       rm -rf docs
     #     fi
 
-    - name: Check if docs folder exists
+    # - name: Check if docs folder exists
+    #   run: |
+    #     if [ -d "docs" ]; then
+    #       rm -rf docs
+    #     fi
+
+    - name: Generate Docs
       run: |
-        if [ -d "docs" ]; then
-          rm -rf docs
-        fi
-    
+        pdoc GenomeSigInfer -o docs
+
     - name: Push
       uses: s0/git-publish-subdir-action@develop
       env:

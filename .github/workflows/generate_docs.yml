@@ -34,4 +34,12 @@ jobs:
         git config --local user.name "AlfonsoJan"
         git add docs
         git commit -m "Auto Generate Python docs"
-        git push
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: dev
+        commit-message: "Auto-generate Python docs"
+        title: "Auto-generate Python docs"
+        body: "This is an automated pull request to update Python documentation."

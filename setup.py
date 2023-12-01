@@ -7,6 +7,8 @@ setup(
     name="GenomeSigInfer",
     version="0.4.2",
     packages=find_packages(),
+    package_data={"": ["*.md"]},
+    include_package_data=True,
     author="J.A. Busker",
     author_email="alfonsobusker@gmail.com",
     description="This project aims to refine the statistical model and the current representation of mutations in building mutational signatures in cancer.",
@@ -21,6 +23,7 @@ setup(
         "seaborn==0.13.0",
         "matplotlib==3.7.1",
         "requests==2.31.0",
+        "pdoc==14.1.0"
     ],
     extras_require={
         "test": ["pytest==7.4.2", "pylint==3.0.2"],

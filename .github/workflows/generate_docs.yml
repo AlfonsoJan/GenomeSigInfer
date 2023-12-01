@@ -6,30 +6,38 @@ on:
       - main
 
 jobs:
-  generate_docs:
+  auto_generate_docs:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
-        python-version: 3.10
+        python-version: "3.10"
 
     - name: Install Dependencies
       run: |
-        pip install pydoc
+        pip install .
+    
+    - name: Check if docs folder exists
+      run: |
+        if [ -d "docs" ]; then
+          rm -rf docs
+        fi
 
     - name: Generate Docs
       run: |
         pdoc GenomeSigInfer -o docs
 
     - name: Commit and Push Docs
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config --local user.email "alfonsobusker@gmail.com"
         git config --local user.name "AlfonsoJan"
         git add docs
-        git commit -m "Auto-generate Python docs"
-        git push
+        git commit -m "Auto Generate Python docs"
+        git push origin HEAD:main

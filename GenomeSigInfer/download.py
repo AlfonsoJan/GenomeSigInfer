@@ -2,21 +2,17 @@
 """
 The module includes methods for downloading and extracting reference genomes.
 
-Functions:
-    - download_ref_genome_arg_checker(func: callable) -> callable:
-        A decorator function to check arguments before calling the actual download_ref_genome function.
-    - download_ref_genome(folder: Path, genome: MutationalSigantures.REF_GENOMES, bash: bool=False) -> None:
-        Downloads the specified reference genome.
-    - download_tar_url(url: str, download_path: Path, extracted_path: Path, genome: str) -> None:
-        Download a tar.gz file from the provided URL, extract its contents, and clean up.
+* download_ref_genome_arg_checker(func: callable) -> callable: A decorator function to check arguments before calling the actual download_ref_genome function.
+* download_ref_genome(folder: Path, genome: MutationalSigantures.REF_GENOMES, bash: bool=False) -> None: Downloads the specified reference genome.
+* download_tar_url(url: str, download_path: Path, extracted_path: Path, genome: str) -> NoneDownload a tar.gz file from the provided URL, extract its contents, and clean up.
+
+Author: J.A. Busker
 """
-import sys
 import os
 import requests
 import tarfile
 from functools import wraps
 from pathlib import Path
-import shutil
 from .utils import helpers, logging
 
 

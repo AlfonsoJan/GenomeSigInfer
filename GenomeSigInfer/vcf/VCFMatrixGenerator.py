@@ -5,11 +5,10 @@ Module for filtering and processing VCF (Variant Call Format) files.
 This module provides functions to read and filter VCF files based on specified criteria.
 It includes the following functions:
 
-1. `filter_vcf_files`: Filters multiple VCF files and combines them into a single DataFrame.
-2. `read_vcf_file`: Reads and filters a single VCF file.
-
 The module uses the pandas library for handling DataFrame operations and numpy for array manipulations.
 Additionally, it utilizes a logging module for information logging.
+
+Author: J.A. Busker
 """
 import warnings
 import pandas as pd

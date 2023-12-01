@@ -1,0 +1,35 @@
+name: Generate Python Docs
+
+on:
+  push:
+    branches:
+      - main  # Change this to your main branch name
+
+jobs:
+  generate_docs:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.10  # Change this to your Python version
+
+    - name: Install Dependencies
+      run: |
+        pip install pydoc
+
+    - name: Generate Docs
+      run: |
+        pdoc GenomeSigInfer -o docs
+
+    - name: Commit and Push Docs
+      run: |
+        git config --local user.email "alfonsobusker@gmail.com"
+        git config --local user.name "AlfonsoJan"
+        git add docs
+        git commit -m "Auto-generate Python docs"
+        git push

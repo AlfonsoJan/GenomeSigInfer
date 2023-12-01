@@ -21,8 +21,6 @@ setup(
         "seaborn==0.13.0",
         "matplotlib==3.7.1",
         "requests==2.31.0",
-        "sphinx==7.2.6",
-        "sphinx-rtd-theme==2.0.0",
     ],
     extras_require={
         "test": ["pytest==7.4.2", "pylint==3.0.2"],

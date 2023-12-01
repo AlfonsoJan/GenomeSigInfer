@@ -44,4 +44,4 @@ jobs:
         git pull --no-rebase origin pages  # Use merge strategy
         git add docs
         git commit -m "Auto generated Python docs"
-        git push origin HEAD:pages  # Push to pages branch
+        git push --force-with-lease origin HEAD:pages

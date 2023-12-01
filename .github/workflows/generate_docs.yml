@@ -3,7 +3,7 @@ name: Generate Python Docs
 on:
   push:
     branches:
-      - dev
+      - main
 
 jobs:
   auto_generate_docs:
@@ -40,4 +40,4 @@ jobs:
         git config --local user.name "AlfonsoJan"
         git add docs
         git commit -m "Auto Generate Python docs"
-        git push origin HEAD:dev
+        git push origin HEAD:main

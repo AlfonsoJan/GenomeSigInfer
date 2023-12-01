@@ -22,6 +22,9 @@ jobs:
       run: |
         pip install .
     
+    - name: Switch to Dev Branch
+      run: git checkout -b pages || git checkout pages
+    
     - name: Check if docs folder exists
       run: |
         if [ -d "docs" ]; then
@@ -31,15 +34,13 @@ jobs:
     - name: Generate Docs
       run: |
         pdoc GenomeSigInfer -o docs
-
+    
     - name: Commit and Push Docs
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config --local user.email "alfonsobusker@gmail.com"
         git config --local user.name "AlfonsoJan"
-        git checkout -b pages  # Create and switch to pages branch if it doesn't exist
-        git pull --rebase origin pages   # Ensure we have the latest changes from pages
         git add docs
-        git commit -m "Auto Generate Python docs"
-        git push origin HEAD:pages
+        git commit -m "Auto generated Python docs"
+        git push origin HEAD:pages  # Push to pages branch

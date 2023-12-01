@@ -20,7 +20,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        pip install pydoc
+        pip install .
 
     - name: Generate Docs
       run: |

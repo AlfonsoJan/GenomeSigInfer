@@ -38,6 +38,8 @@ jobs:
       run: |
         git config --local user.email "alfonsobusker@gmail.com"
         git config --local user.name "AlfonsoJan"
+        git checkout -b pages  # Create and switch to dev branch if it doesn't exist
+        git pull origin pages   # Ensure we have the latest changes from dev
         git add docs
         git commit -m "Auto Generate Python docs"
-        git push origin HEAD:main
+        git push origin HEAD:pages

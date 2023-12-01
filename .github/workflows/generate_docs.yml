@@ -6,7 +6,7 @@ on:
       - dev
 
 jobs:
-  generate_docs:
+  auto_generate_docs:
     runs-on: ubuntu-latest
 
     steps:

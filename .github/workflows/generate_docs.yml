@@ -20,13 +20,15 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        pip install .
+        pip install pdoc==14.1.0
 
     - name: Generate Docs
       run: |
         pdoc GenomeSigInfer -o docs
 
     - name: Commit and Push Docs
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config --local user.email "alfonsobusker@gmail.com"
         git config --local user.name "AlfonsoJan"

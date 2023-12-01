@@ -41,6 +41,7 @@ jobs:
       run: |
         git config --local user.email "alfonsobusker@gmail.com"
         git config --local user.name "AlfonsoJan"
+        git pull origin pages  # Pull changes from remote pages branch
         git add docs
         git commit -m "Auto generated Python docs"
         git push origin HEAD:pages  # Push to pages branch

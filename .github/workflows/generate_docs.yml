@@ -33,5 +33,5 @@ jobs:
         git config --local user.email "alfonsobusker@gmail.com"
         git config --local user.name "AlfonsoJan"
         git add docs
-        git commit -m "Auto-generate Python docs"
+        git commit -m "Auto Generate Python docs"
         git push

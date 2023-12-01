@@ -6,8 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name="GenomeSigInfer",
     version="0.4.2",
-    packages=find_packages(where="src"),
-    package_dir={"": "src"},
+    packages=find_packages(),
     author="J.A. Busker",
     author_email="alfonsobusker@gmail.com",
     description="This project aims to refine the statistical model and the current representation of mutations in building mutational signatures in cancer.",
@@ -22,6 +21,8 @@ setup(
         "seaborn==0.13.0",
         "matplotlib==3.7.1",
         "requests==2.31.0",
+        "sphinx==7.2.6",
+        "sphinx-rtd-theme==2.0.0",
     ],
     extras_require={
         "test": ["pytest==7.4.2", "pylint==3.0.2"],

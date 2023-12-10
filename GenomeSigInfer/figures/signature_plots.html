@@ -134,7 +134,7 @@ signature plots for different mutation contexts.</p>
 </span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">log_info</span><span class="p">(</span><span class="s2">&quot;Creating siganture plots for context file: &#39;96&#39;&quot;</span><span class="p">)</span>
 </span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>                <span class="n">barplots</span><span class="o">.</span><span class="n">create_96_barplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
 </span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>    <span class="k">def</span> <span class="nf">create_expected_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>    <span class="k">def</span> <span class="nf">create_expected_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sbs</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 </span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="sd">        Create signature plots based on a list that</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="sd">        those SBS are having the benefit of a larger context.</span>
@@ -144,7 +144,9 @@ signature plots for different mutation contexts.</p>
 </span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="sd">        &#39;EXPECTED_SBS&#39;. The results are saved in the &#39;figures&#39; folder within the</span>
 </span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="sd">        result directory.</span>
 </span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>        <span class="n">barplots</span><span class="o">.</span><span class="n">create_expected_larger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span><span class="p">,</span> <span class="n">SigPlots</span><span class="o">.</span><span class="n">EXPECTED_SBS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>        <span class="k">if</span> <span class="n">sbs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>            <span class="n">sbs</span> <span class="o">=</span> <span class="n">SigPlots</span><span class="o">.</span><span class="n">EXPECTED_SBS</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>        <span class="n">barplots</span><span class="o">.</span><span class="n">create_expected_larger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span><span class="p">,</span> <span class="n">sbs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -197,7 +199,7 @@ signature plots for different mutation contexts.</p>
 </span><span id="SigPlots-51"><a href="#SigPlots-51"><span class="linenos">51</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">log_info</span><span class="p">(</span><span class="s2">&quot;Creating siganture plots for context file: &#39;96&#39;&quot;</span><span class="p">)</span>
 </span><span id="SigPlots-52"><a href="#SigPlots-52"><span class="linenos">52</span></a>                <span class="n">barplots</span><span class="o">.</span><span class="n">create_96_barplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
 </span><span id="SigPlots-53"><a href="#SigPlots-53"><span class="linenos">53</span></a>
-</span><span id="SigPlots-54"><a href="#SigPlots-54"><span class="linenos">54</span></a>    <span class="k">def</span> <span class="nf">create_expected_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SigPlots-54"><a href="#SigPlots-54"><span class="linenos">54</span></a>    <span class="k">def</span> <span class="nf">create_expected_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sbs</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 </span><span id="SigPlots-55"><a href="#SigPlots-55"><span class="linenos">55</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SigPlots-56"><a href="#SigPlots-56"><span class="linenos">56</span></a><span class="sd">        Create signature plots based on a list that</span>
 </span><span id="SigPlots-57"><a href="#SigPlots-57"><span class="linenos">57</span></a><span class="sd">        those SBS are having the benefit of a larger context.</span>
@@ -207,7 +209,9 @@ signature plots for different mutation contexts.</p>
 </span><span id="SigPlots-61"><a href="#SigPlots-61"><span class="linenos">61</span></a><span class="sd">        &#39;EXPECTED_SBS&#39;. The results are saved in the &#39;figures&#39; folder within the</span>
 </span><span id="SigPlots-62"><a href="#SigPlots-62"><span class="linenos">62</span></a><span class="sd">        result directory.</span>
 </span><span id="SigPlots-63"><a href="#SigPlots-63"><span class="linenos">63</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SigPlots-64"><a href="#SigPlots-64"><span class="linenos">64</span></a>        <span class="n">barplots</span><span class="o">.</span><span class="n">create_expected_larger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span><span class="p">,</span> <span class="n">SigPlots</span><span class="o">.</span><span class="n">EXPECTED_SBS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
+</span><span id="SigPlots-64"><a href="#SigPlots-64"><span class="linenos">64</span></a>        <span class="k">if</span> <span class="n">sbs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="SigPlots-65"><a href="#SigPlots-65"><span class="linenos">65</span></a>            <span class="n">sbs</span> <span class="o">=</span> <span class="n">SigPlots</span><span class="o">.</span><span class="n">EXPECTED_SBS</span>
+</span><span id="SigPlots-66"><a href="#SigPlots-66"><span class="linenos">66</span></a>        <span class="n">barplots</span><span class="o">.</span><span class="n">create_expected_larger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span><span class="p">,</span> <span class="n">sbs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -322,13 +326,13 @@ The results are saved in the 'figures' folder within the result directory.</p>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">create_expected_plots</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+        <span class="name">create_expected_plots</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">sbs</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="SigPlots.create_expected_plots-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#SigPlots.create_expected_plots"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SigPlots.create_expected_plots-54"><a href="#SigPlots.create_expected_plots-54"><span class="linenos">54</span></a>    <span class="k">def</span> <span class="nf">create_expected_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SigPlots.create_expected_plots-54"><a href="#SigPlots.create_expected_plots-54"><span class="linenos">54</span></a>    <span class="k">def</span> <span class="nf">create_expected_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sbs</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 </span><span id="SigPlots.create_expected_plots-55"><a href="#SigPlots.create_expected_plots-55"><span class="linenos">55</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SigPlots.create_expected_plots-56"><a href="#SigPlots.create_expected_plots-56"><span class="linenos">56</span></a><span class="sd">        Create signature plots based on a list that</span>
 </span><span id="SigPlots.create_expected_plots-57"><a href="#SigPlots.create_expected_plots-57"><span class="linenos">57</span></a><span class="sd">        those SBS are having the benefit of a larger context.</span>
@@ -338,7 +342,9 @@ The results are saved in the 'figures' folder within the result directory.</p>
 </span><span id="SigPlots.create_expected_plots-61"><a href="#SigPlots.create_expected_plots-61"><span class="linenos">61</span></a><span class="sd">        &#39;EXPECTED_SBS&#39;. The results are saved in the &#39;figures&#39; folder within the</span>
 </span><span id="SigPlots.create_expected_plots-62"><a href="#SigPlots.create_expected_plots-62"><span class="linenos">62</span></a><span class="sd">        result directory.</span>
 </span><span id="SigPlots.create_expected_plots-63"><a href="#SigPlots.create_expected_plots-63"><span class="linenos">63</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SigPlots.create_expected_plots-64"><a href="#SigPlots.create_expected_plots-64"><span class="linenos">64</span></a>        <span class="n">barplots</span><span class="o">.</span><span class="n">create_expected_larger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span><span class="p">,</span> <span class="n">SigPlots</span><span class="o">.</span><span class="n">EXPECTED_SBS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
+</span><span id="SigPlots.create_expected_plots-64"><a href="#SigPlots.create_expected_plots-64"><span class="linenos">64</span></a>        <span class="k">if</span> <span class="n">sbs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="SigPlots.create_expected_plots-65"><a href="#SigPlots.create_expected_plots-65"><span class="linenos">65</span></a>            <span class="n">sbs</span> <span class="o">=</span> <span class="n">SigPlots</span><span class="o">.</span><span class="n">EXPECTED_SBS</span>
+</span><span id="SigPlots.create_expected_plots-66"><a href="#SigPlots.create_expected_plots-66"><span class="linenos">66</span></a>        <span class="n">barplots</span><span class="o">.</span><span class="n">create_expected_larger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span><span class="p">,</span> <span class="n">sbs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
 </span></pre></div>
 
 

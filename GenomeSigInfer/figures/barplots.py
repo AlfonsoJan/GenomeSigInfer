@@ -102,7 +102,7 @@ def create_expected_larger(
         for sbs in expected_larger_sbs:
             logger.log_info(f"Creating Signature plot for {sbs}")
             # Create a num_subplotsx1 grid for subplots using GridSpec
-            gs = GridSpec(1, num_subplots, height_ratios=[0.8] * num_subplots)
+            gs = GridSpec(1, num_subplots, height_ratios=[0.8], width_ratios=[0.8] * num_subplots)
             _ = plt.figure(figsize=(10, 5 * num_subplots))
             # Create for every context a plot and add it to the page
             for index, size in enumerate(df_dict.keys()):

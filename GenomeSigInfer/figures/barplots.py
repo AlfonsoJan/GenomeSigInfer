@@ -37,6 +37,7 @@ from ..utils.helpers import (
     generate_numbers,
     generate_sequence,
     custom_sort_column_names,
+    get_context_given_size,
     MUTATION_LIST,
     COLOR_DICT,
     COLOR_DICT_MUTATION,
@@ -96,17 +97,21 @@ def create_expected_larger(
     # Raise error
     if len(expected_larger_sbs) == 0:
         raise ValueError("No of the SBS are in all the dataframes")
-    plot_name = folder_path / "signatures.expected_larger.pdf"
-    num_subplots = len(df_dict)
-    with PdfPages(plot_name) as pdf:
-        for sbs in expected_larger_sbs:
+    for sbs in expected_larger_sbs:
+        plot_name = folder_path / f"{sbs}.pdf"
+        with PdfPages(plot_name) as pdf:
             logger.log_info(f"Creating Signature plot for {sbs}")
-            # Create a num_subplotsx1 grid for subplots using GridSpec
-            gs = GridSpec(1, num_subplots, height_ratios=[0.8], width_ratios=[0.8] * num_subplots)
-            _ = plt.figure(figsize=(10, 5 * num_subplots))
+            # Create a grid for subplots using GridSpec
+            gs = GridSpec(2, 2)
+            _ = plt.figure(figsize=(30, 15))
             # Create for every context a plot and add it to the page
             for index, size in enumerate(df_dict.keys()):
-                ax = plt.subplot(gs[index])
+                # Custom Subplot Creation with Matplotlib
+                if index == 0:
+                    ax = plt.subplot(gs[1, :])
+                else:
+                    ax = plt.subplot(gs[0, index - 1])
+                add_title_to_axe(ax, size)
                 data = df_dict[size]
                 if size == 96:
                     parse_96_df(data, sbs, pdf, ax)
@@ -121,6 +126,19 @@ def create_expected_larger(
             pdf.savefig(bbox_inches="tight")
             plt.close()
             logger.log_info(f"Created Signature plot for {sbs}")
+
+
+def add_title_to_axe(ax, context):
+    ax.text(
+        48,
+        0.8,
+        f"Context of: {get_context_given_size(context)}",
+        rotation=0,
+        ha="center",
+        va="center",
+        fontsize=20,
+        fontweight="bold",
+    )
 
 
 def larger_context_barplot(df_multi_context: pd.DataFrame, folder_path: Path) -> None:

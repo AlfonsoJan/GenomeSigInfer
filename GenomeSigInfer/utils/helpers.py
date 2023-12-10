@@ -362,3 +362,9 @@ class MutationalSigantures:
     CONTEXT_LIST: list[int] = list(range(MAX_CONTEXT, 2, -2))
     SIZES: list[int] = [calculate_value(i) for i in CONTEXT_LIST[::-1]]
     SIZES_CONTEXT_GROUPED: list[int, int] = list(zip(SIZES, CONTEXT_LIST[::-1]))
+
+def get_context_given_size(target_first_value):
+    for first_value, second_value in MutationalSigantures.SIZES_CONTEXT_GROUPED:
+        if first_value == target_first_value:
+            return second_value
+    return None  # Return None if the first value is not found in the list

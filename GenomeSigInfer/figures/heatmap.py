@@ -8,7 +8,6 @@ It includes methods for visualizing the best parameters, cosine similarity for d
 and Jensen Shannon Distance for different contexts.
 
 Functions:
-    - heatmap_best_param(cosine_df: pd.DataFrame, figure_folder: Path) -> str
     - heatmap_cosine(cosine_df_list: List[pd.DataFrame], figure_folder: Path) -> str
     - heatmap_jens_shan(jens_shan_df_list: List[pd.DataFrame], figure_folder: Path) -> str
 
@@ -19,42 +18,6 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
-
-def heatmap_best_param(cosine_df: pd.DataFrame, figure_folder: Path) -> str:
-    """
-    Generate a heatmap of the best parameters based on cosine similarity.
-
-    Args:
-        cosine_df (pd.DataFrame): DataFrame containing cosine similarity values.
-        figure_folder (Path): Path to the folder where the heatmap image will be saved.
-
-    Returns:
-        str: Image name of the saved heatmap.
-    """
-    # Extract data from the input DataFrame
-    data = cosine_df.values
-    values = data[:, 0].astype(float)
-    labels = data[:, 1]
-    # Create a DataFrame for visualization
-    df = pd.DataFrame({"Cosine Similarity": values}, index=labels)
-    # Generate heatmap using Seabor
-    ax = sns.heatmap(
-        df,
-        linewidth=0.5,
-        fmt="",
-        annot=values.reshape(-1, 1),
-        cmap="crest",
-        xticklabels=True,
-        yticklabels=True,
-        vmin=0,
-        vmax=1,
-    )
-    ax.set(ylabel="Parameters: (Init, Beta loss)")
-    # Save the generated heatmap as an image
-    image_name = figure_folder / "cosine.params.similarity.png"
-    plt.savefig(image_name, bbox_inches="tight", format="png", dpi=300, pad_inches=0.1)
-    return image_name
 
 
 def heatmap_cosine(cosine_df_list: list[pd.DataFrame], figure_folder: Path) -> str:

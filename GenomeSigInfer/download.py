@@ -59,7 +59,7 @@ def download_ref_genome(
     )
     # Download the tar.gz file
     url = f"https://ngs.sanger.ac.uk/scratch/project/mutographs/SigProf/{genome}.tar.gz"
-    download_tar_url(url, download_path, folder)
+    download_tar_url(url, download_path, folder, genome)
 
 
 def download_tar_url(
@@ -86,7 +86,7 @@ def download_tar_url(
         # Extract the contents of the tar.gz file
         with tarfile.open(download_path, "r:gz") as tar:
             tar.extractall(extracted_path)
-        logger.log_info(f"Finished downloading {genome} to {extracted_path}!")
+        logger.log_info(f"Finished downloading {genome} to '{extracted_path}'!")
         # Clean up by removing the downloaded tar.gz file
         os.remove(download_path)
     else:

@@ -55,12 +55,15 @@ The sbs.24576.txt file contains all of the following the pyrimidine single nucle
 
 ```python
 from GenomeSigInfer.sbs import SBSMatrixGenerator
-sbs_out = "project/SBS" # Where the SBS files will be saved to
-ref_genome = Path("project/ref_genome") # Parent folder of the Ref genome
-vcf = (Path("test/files/test.vcf"),) # Tuple of the VCF file(s)
 genome = "GRCh37" # Ref genome
+folder_ref_genome = "project/ref_genome/GRCh37" # The folder of the GRCh37 files
+folder_sbs = "project/SBS" # Folder where the SBS files will be saved to
+vcf_files = ["data/vcf/file1.vcf", "data/vcf/file2.vcf"] # List of the VCF files
 SBSMatrixGenerator.generate_sbs_matrix(
-    folder=sbs_out, ref_genome=ref_genome, vcf_files=vcf, genome=genome
+  folder_sbs,
+  vcf_files,
+  folder_ref_genome,
+  genome
 )
 ```
 
@@ -70,22 +73,27 @@ Create nmf files and deconmpose mutational signatures from NMF results. And calc
 
 ```python
 from GenomeSigInfer.nmf import NMFMatrixGenerator
-sbs_dir = "project/SBS"  # Folder where the SBS files are located
-nmf_dir = "project/NMF" # Folder where the NMF files are saved to
-sigs = 48 # Amount of mutational signatures
-cosmic = "/path/to/cosmic.file" # Cosmic file name for the results (Path Object)
-res_dir = "project/results" # Folder where results from the analysis will be saved to
-nmf_init = "nndsvda" # Put here the best init from the last step
-beta_loss = "frobenius" # Put here the best beta_loss from the last step
-NMFMatrixGenerator.generate_nmf_matrix(
-    sbs_folder=sbs_dir,
-    signatures=sigs,
-    cosmic=cosmic,
-    nmf_folder=nmf_dir,
-    nmf_init=nmf_init,
-    beta_los=beta_loss,
-    result_folder=res_dir,
+sbs_folder = "project/SBS/" # Folder where the SBS files are locate
+cosmic_path = "data/COSMIC_v3.4_SBS_GRCh37.txt" # Cosmic file name for the results
+signatures = 48 # Amount of mutational signatures
+nmf_init = "None" # init for the NMF
+beta_loss = "frobenius" # beta_loss for the NMF
+nmf_folder = "project/NMF/" # Folder where the NMF files are saved to
+result_folder = "project/results/" # Folder where results from the analysis will be saved to
+nmf_matrixgenerator = NMFMatrixGenerator.generate_nmf_matrix(
+  sbs_folder,
+  signatures,
+  cosmic_path,
+  nmf_init,
+  beta_loss,
+  nmf_folder,
+  result_folder
 )
+nmf_matrixgenerator.run_nmf_on_sbs_files()
+
+# The figure folder
+figure_folder = "../figures/"
+nmf_matrixgenerator.create_distance_figures(figure_folder)
 ```
 
 ### Create Signature Plots

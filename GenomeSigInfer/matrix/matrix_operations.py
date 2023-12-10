@@ -10,8 +10,6 @@ SBS (Single Base Substitution) matrices based on context.
 Functions:
     - compress_to_96(df: pd.DataFrame) -> pd.DataFrame:
         Compress the DataFrame to 96 rows
-    - df2csv(df: pd.DataFrame, fname: str, formats: list[str] = [], sep: str = '\t') -> None:
-        Write a DataFrame to a CSV file using a custom format.
     - compress_matrix_stepwise(project: Path, samples_df: pd.DataFrame) -> None:
         Compress the SBS data to lower context sizes.
     - compress(df: pd.DataFrame, regex_str: str) -> pd.DataFrame:
@@ -57,60 +55,19 @@ def compress_to_96(df: pd.DataFrame) -> pd.DataFrame:
     # Determine the compression steps
     steps = int(df.shape[0] / 96)
     # Initialize the compressed DataFram
-    compressed_df = pd.DataFrame()
-    compressed_df[col] = df_keys[::steps]
+    compressed_cols = {col: df_keys[::steps]}
     # Compress the remaining columns
     for col in df.columns:
-        chunks = [df[col][i : i + steps] for i in range(0, len(df[col]), steps)]
+        chunks = [df[col].iloc[i : i + steps] for i in range(0, len(df[col]), steps)]
         chunk_sums = [chunk.sum() for chunk in chunks]
-        compressed_df[col] = chunk_sums
+        compressed_cols[col] = chunk_sums
+    compressed_df = pd.DataFrame(compressed_cols)
     # Reindex the compressed DataFrame
     return (
         compressed_df.set_index("MutationType")
         .reindex(helpers.MUTATION_LIST)
         .reset_index()
     )
-
-
-def df2csv(
-    df: pd.DataFrame, fname: Path, formats: list[str] = [], sep: str = "\t"
-) -> None:
-    """
-    Write a DataFrame to a CSV file using a custom format.
-
-    Args:
-        df (pd.DataFrame): The DataFrame to be written to the CSV file.
-        fname (str): The filename for the CSV file.
-        formats (list[str]): List of format strings for each column.
-        sep (str): The separator for the CSV file.
-    """
-    # function is faster than to_csv
-    # Only for creating SBS matrices
-    if len(df.columns) <= 0:
-        return
-    Nd = len(df.columns)
-    Nd_1 = Nd
-    Nf = 0
-    formats.append("%s")
-    # Determine formats for each column if not provided
-    if Nf < Nd:
-        for ii in range(Nf, Nd, 1):
-            coltype = df[df.columns[ii]].dtype
-            ff = "%s"
-            if coltype == np.int64 or coltype == np.float64:
-                ff = "%d"
-            formats.append(ff)
-    # Write header and rows to the CSV file
-    header = list(df.columns)
-    with open(fname, "w", buffering=200000) as fh:
-        fh.write(sep.join(header) + "\n")
-        for row in df.itertuples(index=True):
-            ss = ""
-            for ii in range(1, Nd + 1, 1):
-                ss += formats[ii] % row[ii]
-                if ii < Nd_1:
-                    ss += sep
-            fh.write(ss + "\n")
 
 
 def compress_matrix_stepwise(sbs_folder: Path, samples_df: pd.DataFrame) -> None:
@@ -137,9 +94,9 @@ def compress_matrix_stepwise(sbs_folder: Path, samples_df: pd.DataFrame) -> None
             sampled_one_down = compress(
                 sampled_one_down, helpers.MutationalSigantures.SORT_REGEX[context]
             )
-        # Write the compressed SBS matrix to a CSV file
-        filename = sbs_folder / f"sbs.{sampled_one_down.shape[0]}.txt"
-        df2csv(sampled_one_down, filename, sep=",")
+        # Write the compressed SBS matrix to a parquet file
+        filename = sbs_folder / f"sbs.{sampled_one_down.shape[0]}.parquet"
+        sampled_one_down.to_parquet(filename, compression="gzip")
         logger.log_info(
             f"Written the SBS matrix with context {context} to '{filename}'"
         )
@@ -164,7 +121,7 @@ def compress(df: pd.DataFrame, regex_str: str) -> pd.DataFrame:
     # Sort the DataFrame based on the sorting key
     df = df.sort_values(sort_col)
     # Group rows based on the sorting key and sum values
-    compressed_df = df.groupby(sort_col).sum().reset_index()
+    compressed_df = df.groupby(sort_col).sum(numeric_only=True).reset_index()
     # Rename columns
     compressed_df.columns = [col] + list(compressed_df.columns[1:])
     return compressed_df

@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="GenomeSigInfer",
-    version="0.4.2",
+    version="1.0.0",
     packages=find_packages(),
     package_data={"": ["*.md"]},
     include_package_data=True,

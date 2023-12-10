@@ -28,7 +28,7 @@ import pandas as pd
 from ..utils import helpers, logging
 from ..errors import error
 from ..matrix import matrix_operations
-from ..vcf.VCFMatrixGenerator import filter_vcf_files
+from ..vcf import VCFMatrixGenerator
 
 
 def custom_chromosome_sort(value: str) -> int | float:
@@ -62,15 +62,20 @@ def generate_sbs_matrix_arg_checker(func: callable) -> callable:
     def wrapper(folder, vcf_files, ref_genome, genome):
         # Ensure folder is a Path object
         folder = Path(folder)
+        # Correct type
+        if not isinstance(vcf_files, tuple) and not isinstance(vcf_files, list):
+            raise TypeError("Input 'vcf_files' must be a tuple or a list type.")
         # Check if the file exist
-        vcf_files = tuple(
-            Path(vcf_file) for vcf_file in vcf_files if Path(vcf_file).exists
+        exist_vcf_files = tuple(
+            Path(vcf_file) for vcf_file in vcf_files if Path(vcf_file).exists()
         )
+        if len(exist_vcf_files) < 1:
+            raise FileNotFoundError(f"None of {', '.join(map(str, vcf_files))} exist!")
         # Ensure ref_genome is a Path object
         ref_genome = Path(ref_genome)
         # Check if the genome is supported
         helpers.check_supported_genome(genome)
-        return func(folder, vcf_files, ref_genome, genome)
+        return func(folder, exist_vcf_files, ref_genome, genome)
 
     return wrapper
 
@@ -98,7 +103,7 @@ def generate_sbs_matrix(
     folder.mkdir(parents=True, exist_ok=True)
     logger.log_info(f"Processing VCF files: {', '.join(map(str, vcf_files))}")
     # Filter the VCF files on chosen genome
-    filtered_vcf = filter_vcf_files(vcf_files, genome)
+    filtered_vcf = VCFMatrixGenerator.filter_vcf_files(vcf_files, genome)
     sbsmatrixgen = SBSMatrixGenerator(
         project=folder, vcf_file=filtered_vcf, genome=genome, ref_genome=ref_genome
     )

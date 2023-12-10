@@ -59,8 +59,8 @@ def generate_nmf_matrix_arg_checker(func: callable) -> callable:
         cosmic: Path,
         nmf_init: str,
         beta_los: str,
-        result_folder: Path,
         nmf_folder: Path,
+        result_folder: Path,
     ):
         """
         Ensure the validity of input arguments for the `generate_nmf_matrix` function.
@@ -73,6 +73,7 @@ def generate_nmf_matrix_arg_checker(func: callable) -> callable:
             beta_los (str): Beta loss function for NMF.
             result_folder (Path): Path to the result folder.
             nmf_folder (Path): Path to the NMF folder.
+            result_folder (Path): Path to the result folder.
 
         Raises:
             TypeError: If input types are not valid or within expected values.
@@ -80,8 +81,8 @@ def generate_nmf_matrix_arg_checker(func: callable) -> callable:
         # Ensure Path object are actually Path objects and exist
         cosmic = Path(cosmic)
         sbs_folder = Path(sbs_folder)
-        nmf_folder = Path(nmf_folder)
         result_folder = Path(result_folder)
+        nmf_folder = Path(nmf_folder)
         if not isinstance(signatures, int) or signatures < 1:
             raise TypeError("Input 'signatures' must be a positive integer.")
         # Make sure the init and betaloss are correct
@@ -97,55 +98,11 @@ def generate_nmf_matrix_arg_checker(func: callable) -> callable:
             cosmic,
             nmf_init,
             beta_los,
-            result_folder,
             nmf_folder,
+            result_folder,
         )
 
     return wrapper
-
-
-@generate_nmf_matrix_arg_checker
-def generate_nmf_matrix(
-    sbs_folder: Path,
-    signatures: int,
-    cosmic: Path,
-    nmf_init: str,
-    beta_los: str,
-    result_folder: Path,
-    nmf_folder: Path,
-):
-    """
-    Generate NMF matrix from SBS data and perform analysis.
-
-    Args:
-        sbs_folder (Path): Path to the SBS folder.
-        signatures (int): Number of signatures to extract.
-        cosmic (Path): Path to the cosmic data file.
-        nmf_init (str): Initialization method for NMF.
-        beta_los (str): Beta loss function for NMF.
-        result_folder (Path): Path to the result folder.
-        nmf_folder (Path): Path to the NMF folder.
-
-    Raises:
-        FileNotFoundError: If any of the required folders or files are not found.
-    """
-    # Read the COSMIC file
-    cosmic = (
-        pd.read_csv(cosmic, sep="\t")
-        .set_index("Type")
-        .reindex(helpers.MUTATION_LIST)
-        .reset_index()
-    )
-    nmfmatrixgen = NMFMatrixGenerator(
-        sbs_folder=sbs_folder,
-        signatures=signatures,
-        cosmic=cosmic,
-        result_folder=result_folder,
-        nmf_folder=nmf_folder,
-        init=nmf_init,
-        beta_loss=beta_los,
-    )
-    nmfmatrixgen.run_nmf_on_sbs_files()
 
 
 def sbs_read_and_extract(sbs_path: Path):
@@ -163,7 +120,7 @@ def sbs_read_and_extract(sbs_path: Path):
     # Extract the data from the SBS file
     # And return an numpy array with only the values (all_genomes)
     # And a list of the mutations
-    matrix = pd.read_csv(sbs_path, sep=",", header=0)
+    matrix = pd.read_parquet(sbs_path)
     mutations = matrix[matrix.columns[0]]
     all_genomes = np.array(matrix.iloc[:, 1:])
     return mutations, all_genomes
@@ -180,8 +137,8 @@ class NMFMatrixGenerator:
         sbs_folder: Path,
         signatures: int,
         cosmic: pd.DataFrame,
-        result_folder: Path,
         nmf_folder: Path,
+        result_folder: Path,
         init: str = "nndsvda",
         beta_loss: str = "frobenius",
     ):
@@ -192,19 +149,20 @@ class NMFMatrixGenerator:
             sbs_folder (Path): Path to the folder containing SBS data.
             signatures (int): Number of signatures to extract.
             cosmic (pd.DataFrame): Cosmic mutation data.
-            result_folder (Path): Path to the folder where result files will be stored.
             nmf_folder (Path): Path to the folder where NMF files will be stored.
             init (str): Initialization method for NMF.
             beta_loss (str): Beta loss function for NMF.
         """
         self._logger = logging.SingletonLogger()
+        # Number of signatures to extract
         self.signatures = signatures
         self.sbs_folder = sbs_folder
         self.cosmic = cosmic
-        self.result_folder = result_folder
-        self.figure_folder = result_folder / "figures"
         self.nmf_folder = nmf_folder
+        self.result_folder = result_folder
+        # NMF betaloss
         self.beta_loss = beta_loss
+        # NMF init
         self.init = init
         # The smallest context one
         self.control_df = None
@@ -219,9 +177,8 @@ class NMFMatrixGenerator:
         Create necessary result folders.
         """
         # Create the folder if it does not exist yet
-        self.result_folder.mkdir(parents=True, exist_ok=True)
         self.nmf_folder.mkdir(parents=True, exist_ok=True)
-        self.figure_folder.mkdir(parents=True, exist_ok=True)
+        self.result_folder.mkdir(parents=True, exist_ok=True)
 
     def run_nmf_on_sbs_files(self) -> None:
         """
@@ -230,21 +187,23 @@ class NMFMatrixGenerator:
         self._logger.log_info(f"Creating NMF files with {self.signatures} signatures")
         # For every file run nmf
         for index, context in enumerate(helpers.MutationalSigantures.SIZES, -1):
-            filename = self.sbs_folder / f"sbs.{context}.txt"
+            filename = self.sbs_folder / f"sbs.{context}.parquet"
             signatures_df = self._run_nmf_file(filename)
             # Process the NMF results
             self._process_results(context, signatures_df, index)
         self._logger.log_info("Creating cosine and Jensen Shannon Distance plots")
-        # Create figures
-        self._create_distance_figures()
 
-    def _create_distance_figures(self) -> None:
+    def create_distance_figures(self, figure_folder: Path) -> None:
         """
-        Create cosine and Jensen Shannon Distance figures.
+        Create cosine and Jensen Shannon Distance figures.0
+
+        Args:
+            figure_folder (Path): Location where the figure folders will be saved to.
         """
+        figure_folder = Path(figure_folder)
         # Generate heatmap figures
-        heatmap.heatmap_cosine(self.cosine_similarities, self.figure_folder)
-        heatmap.heatmap_jens_shan(self.jens_shannon_distances, self.figure_folder)
+        heatmap.heatmap_cosine(self.cosine_similarities, figure_folder)
+        heatmap.heatmap_jens_shan(self.jens_shannon_distances, figure_folder)
         # Log completion
         self._logger.log_info("Created cosine similarity plots from the NMF results")
         self._logger.log_info(
@@ -365,3 +324,46 @@ class NMFMatrixGenerator:
         # Get NMF results and save to file
         W = nmf_model.W_norm
         return W
+
+
+@generate_nmf_matrix_arg_checker
+def generate_nmf_matrix(
+    sbs_folder: Path,
+    signatures: int,
+    cosmic: Path,
+    nmf_init: str,
+    beta_los: str,
+    nmf_folder: Path,
+    result_folder: Path,
+) -> NMFMatrixGenerator:
+    """
+    Generate NMF matrix from SBS data and perform analysis.
+
+    Args:
+        sbs_folder (Path): Path to the SBS folder.
+        signatures (int): Number of signatures to extract.
+        cosmic (Path): Path to the cosmic data file.
+        nmf_init (str): Initialization method for NMF.
+        beta_los (str): Beta loss function for NMF.
+        nmf_folder (Path): Path to the NMF folder.
+        result_folder (Path): Path to the result folder.
+
+    Raises:
+        FileNotFoundError: If any of the required folders or files are not found.
+    """
+    # Read the COSMIC file
+    cosmic = (
+        pd.read_csv(cosmic, sep="\t")
+        .set_index("Type")
+        .reindex(helpers.MUTATION_LIST)
+        .reset_index()
+    )
+    return NMFMatrixGenerator(
+        sbs_folder=sbs_folder,
+        signatures=signatures,
+        cosmic=cosmic,
+        nmf_folder=nmf_folder,
+        init=nmf_init,
+        beta_loss=beta_los,
+        result_folder=result_folder,
+    )

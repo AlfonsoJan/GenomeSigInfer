@@ -186,7 +186,7 @@ MUTATION_LIST = [
     "T[T>G]T",
 ]
 
-NMF_INITS = ["random", "nndsvd", "nndsvda", "nndsvdar", "custom"]
+NMF_INITS = ["random", "nndsvd", "nndsvda", "nndsvdar", "None"]
 BETA_LOSS = ["frobenius", "kullback-leibler", "itakura-saito"]
 
 

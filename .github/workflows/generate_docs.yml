@@ -24,7 +24,7 @@ jobs:
 
     - name: Generate Docs
       run: |
-        pdoc GenomeSigInfer -o docs
+        pdoc ./GenomeSigInfer -o docs
 
     - name: Push
       uses: s0/git-publish-subdir-action@develop

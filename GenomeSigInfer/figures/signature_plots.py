@@ -21,9 +21,9 @@ class SigPlots:
 
     EXPECTED_SBS = ["SBS2", "SBS7a", "SBS10a", "SBS13", "SBS17a", "SBS17b"]
 
-    def __init__(self, nmf_folder: Path, result_folder: Path) -> None:
+    def __init__(self, nmf_folder: Path, figure_folder: Path) -> None:
         self.nmf_folder = Path(nmf_folder)
-        self.figures = result_folder / "figures"
+        self.figures = Path(figure_folder)
         self.figures.mkdir(parents=True, exist_ok=True)
         self._logger = logging.SingletonLogger()
         self._dfs = {}

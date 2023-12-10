@@ -50,7 +50,7 @@ class SigPlots:
                 self._logger.log_info("Creating siganture plots for context file: '96'")
                 barplots.create_96_barplot(df, self.figures)
 
-    def create_expected_plots(self):
+    def create_expected_plots(self, sbs: list = None):
         """
         Create signature plots based on a list that
         those SBS are having the benefit of a larger context.
@@ -60,4 +60,6 @@ class SigPlots:
         'EXPECTED_SBS'. The results are saved in the 'figures' folder within the
         result directory.
         """
-        barplots.create_expected_larger(self._dfs, SigPlots.EXPECTED_SBS, self.figures)
+        if sbs is None:
+            sbs = SigPlots.EXPECTED_SBS
+        barplots.create_expected_larger(self._dfs, sbs, self.figures)

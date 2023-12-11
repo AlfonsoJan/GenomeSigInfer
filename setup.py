@@ -17,7 +17,9 @@ setup(
     url="https://github.com/AlfonsoJan/GenomeSigInfer",
     install_requires=[
         "numpy==1.23.1",
-        "pandas==1.4.3",
+        "pandas==1.5.0",
+        "pyarrow==14.0.1",
+        "fastparquet==2023.10.1",
         "tqdm==4.66.1",
         "scikit_learn==1.3.1",
         "seaborn==0.13.0",

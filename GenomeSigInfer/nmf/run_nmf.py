@@ -100,3 +100,12 @@ class RunNMF:
         self._W (np.ndarray): NMF factorization matrix normalized between 0 and 1.
         """
         return self._W / self._W.sum(axis=0)[np.newaxis]
+
+    def __repr__(self) -> str:
+        """
+        Return a string representation of the RunNMF object.
+
+        Returns:
+            str: String representation of the object.
+        """
+        return f"RunNMF(genomes={self._genomes}, signatures={self._signatures}, init={self._init}, beta_loss={self._beta_loss})"

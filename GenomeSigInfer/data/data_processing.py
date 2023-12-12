@@ -151,3 +151,9 @@ class Preprocessing:
         results = np.round(results, 0)
         results = results.astype(int)
         return results
+
+    def __repr__(self) -> str:
+        """
+        Return a string representation of the Preprocessing class.
+        """
+        return f"Preprocessing(genomes={self._genomes.shape}, cutoff={self._cutoff})"

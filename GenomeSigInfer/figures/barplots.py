@@ -43,6 +43,8 @@ from ..utils.helpers import (
 )
 from ..utils.logging import SingletonLogger
 
+# A tuple with all the info of the dataframe
+# For the barplot
 ContextBarInfo = namedtuple(
     "ContextBarInfo",
     [
@@ -85,7 +87,7 @@ def formatted_y_labels(x: float, _: int) -> str:
     Returns:
         str: The formatted string.
     """
-    # This is for percentage
+    # Uncomment this for percentage
     # return f"{x:.0%}"
     return f"{x:.2f}"
 
@@ -115,10 +117,13 @@ def context_96_barplot(df: pd.DataFrame, figure_folder: Path) -> None:
     """
     # Sort the columns
     sorted_columns = sorted(df.columns[1:], key=custom_sort_column_names)
+    # Use PdfPages for creating a multi-page PDF file
     with PdfPages(figure_folder / "signatures.96.pdf") as pdf:
+        # Iterate over each column (mutation type) in sorted order
         for col in tqdm(sorted_columns):
-            temp_df = parse_96_df(df, col)
-            create_barplot(temp_df, col, pdf, write_sbs_title=True)
+            # Parse the DataFrame to extract 96 context data for the current column
+            df_col = parse_96_df(df, col)
+            create_barplot(df_col, col, pdf, write_sbs_title=True)
 
 
 def larger_context_barplot(df_multi_context: pd.DataFrame, folder_path: Path) -> None:
@@ -135,23 +140,27 @@ def larger_context_barplot(df_multi_context: pd.DataFrame, folder_path: Path) ->
         r"(\w\[.*\]\w)"
     )
     # Sort the columns
+    # The SBS name for consistency
     sorted_columns = sorted(
         df_multi_context.columns[1:-1], key=custom_sort_column_names
     )
+    # Use PdfPages for creating a multi-page PDF file
     with PdfPages(folder_path / f"signatures.{df_multi_context.shape[0]}.pdf") as pdf:
         for col in tqdm(sorted_columns):
-            temp_df = parse_lager_context_df(df_multi_context, col)
-            create_barplot(temp_df, col, pdf, write_sbs_title=True)
+            # Parse the DataFrame to extract larger context data for the current column
+            df_col = parse_lager_context_df(df_multi_context, col)
+            create_barplot(df_col, col, pdf, write_sbs_title=True)
 
 
 def add_title_to_axe(ax: plt.axes, context: int) -> None:
     """
-    Add title to an axes.
+    Add text with information about the context.
 
     Args:
         ax (plt.axes): Matplotlib axes.
         context: Context information.
     """
+    # Add a text label to the specified axes with information about the context
     ax.text(
         48,
         0.8,
@@ -303,20 +312,25 @@ def create_barplot(
         ax (plt.axes, optional): Matplotlib axes. Defaults to None.
         write_sbs_title (bool, optional): Whether to write the SBS title on the plot. Defaults to True.
     """
+    # If ax is not provided, create a new subplot
     ax_none = False
     if ax is None:
         ax_none = True
     if ax_none:
         _, ax = plt.subplots(figsize=(20, 10))
+    # Plot the context bar using helper functions
     info = plot_context_bar(df, col)
     add_to_plot(info, ax, df, write_sbs_title)
+    # If ax was created inside this function, save the plot to the PDF
     if ax_none:
         plt.tight_layout()
         pdf.savefig(bbox_inches="tight")
         plt.close()
 
 
-def add_to_plot(info: ContextBarInfo, ax: plt.axes, df: pd.DataFrame, write_sbs_title: bool) -> None:
+def add_to_plot(
+    info: ContextBarInfo, ax: plt.axes, df: pd.DataFrame, write_sbs_title: bool
+) -> None:
     """
     Add elements to a plot based on mutation data.
 
@@ -346,7 +360,9 @@ def add_to_plot(info: ContextBarInfo, ax: plt.axes, df: pd.DataFrame, write_sbs_
     plt.gca().yaxis.set_major_formatter(FuncFormatter(formatted_y_labels))
 
 
-def add_text_lines_to_plot(info: ContextBarInfo, ax: plt.axes, write_sbs_title: bool) -> None:
+def add_text_lines_to_plot(
+    info: ContextBarInfo, ax: plt.axes, write_sbs_title: bool
+) -> None:
     """
     Add text lines to the plot based on mutation data.
 
@@ -358,8 +374,11 @@ def add_text_lines_to_plot(info: ContextBarInfo, ax: plt.axes, write_sbs_title: 
     Returns:
         None
     """
+    # Iterate over mutation types and add text lines to the plot
     for index, (mutation_type, indices_list) in enumerate(info.groups):
+        # Calculate the text position in the middle of the indices list
         text_x = indices_list[len(indices_list) // 2]
+        # Add mutation type as text at the top of the plot
         plt.text(
             text_x,
             0.95,
@@ -370,7 +389,7 @@ def add_text_lines_to_plot(info: ContextBarInfo, ax: plt.axes, write_sbs_title: 
             fontsize=20,
             fontweight="bold",
         )
-        # BG color
+        # Add a colored background for the mutation type
         bg_color_x_min = indices_list[0] - 1 if index == 0 else indices_list[0] - 0.5
         bg_color_x_max = (
             indices_list[-1] + 1
@@ -380,10 +399,12 @@ def add_text_lines_to_plot(info: ContextBarInfo, ax: plt.axes, write_sbs_title: 
         ax.axvspan(
             bg_color_x_min, bg_color_x_max, facecolor=COLOR_BG[index], alpha=0.25
         )
-        # Add a line between each group
+        # UNCOMMENT THIS
+        # Adds a line between each group
         # idx = indices_list[-1]
         # if index < info.mutations_group_length - 1:
         #     plt.axvline(x=idx + 0.5, color="black", linestyle="-", linewidth=1)
+    # If specified, add the SBS title to the top-left corner of the plot
     if write_sbs_title:
         # SBS NAME ON THE PLOT
         plt.text(
@@ -415,6 +436,7 @@ def add_context_96_elements(info: ContextBarInfo, ax: plt.axes, df: pd.DataFrame
         value = df.iloc[x, 1]
         # Otherwise, you get a very large legend with duplicate labels
         if mutation not in added_labels:
+            # Add a bar for the mutation type with appropriate color and label
             ax.bar(
                 x=x,
                 height=value,
@@ -423,12 +445,16 @@ def add_context_96_elements(info: ContextBarInfo, ax: plt.axes, df: pd.DataFrame
                 label=mutation,
                 color=color,
             )
+            # Add the mutation type label to the set of added labels
             added_labels.add(mutation)
         else:
+            # If the label is already added, add a bar without a label
             ax.bar(x=x, height=value, width=info.w, bottom=bottom, color=color)
 
 
-def add_larger_context_elements(info: ContextBarInfo, ax: plt.axes, df: pd.DataFrame) -> None:
+def add_larger_context_elements(
+    info: ContextBarInfo, ax: plt.axes, df: pd.DataFrame
+) -> None:
     """
     Add elements to the plot for larger context.
 
@@ -439,17 +465,21 @@ def add_larger_context_elements(info: ContextBarInfo, ax: plt.axes, df: pd.DataF
     """
     # Set to track added labels
     added_labels = set()
+    # Create a dictionary to organize the data by mutation type and variable
     data = {
         f"{name}{variable}": group
         for (name, variable), group in df.groupby(["name", "variable"])
     }
+    # Iterate over positions (x) and names
     for x, name in zip(info.x1, info.names):
         bottom = 0
+        # Iterate over nucleotides (variables)
         for nucleotide in info.variable:
             height = data[f"{name}{nucleotide}"].value.to_numpy()
             color = COLOR_DICT[nucleotide]
             # Otherwise, you get a very large legend with duplicate labels
             if nucleotide not in added_labels:
+                # Add a bar for the nucleotide with appropriate color and label
                 ax.bar(
                     x=x,
                     height=height,
@@ -458,8 +488,10 @@ def add_larger_context_elements(info: ContextBarInfo, ax: plt.axes, df: pd.DataF
                     color=color,
                     label=nucleotide,
                 )
+                # Add the nucleotide label to the set of added labels
                 added_labels.add(nucleotide)
             else:
+                # If the label is already added, add a bar without a label
                 ax.bar(x=x, height=height, width=info.w, bottom=bottom, color=color)
             bottom += height
 
@@ -476,6 +508,7 @@ def plot_context_bar(df: pd.DataFrame, col: str) -> None:
         ContextBarInfo: Information about the context.
     """
     if df.shape[0] == 96:
+        # For 96 context, each mutation type has its own bar
         # Get the title and the labels
         title = col
         labels = df.MutationType.unique()
@@ -487,6 +520,7 @@ def plot_context_bar(df: pd.DataFrame, col: str) -> None:
         groups = df.groupby("mutation").groups.items()
         mutations_group_length = len(groups)
     else:
+        # For larger context, mutations are grouped and represented in stacked bars
         # Get the title and the labels
         title = df["sbs"].unique()[0]
         labels = df["context"].drop_duplicates()
@@ -497,8 +531,10 @@ def plot_context_bar(df: pd.DataFrame, col: str) -> None:
         # These are for the position for the plots
         # The indices of every small bar for the extra context
         if stacks == 2:
+            # For two mutations in a larger context, create two side-by-side bars
             x1 = [x0 - w / stacks, x0 + w / stacks]
         elif stacks == 4:
+            # For four mutations, create four bars forming a stacked bar
             w = 0.2
             x1 = [
                 x0 - w * 4 / stacks - w / 2,
@@ -507,13 +543,16 @@ def plot_context_bar(df: pd.DataFrame, col: str) -> None:
                 x0 + w * 4 / stacks + w / 2,
             ]
         variable = df.variable.unique()
+        # Split indices into sublists for each mutation type in the larger context
         sublist_length = len(x0) // 6
         indices = [
             x0[i : i + sublist_length] for i in range(0, len(x0), sublist_length)
         ]
+        # Extract unique mutation types from the larger context
         mutation_types = df["context"].str.extract(r"\[(.*?)\]")[0].unique()
         groups = zip(mutation_types, indices)
         mutations_group_length = len(mutation_types)
+    # Return the information about the context
     return ContextBarInfo(
         title,
         labels,

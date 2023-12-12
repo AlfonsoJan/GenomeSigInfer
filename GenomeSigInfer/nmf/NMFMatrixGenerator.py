@@ -24,7 +24,7 @@ Methods:
 * _create_distance_figures(): Create cosine and Jensen Shannon Distance figures.
 * _process_results(size: int, signatures_df: pd.DataFrame, index: int): Analyze the NMF results.
 * _run_nmf_file(filename: Path) -> pd.DataFrame: Run NMF on a single SBS file.
-* write_df_file(df: pd.DataFrame, name: Path, sep: str = "\t") -> None: Write a DataFrame to a file.
+* write_df_file(df: pd.DataFrame, name: Path, sep: str = '\t') -> None: Write a DataFrame to a file.
 * _run_nmf(preprocessed: data_processing.Preprocessing, context: int) -> np.ndarray: Run NMF on preprocessed data.
 
 Author: J.A. Busker
@@ -100,6 +100,7 @@ def generate_nmf_matrix_arg_checker(func: callable) -> callable:
             nmf_folder,
             result_folder,
         )
+
     return wrapper
 
 
@@ -322,6 +323,22 @@ class NMFMatrixGenerator:
         # Get NMF results and save to file
         W = nmf_model.W_norm
         return W
+
+    def __repr__(self) -> str:
+        """
+        Return a string representation of the NMFMatrixGenerator object.
+
+        Returns:
+            str: String representation of the object.
+        """
+        return (
+            f"NMFMatrixGenerator(sbs_folder={self.sbs_folder}, "
+            f"signatures={self.signatures}, cosmic={self.cosmic}, "
+            f"nmf_folder={self.nmf_folder}, "
+            f"result_folder={self.result_folder}, "
+            f"init={self.init}, "
+            f"beta_loss={self.beta_loss})"
+        )
 
 
 @generate_nmf_matrix_arg_checker

@@ -5,32 +5,25 @@ It includes color dictionaries for mutations, decoding reference genomes, sortin
 and classes for storing parameters used in multiple scripts.
 
 Attributes:
-    - COLOR_DICT_MUTATION: Dictionary mapping mutation types to colors.
-    - COLOR_DICT: Dictionary mapping genomic elements to colors.
-    - TSB_REF: Dictionary for decoding reference genomes files.
-    - MUTATION_TYPES: Array of mutation types in random order.
-    - MUTATION_LIST: List of mutation types in a specific order.
-    - NMF_INITS: List of supported NMF initialization methods.
-    - BETA_LOSS: List of supported beta loss methods for NMF.
-    - MutationalSignatures: Class for storing parameters for genomic analysis.
+* COLOR_BG: Color list for the background
+* COLOR_DICT_MUTATION: Dictionary mapping mutation types to colors.
+* COLOR_DICT: Dictionary mapping genomic elements to colors.
+* TSB_REF: Dictionary for decoding reference genomes files.
+* MUTATION_TYPES: Array of mutation types in random order.
+* MUTATION_LIST: List of mutation types in a specific order.
+* NMF_INITS: List of supported NMF initialization methods.
+* BETA_LOSS: List of supported beta loss methods for NMF.
+* MutationalSignatures: Class for storing parameters for genomic analysis.
 
 Functions:
-    - custom_sort_column_names(column_name: str) -> tuple:
-        Custom sorting function for column names.
-    - generate_sequence(n: int) -> list[int]:
-        Generates a list of context indices for barplots.
-    - generate_numbers(n: int) -> list[int]:
-        Generates a list of extra context indices based on context number.
-    - alphabet_list(amount: int, genome: str) -> list[str]:
-        Generates a list of column labels with a specified prefix.
-    - create_signatures_df(W: np.ndarray, signatures: int) -> pd.DataFrame:
-        Creates a DataFrame from NMF results.
-    - must_be_int(func: callable) -> callable:
-        Decorator to ensure input is an integer.
-    - calculate_value(number: int) -> int:
-        Calculates a value based on an iterative formula.
-    - check_supported_genome(genome: str) -> None:
-        Checks if the provided genome is supported.
+* custom_sort_column_names(column_name: str) -> tuple: Custom sorting function for column names.
+* generate_sequence(n: int) -> list[int]: Generates a list of context indices for barplots.
+* generate_numbers(n: int) -> list[int]: Generates a list of extra context indices based on context number.
+* alphabet_list(amount: int, genome: str) -> list[str]: Generates a list of column labels with a specified prefix.
+* create_signatures_df(W: np.ndarray, signatures: int) -> pd.DataFrame: Creates a DataFrame from NMF results.
+* must_be_int(func: callable) -> callable: Decorator to ensure input is an integer.
+* calculate_value(number: int) -> int: Calculates a value based on an iterative formula.
+* check_supported_genome(genome: str) -> None: Checks if the provided genome is supported.
 
 Author: J.A. Busker
 """
@@ -40,6 +33,9 @@ import string
 import pandas as pd
 import numpy as np
 from ..errors import error
+
+# Color list for the bg
+COLOR_BG = ["#FF7F50", "#00FFFF", "#C5B4E3", "#FFFF00", "#008000", "#808080"]
 
 # Color dict for the mutations
 COLOR_DICT_MUTATION = {
@@ -195,10 +191,10 @@ def custom_sort_column_names(column_name: str) -> tuple:
     Custom sorting function for column names.
 
     Parameters:
-    - column_name (str): The column name to be sorted.
+* column_name (str): The column name to be sorted.
 
     Returns:
-    - tuple: A tuple used for sorting, containing (numeric_part, prefix, suffix).
+* tuple: A tuple used for sorting, containing (numeric_part, prefix, suffix).
     """
     match = re.match(r"(\D+)(\d+)(\D*)", column_name)
     if match:
@@ -363,7 +359,17 @@ class MutationalSigantures:
     SIZES: list[int] = [calculate_value(i) for i in CONTEXT_LIST[::-1]]
     SIZES_CONTEXT_GROUPED: list[int, int] = list(zip(SIZES, CONTEXT_LIST[::-1]))
 
-def get_context_given_size(target_first_value):
+
+def get_context_given_size(target_first_value: int) -> tuple[None, int]:
+    """
+    Get the corresponding context size for a given target first value.
+
+    Args:
+        target_first_value (int): The target first value for which to find the context size.
+
+    Returns:
+        Optional[int]: The corresponding context size if found, or None if not found.
+    """
     for first_value, second_value in MutationalSigantures.SIZES_CONTEXT_GROUPED:
         if first_value == target_first_value:
             return second_value

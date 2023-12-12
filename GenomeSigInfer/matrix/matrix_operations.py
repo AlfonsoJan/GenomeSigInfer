@@ -1,23 +1,14 @@
 #!/usr/bin/env python3
 """
-This module provides functions for processing mutational data
-from VCF files and creating mutational signatures.
-It includes functionality for sorting chromosomes,
-initializing mutation DataFrames, parsing VCF files,
-compressing dataframes, and creating
-SBS (Single Base Substitution) matrices based on context.
+This module provides functions for processing mutational data from VCF files and creating mutational signatures.
+It includes functionality for sorting chromosomes, initializing mutation DataFrames, parsing VCF files, compressing dataframes, and creating SBS (Single Base Substitution) matrices based on context.
 
 Functions:
-    - compress_to_96(df: pd.DataFrame) -> pd.DataFrame:
-        Compress the DataFrame to 96 rows
-    - compress_matrix_stepwise(project: Path, samples_df: pd.DataFrame) -> None:
-        Compress the SBS data to lower context sizes.
-    - compress(df: pd.DataFrame, regex_str: str) -> pd.DataFrame:
-        Compress the dataframe down by grouping rows based on the regular pattern.
-    - create_mutation_samples_df(filtered_vcf: pd.DataFrame) -> pd.DataFrame:
-        Initialize the samples mutation DataFrame.
-    - increase_mutations(context: int) -> list[str]:
-        Increases mutations in a given column based on a specified context.
+* compress_to_96(df: pd.DataFrame) -> pd.DataFrame: Compress the DataFrame to 96 rows
+* compress_matrix_stepwise(project: Path, samples_df: pd.DataFrame) -> None: Compress the SBS data to lower context sizes.
+* compress(df: pd.DataFrame, regex_str: str) -> pd.DataFrame: Compress the dataframe down by grouping rows based on the regular pattern.
+* create_mutation_samples_df(filtered_vcf: pd.DataFrame) -> pd.DataFrame: Initialize the samples mutation DataFrame.
+* increase_mutations(context: int) -> list[str]: Increases mutations in a given column based on a specified context.
 
 Author: J.A. Busker
 """

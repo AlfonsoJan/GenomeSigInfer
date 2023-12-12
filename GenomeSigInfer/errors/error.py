@@ -5,8 +5,8 @@ Custom Exceptions Module
 This module defines custom exceptions to handle specific errors in the project.
 
 Classes:
-    - RefGenomeNotCorrectError(Exception): Exception raised when chromosome file is not found.
-    - RefGenomeNotSUpported(Exception): Exception raised when ref genome is not supported.
+* RefGenomeNotCorrectError(Exception): Exception raised when chromosome file is not found.
+* RefGenomeNotSUpported(Exception): Exception raised when ref genome is not supported.
 
 Author: J.A. Busker
 """

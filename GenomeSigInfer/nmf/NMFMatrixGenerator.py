@@ -2,31 +2,30 @@
 """
 NMFMatrixGenerator Module
 
-This module defines the NMFMatrixGenerator class, responsible for generating NMF matrices
-from Single Base Substitution (SBS) data. It utilizes the RunNMF class for the NMF process.
+This module defines the NMFMatrixGenerator class, responsible for generating NMF matrices from Single Base Substitution (SBS) data. It utilizes the RunNMF class for the NMF process.
 
 Attributes:
-    sbs_folder (Path): Path to the folder containing SBS data.
-    signatures (int): Number of signatures to extract.
-    cosmic (pd.DataFrame): Cosmic mutation data.
-    result_folder (Path): Path to the folder where result files will be stored.
-    figure_folder (Path): Path to the folder where figure files will be stored.
-    nmf_folder (Path): Path to the folder where NMF files will be stored.
-    init (str): Initialization method for NMF.
-    beta_loss (str): Beta loss function for NMF.
-    control_df (pd.DataFrame): Dataframe for the smallest context file.
-    cosine_similarities (list): List to store cosine similarity data.
-    jens_shannon_distances (list): List to store Jensen Shannon Distance data.
+* sbs_folder (Path): Path to the folder containing SBS data.
+* signatures (int): Number of signatures to extract.
+* cosmic (pd.DataFrame): Cosmic mutation data.
+* result_folder (Path): Path to the folder where result files will be stored.
+* figure_folder (Path): Path to the folder where figure files will be stored.
+* nmf_folder (Path): Path to the folder where NMF files will be stored.
+* init (str): Initialization method for NMF.
+* beta_loss (str): Beta loss function for NMF.
+* control_df (pd.DataFrame): Dataframe for the smallest context file.
+* cosine_similarities (list): List to store cosine similarity data.
+* jens_shannon_distances (list): List to store Jensen Shannon Distance data.
 
 Methods:
-    run_nmf_on_sbs_files(): Perform the NMF process on all SBS files.
-    sbs_read_and_extract(sbs_path: Path): Read data from an SBS file.
-    _prepare_folders(): Create necessary result folders.
-    _create_distance_figures(): Create cosine and Jensen Shannon Distance figures.
-    _process_results(size: int, signatures_df: pd.DataFrame, index: int): Analyze the NMF results.
-    _run_nmf_file(filename: Path) -> pd.DataFrame: Run NMF on a single SBS file.
-    write_df_file(df: pd.DataFrame, name: Path, sep: str = "\t") -> None: Write a DataFrame to a file.
-    _run_nmf(preprocessed: data_processing.Preprocessing, context: int) -> np.ndarray: Run NMF on preprocessed data.
+* run_nmf_on_sbs_files(): Perform the NMF process on all SBS files.
+* sbs_read_and_extract(sbs_path: Path): Read data from an SBS file.
+* _prepare_folders(): Create necessary result folders.
+* _create_distance_figures(): Create cosine and Jensen Shannon Distance figures.
+* _process_results(size: int, signatures_df: pd.DataFrame, index: int): Analyze the NMF results.
+* _run_nmf_file(filename: Path) -> pd.DataFrame: Run NMF on a single SBS file.
+* write_df_file(df: pd.DataFrame, name: Path, sep: str = "\t") -> None: Write a DataFrame to a file.
+* _run_nmf(preprocessed: data_processing.Preprocessing, context: int) -> np.ndarray: Run NMF on preprocessed data.
 
 Author: J.A. Busker
 """
@@ -101,11 +100,10 @@ def generate_nmf_matrix_arg_checker(func: callable) -> callable:
             nmf_folder,
             result_folder,
         )
-
     return wrapper
 
 
-def sbs_read_and_extract(sbs_path: Path):
+def sbs_read_and_extract(sbs_path: Path) -> tuple[pd.DataFrame, np.ndarray]:
     """
     Read data from an SBS file.
 
@@ -141,7 +139,7 @@ class NMFMatrixGenerator:
         result_folder: Path,
         init: str = "nndsvda",
         beta_loss: str = "frobenius",
-    ):
+    ) -> None:
         """
         Initialize the NMFMatrixGenerator.
 
@@ -261,7 +259,7 @@ class NMFMatrixGenerator:
             self.write_df_file(result_jens_df, jens_filename)
             self.write_df_file(decomposed_df, decompose_filename)
 
-    def _run_nmf_file(self, filename):
+    def _run_nmf_file(self, filename: Path) -> pd.DataFrame:
         """
         Run NMF on a single SBS file.
 

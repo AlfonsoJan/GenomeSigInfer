@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 """"
-This module contains functions that calculates the most similar column
-based on cosine similarity for a given DataFrame containing signature data.
+This module contains functions that calculates the most similar column based on cosine similarity for a given DataFrame containing signature data.
 
 Functions:
-    - cosine_nmf_w(optimal_columns: dict, df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
-        Calculate the cosine similarity on the most optimal columns on (decompressed) nmf result.
+* cosine_nmf_w(optimal_columns: dict, df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame: Calculate the cosine similarity on the most optimal columns on (decompressed) nmf result.
 
 Author: J.A. Busker
 """

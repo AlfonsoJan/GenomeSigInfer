@@ -2,8 +2,7 @@
 """
 This module provides a singleton logger class for consistent logging configuration.
 
-The SingletonLogger class ensures that only one instance of the logger is created,
-providing a consistent logging configuration throughout the application.
+The SingletonLogger class ensures that only one instance of the logger is created, providing a consistent logging configuration throughout the application.
 
 Usage:
     logger = SingletonLogger()

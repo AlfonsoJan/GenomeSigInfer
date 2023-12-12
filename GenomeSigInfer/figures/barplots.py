@@ -1,30 +1,28 @@
 #!/usr/bin/env python3
 """
-This module provides functions for generating and visualizing mutation data
-related to larger context and 96 context mutations. It includes methods to
-create bar plots for different mutation contexts and save them in PDF files.
+This module provides functions for generating and visualizing mutation data related to larger context and 96 context mutations.
+It includes methods to create bar plots for different mutation contexts and save them in PDF files.
 
 Functions:
-    - format_xlabels(x_labels: list) -> list:
-        Format the x labels for the plots. To go from A[C>A]A to ACA.
-    - percentage_formatter(x: float, pos: int) -> str:
-        Format a numeric value as a percentage.
-    - create_expected_larger(df_dict: pd.DataFrame, expected_larger_sbs: list, folder_path: Path):
-        Create a page with all three plots (parse_96_df, create_increased_context_barplot)
-        for every SBS in expected_larger_sbs for every DataFrame in df_dict.
-    - larger_context_barplot(df_multi_contexct: pd.DataFrame, folder_path: Path) -> None:
-        Generate barplots for larger context mutations and save them in a PDF file.
-    - create_96_barplot(df: pd.DataFrame, figure_folder: Path) -> None:
-        Generate bar plots for 96 context mutations and save them in a PDF file.
-    - create_increased_context_barplot(df: pd.DataFrame, pdf: PdfPages) -> None:
-        Create a bar plot for increased context mutations and save it in a PDF file.
-    - parse_lager_context_df(df: pd.DataFrame, col: str) -> pd.DataFrame:
-        Parse the DataFrame to extract larger context mutation data.
-    - parse_96_df(df: pd.DataFrame, col: str, pdf: PdfPages) -> None:
-        Parse the DataFrame to extract 96 context mutation data and create a bar plot.
+* format_xlabels(x_labels: list) -> list: Format x labels for the plots.
+* formatted_y_labels(x: float, _: int) -> str: Format numeric values for the y labels.
+* signature_pdf_plot(df: pd.DataFrame, figure_folder: Path) -> None: Generate signature plots based on mutation data.
+* context_96_barplot(df: pd.DataFrame, figure_folder: Path) -> None: Generate bar plots for 96 context mutations and save them in a PDF file.
+* larger_context_barplot(df_multi_context: pd.DataFrame, folder_path: Path) -> None: Generate bar plots for larger context mutations and save them in a PDF file.
+* add_title_to_axe(ax: plt.axes, context: int) -> None: Add title to an axes.
+* create_expected_larger(df_dict: pd.DataFrame, expected_larger_sbs: list, folder_path: Path): Create a page with all three plots for every SBS and every DataFrame.
+* parse_lager_context_df(df: pd.DataFrame, col: str) -> pd.DataFrame: Parse the DataFrame to extract larger context mutation data.
+* parse_96_df(df: pd.DataFrame, col: str) -> pd.DataFrame: Parse the DataFrame to extract 96 context.
+* create_barplot(df, col: str, pdf: PdfPages, ax: plt.axes = None, write_sbs_title: bool = True): Create a bar plot based on mutation data and save it to a PDF file.
+* add_to_plot(info, ax, df, write_sbs_title): Add elements to a plot based on mutation data.
+* add_text_lines_to_plot(info, ax, write_sbs_title): Add text lines to a plot based on mutation data.
+* add_context_96_elements(info, ax, df): Add elements to the plot for context 96.
+* add_larger_context_elements(info, ax, df): Add elements to the plot for larger context.
+* plot_context_bar(df, col): Plot a bar for the given mutation data and column.
 
 Author: J.A. Busker
 """
+from collections import namedtuple
 from pathlib import Path
 from tqdm import tqdm
 import pandas as pd
@@ -38,11 +36,28 @@ from ..utils.helpers import (
     generate_sequence,
     custom_sort_column_names,
     get_context_given_size,
+    COLOR_BG,
     MUTATION_LIST,
     COLOR_DICT,
     COLOR_DICT_MUTATION,
 )
 from ..utils.logging import SingletonLogger
+
+ContextBarInfo = namedtuple(
+    "ContextBarInfo",
+    [
+        "title",
+        "labels",
+        "x0",
+        "x1",
+        "names",
+        "variable",
+        "w",
+        "context",
+        "groups",
+        "mutations_group_length",
+    ],
+)
 
 
 def format_xlabels(x_labels: list) -> list:
@@ -59,18 +74,94 @@ def format_xlabels(x_labels: list) -> list:
     return [f"{label[0]}{label[2]}{label[-1]}" for label in x_labels]
 
 
-def percentage_formatter(x: float, pos: int) -> str:
+def formatted_y_labels(x: float, _: int) -> str:
     """
-    Format a numeric value as a percentage.
+    Format a numeric value for the y labels.
 
     Args:
         x (float): The numeric value to be formatted.
-        pos (int): The tick position (unused in this function).
+        _ (int): The tick position (unused in this function).
 
     Returns:
-        str: The formatted percentage string.
+        str: The formatted string.
     """
-    return f"{x:.0%}"
+    # This is for percentage
+    # return f"{x:.0%}"
+    return f"{x:.2f}"
+
+
+def signature_pdf_plot(df: pd.DataFrame, figure_folder: Path) -> None:
+    """
+    Generate signature plots based on mutation data.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing mutation data.
+        figure_folder (Path): Path to the folder where the PDF file will be saved.
+    """
+    context = df.shape[0]
+    if context == 96:
+        context_96_barplot(df, figure_folder)
+    else:
+        larger_context_barplot(df, figure_folder)
+
+
+def context_96_barplot(df: pd.DataFrame, figure_folder: Path) -> None:
+    """
+    Generate bar plots for 96 context mutations and save them in a PDF file.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing mutation data.
+        figure_folder (Path): Path to the folder where the PDF file will be saved.
+    """
+    # Sort the columns
+    sorted_columns = sorted(df.columns[1:], key=custom_sort_column_names)
+    with PdfPages(figure_folder / "signatures.96.pdf") as pdf:
+        for col in tqdm(sorted_columns):
+            temp_df = parse_96_df(df, col)
+            create_barplot(temp_df, col, pdf, write_sbs_title=True)
+
+
+def larger_context_barplot(df_multi_context: pd.DataFrame, folder_path: Path) -> None:
+    """
+    Generate bar plots for larger context mutations and save them in a PDF file.
+
+    Args:
+        df_multi_context (pd.DataFrame): DataFrame containing mutation data.
+        folder_path (Path): Path to the folder where the PDF file will be saved.
+    """
+    # Ectract the smallest context of the mutation
+    # eg: smalles context of AAG[C>A]TGA is G[C>A]T
+    df_multi_context["context"] = df_multi_context["MutationType"].str.extract(
+        r"(\w\[.*\]\w)"
+    )
+    # Sort the columns
+    sorted_columns = sorted(
+        df_multi_context.columns[1:-1], key=custom_sort_column_names
+    )
+    with PdfPages(folder_path / f"signatures.{df_multi_context.shape[0]}.pdf") as pdf:
+        for col in tqdm(sorted_columns):
+            temp_df = parse_lager_context_df(df_multi_context, col)
+            create_barplot(temp_df, col, pdf, write_sbs_title=True)
+
+
+def add_title_to_axe(ax: plt.axes, context: int) -> None:
+    """
+    Add title to an axes.
+
+    Args:
+        ax (plt.axes): Matplotlib axes.
+        context: Context information.
+    """
+    ax.text(
+        48,
+        0.8,
+        f"Context of: {get_context_given_size(context)}",
+        rotation=0,
+        ha="center",
+        va="center",
+        fontsize=20,
+        fontweight="bold",
+    )
 
 
 def create_expected_larger(
@@ -102,8 +193,8 @@ def create_expected_larger(
         with PdfPages(plot_name) as pdf:
             logger.log_info(f"Creating Signature plot for {sbs}")
             # Create a grid for subplots using GridSpec
-            gs = GridSpec(2, 2)
-            _ = plt.figure(figsize=(30, 15))
+            gs = GridSpec(2, 2, height_ratios=[0.8, 0.8])
+            _ = plt.figure(figsize=(30, 20))
             # Create for every context a plot and add it to the page
             for index, size in enumerate(df_dict.keys()):
                 # Custom Subplot Creation with Matplotlib
@@ -114,69 +205,19 @@ def create_expected_larger(
                 add_title_to_axe(ax, size)
                 data = df_dict[size]
                 if size == 96:
-                    parse_96_df(data, sbs, pdf, ax)
+                    df = parse_96_df(data, sbs)
+                    create_barplot(df, sbs, pdf, ax=ax, write_sbs_title=False)
                 else:
                     # Ectract the smallest context of the mutation
                     # eg: smalles context of AAG[C>A]TGA is G[C>A]T
                     data["context"] = data["MutationType"].str.extract(r"(\w\[.*\]\w)")
-                    result_df = parse_lager_context_df(data, sbs)
-                    create_increased_context_barplot(result_df, pdf, ax)
+                    df = parse_lager_context_df(data, sbs)
+                    create_barplot(df, sbs, pdf, ax=ax, write_sbs_title=False)
             # Save the plots to the PDF page
             plt.tight_layout()
             pdf.savefig(bbox_inches="tight")
             plt.close()
             logger.log_info(f"Created Signature plot for {sbs}")
-
-
-def add_title_to_axe(ax, context):
-    ax.text(
-        48,
-        0.8,
-        f"Context of: {get_context_given_size(context)}",
-        rotation=0,
-        ha="center",
-        va="center",
-        fontsize=20,
-        fontweight="bold",
-    )
-
-
-def larger_context_barplot(df_multi_context: pd.DataFrame, folder_path: Path) -> None:
-    """
-    Generate bar plots for larger context mutations and save them in a PDF file.
-
-    Args:
-        df_multi_context (pd.DataFrame): DataFrame containing mutation data.
-        folder_path (Path): Path to the folder where the PDF file will be saved.
-    """
-    # Ectract the smallest context of the mutation
-    # eg: smalles context of AAG[C>A]TGA is G[C>A]T
-    df_multi_context["context"] = df_multi_context["MutationType"].str.extract(
-        r"(\w\[.*\]\w)"
-    )
-    # Sort the columns
-    sorted_columns = sorted(
-        df_multi_context.columns[1:-1], key=custom_sort_column_names
-    )
-    with PdfPages(folder_path / f"signatures.{df_multi_context.shape[0]}.pdf") as pdf:
-        for col in tqdm(sorted_columns):
-            result_df = parse_lager_context_df(df_multi_context, col)
-            create_increased_context_barplot(result_df, pdf)
-
-
-def create_96_barplot(df: pd.DataFrame, figure_folder: Path) -> None:
-    """
-    Generate bar plots for 96 context mutations and save them in a PDF file.
-
-    Args:
-        df (pd.DataFrame): DataFrame containing mutation data.
-        figure_folder (Path): Path to the folder where the PDF file will be saved.
-    """
-    # Sort the columns
-    sorted_columns = sorted(df.columns[1:], key=custom_sort_column_names)
-    with PdfPages(figure_folder / "signatures.96.pdf") as pdf:
-        for col in tqdm(sorted_columns):
-            parse_96_df(df, col, pdf)
 
 
 def parse_lager_context_df(df: pd.DataFrame, col: str) -> pd.DataFrame:
@@ -232,157 +273,97 @@ def parse_lager_context_df(df: pd.DataFrame, col: str) -> pd.DataFrame:
     return result_df
 
 
-def create_increased_context_barplot(
-    df: pd.DataFrame, pdf: PdfPages, ax: plt.axes = None
-) -> None:
+def parse_96_df(df: pd.DataFrame, col: str) -> pd.DataFrame:
     """
-    Create a bar plot for increased context mutations and save it in a PDF file.
-
-    Args:
-        df (pd.DataFrame): DataFrame containing mutation data.
-        pdf: PdfPages object for saving the plot.
-    """
-    # If axe is not none than this plots if one of many on a page
-    ax_none = False
-    if ax is None:
-        ax_none = True
-    if ax_none:
-        _, ax = plt.subplots(figsize=(20, 10))
-    # Get the title and the labels
-    title = df["sbs"].unique()[0]
-    labels = df["context"].drop_duplicates()
-    x0 = np.arange(len(labels))
-    data = {
-        f"{name}{variable}": group
-        for (name, variable), group in df.groupby(["name", "variable"])
-    }
-    names = df.name.unique()
-    stacks = len(names)
-    variable = df.variable.unique()
-    x1 = []
-    # These are for the position for the plots
-    # The indices of every small bar for the extra context
-    w = 0.45
-    if stacks == 2:
-        x1 = [x0 - w / stacks, x0 + w / stacks]
-    elif stacks == 4:
-        w = 0.2
-        x1 = [
-            x0 - w * 4 / stacks - w / 2,
-            x0 - w * 2 / stacks,
-            x0 + w * 2 / stacks,
-            x0 + w * 4 / stacks + w / 2,
-        ]
-    added_labels = set()
-    # Add for every context a bar
-    for x, name in zip(x1, names):
-        bottom = 0
-        for var in variable:
-            height = data[f"{name}{var}"].value.to_numpy()
-            color = COLOR_DICT[var]
-            # Otherwise you get a very large legend
-            # With duplicate labels
-            if var not in added_labels:
-                ax.bar(
-                    x=x, height=height, width=w, bottom=bottom, color=color, label=var
-                )
-                added_labels.add(var)
-            else:
-                ax.bar(x=x, height=height, width=w, bottom=bottom, color=color)
-            bottom += height
-    sublist_length = len(x0) // 6
-    indices = [x0[i : i + sublist_length] for i in range(0, len(x0), sublist_length)]
-    mutation_types = df["context"].str.extract(r"\[(.*?)\]")[0].unique()
-    # Add the mutations add the top of each group
-    # eg: C>A
-    for i, (mutation_type, indices_list) in enumerate(zip(mutation_types, indices)):
-        idx = indices_list[-1]
-        text_x = indices_list[len(indices_list) // 2]
-        plt.text(
-            text_x,
-            1.05,
-            mutation_type,
-            rotation=0,
-            ha="center",
-            va="center",
-            fontsize=20,
-            fontweight="bold",
-        )
-        # Add a line between each group
-        if i < len(mutation_types) - 1:
-            plt.axvline(x=idx + 0.5, color="black", linestyle="-", linewidth=2)
-    # SBS NAME ON THE PLOT
-    plt.text(
-        -0.05,
-        0.99,
-        title,
-        rotation=0,
-        ha="left",
-        va="top",
-        fontsize=24,
-        fontweight="heavy",
-    )
-    # Formatted x labels
-    x_labels_ticks = format_xlabels(labels)
-    ax.set_xticks(x0)
-    ax.set_xticklabels(x_labels_ticks, rotation=90, ha="center", fontfamily="monospace")
-    ax.legend()
-    ax.set_xlabel("Context", weight="bold")
-    ax.set_ylabel("Percentage OF Single Base Substitution", weight="bold")
-    plt.xlim(-1, len(labels))
-    # Format the ylabels to percentages
-    plt.gca().yaxis.set_major_formatter(FuncFormatter(percentage_formatter))
-    plt.ylim(0, 1)
-    if ax_none:
-        plt.tight_layout()
-        pdf.savefig(bbox_inches="tight")
-        plt.close()
-
-
-def parse_96_df(df: pd.DataFrame, col: str, pdf: PdfPages, ax: plt.axes = None) -> None:
-    """
-    Parse the DataFrame to extract 96 context mutation data and create a bar plot.
+    Parse the DataFrame to extract 96 context.
 
     Args:
         df (pd.DataFrame): DataFrame containing mutation data.
         col (str): Name of the column to parse.
-        pdf: PdfPages object for saving the plot.
+
+    Returns:
+        pd.DataFrame: Resulting DataFrame with parsed 96 context data.
     """
-    # If axe is not none than this plots if one of many on a page
+    mut_col = "MutationType"
+    temp_df = pd.DataFrame({mut_col: df.iloc[:, 0], col: df[col]})
+    temp_df["mutation"] = temp_df[mut_col].str.extract(r"\[(.*?)\]")
+    return temp_df
+
+
+def create_barplot(
+    df, col: str, pdf: PdfPages, ax: plt.axes = None, write_sbs_title: bool = True
+) -> None:
+    """
+    Create a bar plot based on mutation data and save it to a PDF file.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing mutation data.
+        col (str): Name of the column to plot.
+        pdf (PdfPages): PDF file to save the plot.
+        ax (plt.axes, optional): Matplotlib axes. Defaults to None.
+        write_sbs_title (bool, optional): Whether to write the SBS title on the plot. Defaults to True.
+    """
     ax_none = False
     if ax is None:
         ax_none = True
     if ax_none:
         _, ax = plt.subplots(figsize=(20, 10))
-    sort_col = "mutation"
-    mut_col = "MutationType"
-    temp_df = pd.DataFrame({mut_col: df.iloc[:, 0], col: df[col]})
-    temp_df[sort_col] = temp_df[mut_col].str.extract(r"\[(.*?)\]")
-    muts = temp_df.MutationType.unique()
-    x0 = np.arange(len(muts))
-    w = 0.8
-    added_labels = set()
-    # Add for every context a bar
-    for x, mutation in zip(x0, temp_df.mutation):
-        bottom = 0
-        color = COLOR_DICT_MUTATION[mutation]
-        value = temp_df.iloc[x, 1]
-        if mutation not in added_labels:
-            ax.bar(
-                x=x, height=value, width=w, bottom=bottom, label=mutation, color=color
-            )
-            added_labels.add(mutation)
-        else:
-            ax.bar(x=x, height=value, width=w, bottom=bottom, color=color)
-    # Add the mutations add the top of each group
-    # eg: C>A
-    groups = temp_df.groupby(sort_col).groups.items()
-    for i, (mutation_type, indices) in enumerate(groups):
-        idx = indices[-1]
-        text_x = indices[len(indices) // 2]
+    info = plot_context_bar(df, col)
+    add_to_plot(info, ax, df, write_sbs_title)
+    if ax_none:
+        plt.tight_layout()
+        pdf.savefig(bbox_inches="tight")
+        plt.close()
+
+
+def add_to_plot(info: ContextBarInfo, ax: plt.axes, df: pd.DataFrame, write_sbs_title: bool) -> None:
+    """
+    Add elements to a plot based on mutation data.
+
+    Args:
+        info (ContextBarInfo): Information about the context.
+        ax (plt.axes): Matplotlib axes.
+        df (pd.DataFrame): DataFrame containing mutation data.
+        write_sbs_title (bool): Whether to write the SBS title on the plot.
+    """
+    # Add vertical lines between each mutation type
+    # And add the mutation type at the top
+    add_text_lines_to_plot(info, ax, write_sbs_title)
+    if info.context == 96:
+        add_context_96_elements(info, ax, df)
+    else:
+        add_larger_context_elements(info, ax, df)
+    # Formatted x labels
+    x_labels_ticks = format_xlabels(info.labels)
+    ax.set_xticks(info.x0)
+    ax.set_xticklabels(x_labels_ticks, rotation=90, ha="center", fontfamily="monospace")
+    ax.legend(loc="upper right")
+    ax.set_xlabel("Context", weight="bold")
+    ax.set_ylabel("Percentage OF Single Base Substitution", weight="bold")
+    plt.xlim(-1, len(info.labels))
+    plt.ylim(0, 1)
+    # Format the ylabels to percentages
+    plt.gca().yaxis.set_major_formatter(FuncFormatter(formatted_y_labels))
+
+
+def add_text_lines_to_plot(info: ContextBarInfo, ax: plt.axes, write_sbs_title: bool) -> None:
+    """
+    Add text lines to the plot based on mutation data.
+
+    Args:
+        info (ContextBarInfo): Information about the context.
+        ax (plt.axes): Matplotlib axes.
+        write_sbs_title (bool): Whether to write the SBS title on the plot.
+
+    Returns:
+        None
+    """
+    for index, (mutation_type, indices_list) in enumerate(info.groups):
+        idx = indices_list[-1]
+        text_x = indices_list[len(indices_list) // 2]
         plt.text(
             text_x,
-            1.05,
+            0.95,
             mutation_type,
             rotation=0,
             ha="center",
@@ -390,33 +371,158 @@ def parse_96_df(df: pd.DataFrame, col: str, pdf: PdfPages, ax: plt.axes = None) 
             fontsize=20,
             fontweight="bold",
         )
-        # Skip the last line
-        if i < len(groups) - 1:
-            # Add line between each group
-            plt.axvline(x=idx + 0.5, color="black", linestyle="-", linewidth=2)
-    # SBS NAME ON THE PLOT
-    plt.text(
-        -0.05,
-        0.99,
-        col,
-        rotation=0,
-        ha="left",
-        va="top",
-        fontsize=24,
-        fontweight="heavy",
+        # BG color
+        bg_color_x_min = indices_list[0] - 1 if index == 0 else indices_list[0] - 0.5
+        bg_color_x_max = (
+            indices_list[-1] + 1
+            if index == (info.mutations_group_length - 1)
+            else indices_list[-1] + 0.5
+        )
+        ax.axvspan(
+            bg_color_x_min, bg_color_x_max, facecolor=COLOR_BG[index], alpha=0.25
+        )
+        # Add a line between each group
+        if index < info.mutations_group_length - 1:
+            plt.axvline(x=idx + 0.5, color="black", linestyle="-", linewidth=1)
+    if write_sbs_title:
+        # SBS NAME ON THE PLOT
+        plt.text(
+            0.00,
+            0.99,
+            info.title,
+            rotation=0,
+            ha="left",
+            va="top",
+            fontsize=24,
+            fontweight="heavy",
+        )
+
+
+def add_context_96_elements(info: ContextBarInfo, axL plt.axes, df: pd.DataFrame):
+    """
+    Add elements to the plot for context 96.
+
+    Args:
+        info (ContextBarInfo): Information about the context.
+        ax (plt.axes): Matplotlib axes.
+        df (pd.DataFrame): DataFrame containing mutation data.
+    """
+    # Set to track added labels
+    added_labels = set()
+    for x, mutation in zip(info.x1, info.names):
+        bottom = 0
+        color = COLOR_DICT_MUTATION[mutation]
+        value = df.iloc[x, 1]
+        # Otherwise, you get a very large legend with duplicate labels
+        if mutation not in added_labels:
+            ax.bar(
+                x=x,
+                height=value,
+                width=info.w,
+                bottom=bottom,
+                label=mutation,
+                color=color,
+            )
+            added_labels.add(mutation)
+        else:
+            ax.bar(x=x, height=value, width=info.w, bottom=bottom, color=color)
+
+
+def add_larger_context_elements(info: ContextBarInfo, ax: plt.axes, df: pd.DataFrame) -> None:
+    """
+    Add elements to the plot for larger context.
+
+    Args:
+        info (ContextBarInfo): Information about the context.
+        ax (plt.axes): Matplotlib axes.
+        df (pd.DataFrame): DataFrame containing mutation data.
+    """
+    # Set to track added labels
+    added_labels = set()
+    data = {
+        f"{name}{variable}": group
+        for (name, variable), group in df.groupby(["name", "variable"])
+    }
+    for x, name in zip(info.x1, info.names):
+        bottom = 0
+        for nucleotide in info.variable:
+            height = data[f"{name}{nucleotide}"].value.to_numpy()
+            color = COLOR_DICT[nucleotide]
+            # Otherwise, you get a very large legend with duplicate labels
+            if nucleotide not in added_labels:
+                ax.bar(
+                    x=x,
+                    height=height,
+                    width=info.w,
+                    bottom=bottom,
+                    color=color,
+                    label=nucleotide,
+                )
+                added_labels.add(nucleotide)
+            else:
+                ax.bar(x=x, height=height, width=info.w, bottom=bottom, color=color)
+            bottom += height
+
+
+def plot_context_bar(df: pd.DataFrame, col: str) -> None:
+    """
+    Plot a bar for the given mutation data and column.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing mutation data.
+        col (str): Name of the column to plot.
+
+    Returns:
+        ContextBarInfo: Information about the context.
+    """
+    if df.shape[0] == 96:
+        # Get the title and the labels
+        title = col
+        labels = df.MutationType.unique()
+        x0 = np.arange(len(labels))
+        names = df.mutation
+        w = 0.8
+        x1 = x0.copy()
+        variable = None
+        groups = df.groupby("mutation").groups.items()
+        mutations_group_length = len(groups)
+    else:
+        # Get the title and the labels
+        title = df["sbs"].unique()[0]
+        labels = df["context"].drop_duplicates()
+        x0 = np.arange(len(labels))
+        names = df.name.unique()
+        stacks = len(names)
+        w = 0.45
+        # These are for the position for the plots
+        # The indices of every small bar for the extra context
+        if stacks == 2:
+            x1 = [x0 - w / stacks, x0 + w / stacks]
+        elif stacks == 4:
+            w = 0.2
+            x1 = [
+                x0 - w * 4 / stacks - w / 2,
+                x0 - w * 2 / stacks,
+                x0 + w * 2 / stacks,
+                x0 + w * 4 / stacks + w / 2,
+            ]
+        variable = df.variable.unique()
+        sublist_length = len(x0) // 6
+        indices = [
+            x0[i : i + sublist_length] for i in range(0, len(x0), sublist_length)
+        ]
+        mutation_types = df["context"].str.extract(r"\[(.*?)\]")[0].unique()
+        groups = zip(mutation_types, indices)
+        mutations_group_length = len(mutation_types)
+    return ContextBarInfo(
+        title,
+        labels,
+        x0,
+        x1,
+        names,
+        variable,
+        w,
+        df.shape[0],
+        groups,
+        mutations_group_length,
     )
-    # Formatted x labels
-    x_labels_ticks = format_xlabels(muts)
-    ax.set_xticks(x0)
-    ax.set_xticklabels(x_labels_ticks, rotation=90, ha="center", fontfamily="monospace")
-    ax.legend()
-    ax.set_xlabel("Context", weight="bold")
-    ax.set_ylabel("Percentage OF Single Base Substitution", weight="bold")
-    plt.xlim(-1, len(temp_df[mut_col]))
-    # Format the ylabels to percentages
-    plt.gca().yaxis.set_major_formatter(FuncFormatter(percentage_formatter))
-    plt.ylim(0, 1)
-    if ax_none:
-        plt.tight_layout()
-        pdf.savefig(bbox_inches="tight")
-        plt.close()

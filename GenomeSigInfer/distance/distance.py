@@ -2,25 +2,15 @@
 """
 Distance Calculation Module
 
-This module provides functions for calculating optimal column assignments between two DataFrames
-based on the linear sum assignment and calculating Jensen-Shannon distance for each pair of columns.
+This module provides functions for calculating optimal column assignments between two DataFrames based on the linear sum assignment and calculating Jensen-Shannon distance for each pair of columns.
 
 Functions:
-    - calculate_distances(control_df: pd.DataFrame, df_not_compressed: pd.DataFrame) -> tuple[pd.DataFrame]:
-        Calculate Jensen Shannon Distance and Cosine Similarity between two matrices
-    - calculate_similarity(similarity_function: callable, optimal_columns: dict, control_df: np.ndarray, df_compare: np.ndarray) -> pd.DataFrame:
-        Calculate similarity or distance between two matrices using a specified function.
-        Either cosine or jensen shannon distance
-    - create_decompose_df(columns: dict, df: pd.DataFrame) -> pd.DataFrame:
-        Create decompose dataframe
-    - get_optimal_columns(df1: pd.DataFrame, df2: pd.DataFrame) -> dict:
-        Get the optimal column assignments between two DataFrames
-        based on the linear sum assignment.
-    - set_optimal_columns(control_df: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
-        Set optimal column assignments for the control DataFrame based on the linear sum assignment.
-    - get_jensen_shannon_distance(optimal_columns: dict, df1: pd.DataFrame,df2: pd.DataFrame)
-        -> pd.DataFrame: Calculate Jensen-Shannon distance for each pair of columns
-        based on optimal column assignments.
+* calculate_distances(control_df: pd.DataFrame, df_not_compressed: pd.DataFrame) -> tuple[pd.DataFrame]: Calculate Jensen Shannon Distance and Cosine Similarity between two matrices
+* calculate_similarity(similarity_function: callable, optimal_columns: dict, control_df: np.ndarray, df_compare: np.ndarray) -> pd.DataFrame: Calculate similarity or distance between two matrices using a specified function. Either cosine or jensen shannon distance
+* create_decompose_df(columns: dict, df: pd.DataFrame) -> pd.DataFrame: Create decompose dataframe
+* get_optimal_columns(df1: pd.DataFrame, df2: pd.DataFrame) -> dict: Get the optimal column assignments between two DataFrames based on the linear sum assignment.
+* set_optimal_columns(control_df: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame: Set optimal column assignments for the control DataFrame based on the linear sum assignment.
+* get_jensen_shannon_distance(optimal_columns: dict, df1: pd.DataFrame,df2: pd.DataFrame) -> pd.DataFrame: Calculate Jensen-Shannon distance for each pair of columns based on optimal column assignments.
         
 Author: J.A. Busker
 """
@@ -166,8 +156,7 @@ def get_jensen_shannon_distance(
     Calculate Jensen-Shannon distance for each pair of columns based on optimal column assignments.
 
     Parameters:
-        optimal_columns (dict): Dictionary containing optimal
-            column assignments between df1 and df2.
+        optimal_columns (dict): Dictionary containing optimal column assignments between df1 and df2.
         df1 (pd.DataFrame): The first DataFrame.
         df2 (pd.DataFrame): The second DataFrame.
 

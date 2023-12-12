@@ -8,8 +8,8 @@ It includes methods for visualizing the best parameters, cosine similarity for d
 and Jensen Shannon Distance for different contexts.
 
 Functions:
-    - heatmap_cosine(cosine_df_list: List[pd.DataFrame], figure_folder: Path) -> str
-    - heatmap_jens_shan(jens_shan_df_list: List[pd.DataFrame], figure_folder: Path) -> str
+* heatmap_cosine(cosine_df_list: List[pd.DataFrame], figure_folder: Path) -> str: Generate a set of heatmaps based on cosine similarity for different contexts.
+* heatmap_jens_shan(jens_shan_df_list: List[pd.DataFrame], figure_folder: Path) -> str: Generate a set of heatmaps based on Jensen Shannon Distance for different contexts
 
 Author: J.A. Busker
 """
@@ -71,8 +71,7 @@ def heatmap_jens_shan(
     Generate a set of heatmaps based on Jensen Shannon Distance for different contexts.
 
     Args:
-        jens_shan_df_list (List[pd.DataFrame]): List of DataFrames
-            containing Jensen Shannon Distance values.
+        jens_shan_df_list (List[pd.DataFrame]): List of DataFrames containing Jensen Shannon Distance values.
         figure_folder (Path): Path to the folder where the heatmap image will be saved.
 
     Returns:

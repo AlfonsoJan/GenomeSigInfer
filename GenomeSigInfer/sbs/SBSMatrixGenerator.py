@@ -5,19 +5,19 @@ processing mutations, creating SBS files, and performing various operations on
 genomic data.
 
 Classes:
-    - SBSMatrixGenerator: A class for creating maximum context Single Base Substitution (SBS) files.
+* SBSMatrixGenerator: A class for creating maximum context Single Base Substitution (SBS) files.
 
 Functions:
-    - custom_chromosome_sort: Custom sorting function for sorting chromosome values.
-    - generate_sbs_matrix_arg_checker: Decorator function for checking arguments before calling 'generate_sbs_matrix'.
-    - generate_sbs_matrix: Initializes SBS with the specified project path.
+* custom_chromosome_sort: Custom sorting function for sorting chromosome values.
+* generate_sbs_matrix_arg_checker: Decorator function for checking arguments before calling 'generate_sbs_matrix'.
+* generate_sbs_matrix: Initializes SBS with the specified project path.
 
 Attributes:
-    - helpers: Module containing utility functions.
-    - logging: Module for logging information.
-    - error: Module defining custom error classes.
-    - matrix_operations: Module providing matrix operations.
-    - VCFMatrixGenerator: Module for generating VCF matrices.
+* helpers: Module containing utility functions.
+* logging: Module for logging information.
+* error: Module defining custom error classes.
+* matrix_operations: Module providing matrix operations.
+* VCFMatrixGenerator: Module for generating VCF matrices.
 
 Author: J.A. Busker
 """
@@ -264,8 +264,7 @@ class SBSMatrixGenerator:
         Group the VCF DataFrame by chromosome.
 
         Returns:
-            tuple[list[str], dict]: Tuple containing
-                sorted chromosomes, and grouped chromosomes.
+            tuple[list[str], dict]: Tuple containing sorted chromosomes, and grouped chromosomes.
         """
         # Group the VCF DataFrame by the CHROM column (column with index 5)
         grouped_chromosomes: dict = self.vcf.groupby(5).groups

@@ -58,7 +58,6 @@ class Preprocessing:
         Initialize the Preprocessing class.
 
         This private method performs data preprocessing, including normalization.
-
         """
         # Calculate the sum of each column in the genomic data
         sum_row_genomes = pd.DataFrame(self._genomes.sum(0)).transpose()

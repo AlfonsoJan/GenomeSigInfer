@@ -163,6 +163,12 @@ The class provides a method 'create_plots' to generate signature plots for diffe
 </span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>        <span class="k">if</span> <span class="n">sbs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>            <span class="n">sbs</span> <span class="o">=</span> <span class="n">SigPlots</span><span class="o">.</span><span class="n">EXPECTED_SBS</span>
 </span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>        <span class="n">barplots</span><span class="o">.</span><span class="n">create_expected_larger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span><span class="p">,</span> <span class="n">sbs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_folder</span><span class="p">)</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>
+</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a><span class="sd">        Return a string representation of the SigPlots class.</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;SigPlots(nmf_folder=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nmf_folder</span><span class="si">}</span><span class="s2">, figure_folder=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">figure_folder</span><span class="si">}</span><span class="s2">)&quot;</span>
 </span></pre></div>
 
 
@@ -246,6 +252,12 @@ The class provides a method 'create_plots' to generate signature plots for diffe
 </span><span id="SigPlots-81"><a href="#SigPlots-81"><span class="linenos">81</span></a>        <span class="k">if</span> <span class="n">sbs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="SigPlots-82"><a href="#SigPlots-82"><span class="linenos">82</span></a>            <span class="n">sbs</span> <span class="o">=</span> <span class="n">SigPlots</span><span class="o">.</span><span class="n">EXPECTED_SBS</span>
 </span><span id="SigPlots-83"><a href="#SigPlots-83"><span class="linenos">83</span></a>        <span class="n">barplots</span><span class="o">.</span><span class="n">create_expected_larger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span><span class="p">,</span> <span class="n">sbs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_folder</span><span class="p">)</span>
+</span><span id="SigPlots-84"><a href="#SigPlots-84"><span class="linenos">84</span></a>
+</span><span id="SigPlots-85"><a href="#SigPlots-85"><span class="linenos">85</span></a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="SigPlots-86"><a href="#SigPlots-86"><span class="linenos">86</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SigPlots-87"><a href="#SigPlots-87"><span class="linenos">87</span></a><span class="sd">        Return a string representation of the SigPlots class.</span>
+</span><span id="SigPlots-88"><a href="#SigPlots-88"><span class="linenos">88</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SigPlots-89"><a href="#SigPlots-89"><span class="linenos">89</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;SigPlots(nmf_folder=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nmf_folder</span><span class="si">}</span><span class="s2">, figure_folder=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">figure_folder</span><span class="si">}</span><span class="s2">)&quot;</span>
 </span></pre></div>
 
 

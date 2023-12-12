@@ -359,7 +359,6 @@ def add_text_lines_to_plot(info: ContextBarInfo, ax: plt.axes, write_sbs_title: 
         None
     """
     for index, (mutation_type, indices_list) in enumerate(info.groups):
-        idx = indices_list[-1]
         text_x = indices_list[len(indices_list) // 2]
         plt.text(
             text_x,
@@ -382,8 +381,9 @@ def add_text_lines_to_plot(info: ContextBarInfo, ax: plt.axes, write_sbs_title: 
             bg_color_x_min, bg_color_x_max, facecolor=COLOR_BG[index], alpha=0.25
         )
         # Add a line between each group
-        if index < info.mutations_group_length - 1:
-            plt.axvline(x=idx + 0.5, color="black", linestyle="-", linewidth=1)
+        # idx = indices_list[-1]
+        # if index < info.mutations_group_length - 1:
+        #     plt.axvline(x=idx + 0.5, color="black", linestyle="-", linewidth=1)
     if write_sbs_title:
         # SBS NAME ON THE PLOT
         plt.text(

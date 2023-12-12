@@ -101,20 +101,29 @@
 processing mutations, creating SBS files, and performing various operations on
 genomic data.</p>
 
-<p>Classes:
-    - SBSMatrixGenerator: A class for creating maximum context Single Base Substitution (SBS) files.</p>
+<p>Classes:</p>
 
-<p>Functions:
-    - custom_chromosome_sort: Custom sorting function for sorting chromosome values.
-    - generate_sbs_matrix_arg_checker: Decorator function for checking arguments before calling 'generate_sbs_matrix'.
-    - generate_sbs_matrix: Initializes SBS with the specified project path.</p>
+<ul>
+<li>SBSMatrixGenerator: A class for creating maximum context Single Base Substitution (SBS) files.</li>
+</ul>
 
-<p>Attributes:
-    - helpers: Module containing utility functions.
-    - logging: Module for logging information.
-    - error: Module defining custom error classes.
-    - matrix_operations: Module providing matrix operations.
-    - VCFMatrixGenerator: Module for generating VCF matrices.</p>
+<p>Functions:</p>
+
+<ul>
+<li>custom_chromosome_sort: Custom sorting function for sorting chromosome values.</li>
+<li>generate_sbs_matrix_arg_checker: Decorator function for checking arguments before calling 'generate_sbs_matrix'.</li>
+<li>generate_sbs_matrix: Initializes SBS with the specified project path.</li>
+</ul>
+
+<p>Attributes:</p>
+
+<ul>
+<li>helpers: Module containing utility functions.</li>
+<li>logging: Module for logging information.</li>
+<li>error: Module defining custom error classes.</li>
+<li>matrix_operations: Module providing matrix operations.</li>
+<li>VCFMatrixGenerator: Module for generating VCF matrices.</li>
+</ul>
 
 <p>Author: J.A. Busker</p>
 </div>
@@ -130,19 +139,19 @@ genomic data.</p>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="sd">genomic data.</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a>
 </span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="sd">Classes:</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="sd">    - SBSMatrixGenerator: A class for creating maximum context Single Base Substitution (SBS) files.</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="sd">* SBSMatrixGenerator: A class for creating maximum context Single Base Substitution (SBS) files.</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a>
 </span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="sd">Functions:</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="sd">    - custom_chromosome_sort: Custom sorting function for sorting chromosome values.</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="sd">    - generate_sbs_matrix_arg_checker: Decorator function for checking arguments before calling &#39;generate_sbs_matrix&#39;.</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="sd">    - generate_sbs_matrix: Initializes SBS with the specified project path.</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="sd">* custom_chromosome_sort: Custom sorting function for sorting chromosome values.</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="sd">* generate_sbs_matrix_arg_checker: Decorator function for checking arguments before calling &#39;generate_sbs_matrix&#39;.</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="sd">* generate_sbs_matrix: Initializes SBS with the specified project path.</span>
 </span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>
 </span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="sd">Attributes:</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="sd">    - helpers: Module containing utility functions.</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="sd">    - logging: Module for logging information.</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="sd">    - error: Module defining custom error classes.</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="sd">    - matrix_operations: Module providing matrix operations.</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">    - VCFMatrixGenerator: Module for generating VCF matrices.</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="sd">* helpers: Module containing utility functions.</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="sd">* logging: Module for logging information.</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="sd">* error: Module defining custom error classes.</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="sd">* matrix_operations: Module providing matrix operations.</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">* VCFMatrixGenerator: Module for generating VCF matrices.</span>
 </span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>
 </span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">Author: J.A. Busker</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">&quot;&quot;&quot;</span>
@@ -389,28 +398,27 @@ genomic data.</p>
 </span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a><span class="sd">        Group the VCF DataFrame by chromosome.</span>
 </span><span id="L-265"><a href="#L-265"><span class="linenos">265</span></a>
 </span><span id="L-266"><a href="#L-266"><span class="linenos">266</span></a><span class="sd">        Returns:</span>
-</span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a><span class="sd">            tuple[list[str], dict]: Tuple containing</span>
-</span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a><span class="sd">                sorted chromosomes, and grouped chromosomes.</span>
-</span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a>        <span class="c1"># Group the VCF DataFrame by the CHROM column (column with index 5)</span>
-</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a>        <span class="n">grouped_chromosomes</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vcf</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span>
-</span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a>        <span class="c1"># Extract the chromosome names</span>
-</span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a>        <span class="n">chromosomes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">grouped_chromosomes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-</span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a>        <span class="c1"># Sort the chromosomes using the custom sorting function</span>
-</span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a>        <span class="n">sorted_chr</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">chromosomes</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">custom_chromosome_sort</span><span class="p">)</span>
-</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a>        <span class="k">return</span> <span class="n">sorted_chr</span><span class="p">,</span> <span class="n">grouped_chromosomes</span>
-</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a>
-</span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a>    <span class="nd">@property</span>
-</span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a>    <span class="k">def</span> <span class="nf">samples_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-281"><a href="#L-281"><span class="linenos">281</span></a><span class="sd">        Private attribute storing processed sample data.</span>
-</span><span id="L-282"><a href="#L-282"><span class="linenos">282</span></a>
-</span><span id="L-283"><a href="#L-283"><span class="linenos">283</span></a><span class="sd">        Returns:</span>
-</span><span id="L-284"><a href="#L-284"><span class="linenos">284</span></a><span class="sd">            pd.DataFrame: Max context samples dataframe.</span>
-</span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-286"><a href="#L-286"><span class="linenos">286</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples_df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a>            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
-</span><span id="L-288"><a href="#L-288"><span class="linenos">288</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">_samples_df</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
+</span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a><span class="sd">            tuple[list[str], dict]: Tuple containing sorted chromosomes, and grouped chromosomes.</span>
+</span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a>        <span class="c1"># Group the VCF DataFrame by the CHROM column (column with index 5)</span>
+</span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a>        <span class="n">grouped_chromosomes</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vcf</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span>
+</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a>        <span class="c1"># Extract the chromosome names</span>
+</span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a>        <span class="n">chromosomes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">grouped_chromosomes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a>        <span class="c1"># Sort the chromosomes using the custom sorting function</span>
+</span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a>        <span class="n">sorted_chr</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">chromosomes</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">custom_chromosome_sort</span><span class="p">)</span>
+</span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a>        <span class="k">return</span> <span class="n">sorted_chr</span><span class="p">,</span> <span class="n">grouped_chromosomes</span>
+</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a>
+</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a>    <span class="nd">@property</span>
+</span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a>    <span class="k">def</span> <span class="nf">samples_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a><span class="sd">        Private attribute storing processed sample data.</span>
+</span><span id="L-281"><a href="#L-281"><span class="linenos">281</span></a>
+</span><span id="L-282"><a href="#L-282"><span class="linenos">282</span></a><span class="sd">        Returns:</span>
+</span><span id="L-283"><a href="#L-283"><span class="linenos">283</span></a><span class="sd">            pd.DataFrame: Max context samples dataframe.</span>
+</span><span id="L-284"><a href="#L-284"><span class="linenos">284</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples_df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-286"><a href="#L-286"><span class="linenos">286</span></a>            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+</span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">_samples_df</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
 </span></pre></div>
 
 
@@ -730,28 +738,27 @@ genomic data.</p>
 </span><span id="SBSMatrixGenerator-265"><a href="#SBSMatrixGenerator-265"><span class="linenos">265</span></a><span class="sd">        Group the VCF DataFrame by chromosome.</span>
 </span><span id="SBSMatrixGenerator-266"><a href="#SBSMatrixGenerator-266"><span class="linenos">266</span></a>
 </span><span id="SBSMatrixGenerator-267"><a href="#SBSMatrixGenerator-267"><span class="linenos">267</span></a><span class="sd">        Returns:</span>
-</span><span id="SBSMatrixGenerator-268"><a href="#SBSMatrixGenerator-268"><span class="linenos">268</span></a><span class="sd">            tuple[list[str], dict]: Tuple containing</span>
-</span><span id="SBSMatrixGenerator-269"><a href="#SBSMatrixGenerator-269"><span class="linenos">269</span></a><span class="sd">                sorted chromosomes, and grouped chromosomes.</span>
-</span><span id="SBSMatrixGenerator-270"><a href="#SBSMatrixGenerator-270"><span class="linenos">270</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SBSMatrixGenerator-271"><a href="#SBSMatrixGenerator-271"><span class="linenos">271</span></a>        <span class="c1"># Group the VCF DataFrame by the CHROM column (column with index 5)</span>
-</span><span id="SBSMatrixGenerator-272"><a href="#SBSMatrixGenerator-272"><span class="linenos">272</span></a>        <span class="n">grouped_chromosomes</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vcf</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span>
-</span><span id="SBSMatrixGenerator-273"><a href="#SBSMatrixGenerator-273"><span class="linenos">273</span></a>        <span class="c1"># Extract the chromosome names</span>
-</span><span id="SBSMatrixGenerator-274"><a href="#SBSMatrixGenerator-274"><span class="linenos">274</span></a>        <span class="n">chromosomes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">grouped_chromosomes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-</span><span id="SBSMatrixGenerator-275"><a href="#SBSMatrixGenerator-275"><span class="linenos">275</span></a>        <span class="c1"># Sort the chromosomes using the custom sorting function</span>
-</span><span id="SBSMatrixGenerator-276"><a href="#SBSMatrixGenerator-276"><span class="linenos">276</span></a>        <span class="n">sorted_chr</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">chromosomes</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">custom_chromosome_sort</span><span class="p">)</span>
-</span><span id="SBSMatrixGenerator-277"><a href="#SBSMatrixGenerator-277"><span class="linenos">277</span></a>        <span class="k">return</span> <span class="n">sorted_chr</span><span class="p">,</span> <span class="n">grouped_chromosomes</span>
-</span><span id="SBSMatrixGenerator-278"><a href="#SBSMatrixGenerator-278"><span class="linenos">278</span></a>
-</span><span id="SBSMatrixGenerator-279"><a href="#SBSMatrixGenerator-279"><span class="linenos">279</span></a>    <span class="nd">@property</span>
-</span><span id="SBSMatrixGenerator-280"><a href="#SBSMatrixGenerator-280"><span class="linenos">280</span></a>    <span class="k">def</span> <span class="nf">samples_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="SBSMatrixGenerator-281"><a href="#SBSMatrixGenerator-281"><span class="linenos">281</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SBSMatrixGenerator-282"><a href="#SBSMatrixGenerator-282"><span class="linenos">282</span></a><span class="sd">        Private attribute storing processed sample data.</span>
-</span><span id="SBSMatrixGenerator-283"><a href="#SBSMatrixGenerator-283"><span class="linenos">283</span></a>
-</span><span id="SBSMatrixGenerator-284"><a href="#SBSMatrixGenerator-284"><span class="linenos">284</span></a><span class="sd">        Returns:</span>
-</span><span id="SBSMatrixGenerator-285"><a href="#SBSMatrixGenerator-285"><span class="linenos">285</span></a><span class="sd">            pd.DataFrame: Max context samples dataframe.</span>
-</span><span id="SBSMatrixGenerator-286"><a href="#SBSMatrixGenerator-286"><span class="linenos">286</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SBSMatrixGenerator-287"><a href="#SBSMatrixGenerator-287"><span class="linenos">287</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples_df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="SBSMatrixGenerator-288"><a href="#SBSMatrixGenerator-288"><span class="linenos">288</span></a>            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
-</span><span id="SBSMatrixGenerator-289"><a href="#SBSMatrixGenerator-289"><span class="linenos">289</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">_samples_df</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
+</span><span id="SBSMatrixGenerator-268"><a href="#SBSMatrixGenerator-268"><span class="linenos">268</span></a><span class="sd">            tuple[list[str], dict]: Tuple containing sorted chromosomes, and grouped chromosomes.</span>
+</span><span id="SBSMatrixGenerator-269"><a href="#SBSMatrixGenerator-269"><span class="linenos">269</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SBSMatrixGenerator-270"><a href="#SBSMatrixGenerator-270"><span class="linenos">270</span></a>        <span class="c1"># Group the VCF DataFrame by the CHROM column (column with index 5)</span>
+</span><span id="SBSMatrixGenerator-271"><a href="#SBSMatrixGenerator-271"><span class="linenos">271</span></a>        <span class="n">grouped_chromosomes</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vcf</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span>
+</span><span id="SBSMatrixGenerator-272"><a href="#SBSMatrixGenerator-272"><span class="linenos">272</span></a>        <span class="c1"># Extract the chromosome names</span>
+</span><span id="SBSMatrixGenerator-273"><a href="#SBSMatrixGenerator-273"><span class="linenos">273</span></a>        <span class="n">chromosomes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">grouped_chromosomes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</span><span id="SBSMatrixGenerator-274"><a href="#SBSMatrixGenerator-274"><span class="linenos">274</span></a>        <span class="c1"># Sort the chromosomes using the custom sorting function</span>
+</span><span id="SBSMatrixGenerator-275"><a href="#SBSMatrixGenerator-275"><span class="linenos">275</span></a>        <span class="n">sorted_chr</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">chromosomes</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">custom_chromosome_sort</span><span class="p">)</span>
+</span><span id="SBSMatrixGenerator-276"><a href="#SBSMatrixGenerator-276"><span class="linenos">276</span></a>        <span class="k">return</span> <span class="n">sorted_chr</span><span class="p">,</span> <span class="n">grouped_chromosomes</span>
+</span><span id="SBSMatrixGenerator-277"><a href="#SBSMatrixGenerator-277"><span class="linenos">277</span></a>
+</span><span id="SBSMatrixGenerator-278"><a href="#SBSMatrixGenerator-278"><span class="linenos">278</span></a>    <span class="nd">@property</span>
+</span><span id="SBSMatrixGenerator-279"><a href="#SBSMatrixGenerator-279"><span class="linenos">279</span></a>    <span class="k">def</span> <span class="nf">samples_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="SBSMatrixGenerator-280"><a href="#SBSMatrixGenerator-280"><span class="linenos">280</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SBSMatrixGenerator-281"><a href="#SBSMatrixGenerator-281"><span class="linenos">281</span></a><span class="sd">        Private attribute storing processed sample data.</span>
+</span><span id="SBSMatrixGenerator-282"><a href="#SBSMatrixGenerator-282"><span class="linenos">282</span></a>
+</span><span id="SBSMatrixGenerator-283"><a href="#SBSMatrixGenerator-283"><span class="linenos">283</span></a><span class="sd">        Returns:</span>
+</span><span id="SBSMatrixGenerator-284"><a href="#SBSMatrixGenerator-284"><span class="linenos">284</span></a><span class="sd">            pd.DataFrame: Max context samples dataframe.</span>
+</span><span id="SBSMatrixGenerator-285"><a href="#SBSMatrixGenerator-285"><span class="linenos">285</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SBSMatrixGenerator-286"><a href="#SBSMatrixGenerator-286"><span class="linenos">286</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples_df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="SBSMatrixGenerator-287"><a href="#SBSMatrixGenerator-287"><span class="linenos">287</span></a>            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+</span><span id="SBSMatrixGenerator-288"><a href="#SBSMatrixGenerator-288"><span class="linenos">288</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">_samples_df</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
 </span></pre></div>
 
 
@@ -1100,24 +1107,22 @@ Create the mutation in the style of eg: A[C>A]A</p>
 </span><span id="SBSMatrixGenerator.group_vcf_chromosome-265"><a href="#SBSMatrixGenerator.group_vcf_chromosome-265"><span class="linenos">265</span></a><span class="sd">        Group the VCF DataFrame by chromosome.</span>
 </span><span id="SBSMatrixGenerator.group_vcf_chromosome-266"><a href="#SBSMatrixGenerator.group_vcf_chromosome-266"><span class="linenos">266</span></a>
 </span><span id="SBSMatrixGenerator.group_vcf_chromosome-267"><a href="#SBSMatrixGenerator.group_vcf_chromosome-267"><span class="linenos">267</span></a><span class="sd">        Returns:</span>
-</span><span id="SBSMatrixGenerator.group_vcf_chromosome-268"><a href="#SBSMatrixGenerator.group_vcf_chromosome-268"><span class="linenos">268</span></a><span class="sd">            tuple[list[str], dict]: Tuple containing</span>
-</span><span id="SBSMatrixGenerator.group_vcf_chromosome-269"><a href="#SBSMatrixGenerator.group_vcf_chromosome-269"><span class="linenos">269</span></a><span class="sd">                sorted chromosomes, and grouped chromosomes.</span>
-</span><span id="SBSMatrixGenerator.group_vcf_chromosome-270"><a href="#SBSMatrixGenerator.group_vcf_chromosome-270"><span class="linenos">270</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SBSMatrixGenerator.group_vcf_chromosome-271"><a href="#SBSMatrixGenerator.group_vcf_chromosome-271"><span class="linenos">271</span></a>        <span class="c1"># Group the VCF DataFrame by the CHROM column (column with index 5)</span>
-</span><span id="SBSMatrixGenerator.group_vcf_chromosome-272"><a href="#SBSMatrixGenerator.group_vcf_chromosome-272"><span class="linenos">272</span></a>        <span class="n">grouped_chromosomes</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vcf</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span>
-</span><span id="SBSMatrixGenerator.group_vcf_chromosome-273"><a href="#SBSMatrixGenerator.group_vcf_chromosome-273"><span class="linenos">273</span></a>        <span class="c1"># Extract the chromosome names</span>
-</span><span id="SBSMatrixGenerator.group_vcf_chromosome-274"><a href="#SBSMatrixGenerator.group_vcf_chromosome-274"><span class="linenos">274</span></a>        <span class="n">chromosomes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">grouped_chromosomes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-</span><span id="SBSMatrixGenerator.group_vcf_chromosome-275"><a href="#SBSMatrixGenerator.group_vcf_chromosome-275"><span class="linenos">275</span></a>        <span class="c1"># Sort the chromosomes using the custom sorting function</span>
-</span><span id="SBSMatrixGenerator.group_vcf_chromosome-276"><a href="#SBSMatrixGenerator.group_vcf_chromosome-276"><span class="linenos">276</span></a>        <span class="n">sorted_chr</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">chromosomes</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">custom_chromosome_sort</span><span class="p">)</span>
-</span><span id="SBSMatrixGenerator.group_vcf_chromosome-277"><a href="#SBSMatrixGenerator.group_vcf_chromosome-277"><span class="linenos">277</span></a>        <span class="k">return</span> <span class="n">sorted_chr</span><span class="p">,</span> <span class="n">grouped_chromosomes</span>
+</span><span id="SBSMatrixGenerator.group_vcf_chromosome-268"><a href="#SBSMatrixGenerator.group_vcf_chromosome-268"><span class="linenos">268</span></a><span class="sd">            tuple[list[str], dict]: Tuple containing sorted chromosomes, and grouped chromosomes.</span>
+</span><span id="SBSMatrixGenerator.group_vcf_chromosome-269"><a href="#SBSMatrixGenerator.group_vcf_chromosome-269"><span class="linenos">269</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SBSMatrixGenerator.group_vcf_chromosome-270"><a href="#SBSMatrixGenerator.group_vcf_chromosome-270"><span class="linenos">270</span></a>        <span class="c1"># Group the VCF DataFrame by the CHROM column (column with index 5)</span>
+</span><span id="SBSMatrixGenerator.group_vcf_chromosome-271"><a href="#SBSMatrixGenerator.group_vcf_chromosome-271"><span class="linenos">271</span></a>        <span class="n">grouped_chromosomes</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vcf</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span>
+</span><span id="SBSMatrixGenerator.group_vcf_chromosome-272"><a href="#SBSMatrixGenerator.group_vcf_chromosome-272"><span class="linenos">272</span></a>        <span class="c1"># Extract the chromosome names</span>
+</span><span id="SBSMatrixGenerator.group_vcf_chromosome-273"><a href="#SBSMatrixGenerator.group_vcf_chromosome-273"><span class="linenos">273</span></a>        <span class="n">chromosomes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">grouped_chromosomes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</span><span id="SBSMatrixGenerator.group_vcf_chromosome-274"><a href="#SBSMatrixGenerator.group_vcf_chromosome-274"><span class="linenos">274</span></a>        <span class="c1"># Sort the chromosomes using the custom sorting function</span>
+</span><span id="SBSMatrixGenerator.group_vcf_chromosome-275"><a href="#SBSMatrixGenerator.group_vcf_chromosome-275"><span class="linenos">275</span></a>        <span class="n">sorted_chr</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">chromosomes</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">custom_chromosome_sort</span><span class="p">)</span>
+</span><span id="SBSMatrixGenerator.group_vcf_chromosome-276"><a href="#SBSMatrixGenerator.group_vcf_chromosome-276"><span class="linenos">276</span></a>        <span class="k">return</span> <span class="n">sorted_chr</span><span class="p">,</span> <span class="n">grouped_chromosomes</span>
 </span></pre></div>
 
 
             <div class="docstring"><p>Group the VCF DataFrame by chromosome.</p>
 
 <p>Returns:
-    tuple[list[str], dict]: Tuple containing
-        sorted chromosomes, and grouped chromosomes.</p>
+    tuple[list[str], dict]: Tuple containing sorted chromosomes, and grouped chromosomes.</p>
 </div>
 
 

@@ -43,7 +43,7 @@
                                 <a class="variable" href="#SigPlots.nmf_folder">nmf_folder</a>
                         </li>
                         <li>
-                                <a class="variable" href="#SigPlots.figures">figures</a>
+                                <a class="variable" href="#SigPlots.figure_folder">figure_folder</a>
                         </li>
                         <li>
                                 <a class="function" href="#SigPlots.create_plots">create_plots</a>
@@ -72,8 +72,7 @@
 
                         <div class="docstring"><p>SigPlots class is responsible for creating signature plots based on mutation data.
 It utilizes the SBS class for accessing genome information and logging using SingletonLogger.
-The class provides a method 'create_plots' to generate
-signature plots for different mutation contexts.</p>
+The class provides a method 'create_plots' to generate signature plots for different mutation contexts.</p>
 
 <p>Author: J.A. Busker</p>
 </div>
@@ -86,67 +85,84 @@ signature plots for different mutation contexts.</p>
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">SigPlots class is responsible for creating signature plots based on mutation data.</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="sd">It utilizes the SBS class for accessing genome information and logging using SingletonLogger.</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">The class provides a method &#39;create_plots&#39; to generate</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="sd">signature plots for different mutation contexts.</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="sd">Author: J.A. Busker</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">logging</span><span class="p">,</span> <span class="n">helpers</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">barplots</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">The class provides a method &#39;create_plots&#39; to generate signature plots for different mutation contexts.</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="sd">Author: J.A. Busker</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">logging</span><span class="p">,</span> <span class="n">helpers</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">barplots</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="k">class</span> <span class="nc">SigPlots</span><span class="p">:</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">    This method sets up the SigPlots object with the provided project path. It initializes</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="sd">    attributes for project, NMF folder, figures folder, and a SingletonLogger for logging.</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="k">class</span> <span class="nc">SigPlots</span><span class="p">:</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">    SigPlots class is responsible for creating signature plots based on mutation data.</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">    It utilizes the SBS class (provide import statement or explanation) for accessing genome information and logging using SingletonLogger.</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="sd">    The class provides methods to generate signature plots for different mutation contexts.</span>
 </span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="n">EXPECTED_SBS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;SBS2&quot;</span><span class="p">,</span> <span class="s2">&quot;SBS7a&quot;</span><span class="p">,</span> <span class="s2">&quot;SBS10a&quot;</span><span class="p">,</span> <span class="s2">&quot;SBS13&quot;</span><span class="p">,</span> <span class="s2">&quot;SBS17a&quot;</span><span class="p">,</span> <span class="s2">&quot;SBS17b&quot;</span><span class="p">]</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="n">EXPECTED_SBS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;SBS2&quot;</span><span class="p">,</span> <span class="s2">&quot;SBS7a&quot;</span><span class="p">,</span> <span class="s2">&quot;SBS10a&quot;</span><span class="p">,</span> <span class="s2">&quot;SBS13&quot;</span><span class="p">,</span> <span class="s2">&quot;SBS17b&quot;</span><span class="p">,</span> <span class="s2">&quot;SBS22a&quot;</span><span class="p">]</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>
 </span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nmf_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">figure_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">nmf_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">nmf_folder</span><span class="p">)</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">figures</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">figure_folder</span><span class="p">)</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">SingletonLogger</span><span class="p">()</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>    <span class="k">def</span> <span class="nf">create_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">        Create signature plots based on mutation data.</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">        This method reads the decomposed mutation data for different mutation contexts</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="sd">        from the NMF folder and generates signature plots. It checks the size of the</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="sd">        mutation context and chooses the appropriate plotting function accordingly.</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="sd">        The results are saved in the &#39;figures&#39; folder within the result directory.</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>        <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">helpers</span><span class="o">.</span><span class="n">MutationalSigantures</span><span class="o">.</span><span class="n">SIZES</span><span class="p">:</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>            <span class="n">decompose_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nmf_folder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;decompose.</span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">.txt&quot;</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">decompose_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>            <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">96</span><span class="p">:</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">log_info</span><span class="p">(</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>                    <span class="sa">f</span><span class="s2">&quot;Creating siganture plots for context file: &#39;</span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>                <span class="p">)</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>                <span class="n">barplots</span><span class="o">.</span><span class="n">larger_context_barplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>            <span class="k">else</span><span class="p">:</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">log_info</span><span class="p">(</span><span class="s2">&quot;Creating siganture plots for context file: &#39;96&#39;&quot;</span><span class="p">)</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>                <span class="n">barplots</span><span class="o">.</span><span class="n">create_96_barplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>    <span class="k">def</span> <span class="nf">create_expected_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sbs</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="sd">        Create signature plots based on a list that</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="sd">        those SBS are having the benefit of a larger context.</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a><span class="sd">        This method utilizes the pre-processed mutation data stored in the &#39;_dfs&#39;</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a><span class="sd">        attribute and generates signature plots for the SBS types specified in</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="sd">        &#39;EXPECTED_SBS&#39;. The results are saved in the &#39;figures&#39; folder within the</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="sd">        result directory.</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>        <span class="k">if</span> <span class="n">sbs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>            <span class="n">sbs</span> <span class="o">=</span> <span class="n">SigPlots</span><span class="o">.</span><span class="n">EXPECTED_SBS</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>        <span class="n">barplots</span><span class="o">.</span><span class="n">create_expected_larger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span><span class="p">,</span> <span class="n">sbs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">        Initialize a SigPlots object.</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">        Args:</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">            nmf_folder (Path): Path to the folder containing decomposed mutation data.</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">            figure_folder (Path): Path to the folder where generated plots will be saved.</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">        This method sets up the SigPlots object with the provided project path.</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">        It initializes attributes for the project, NMF folder, figures folder, and a SingletonLogger for logging.</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">nmf_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">nmf_folder</span><span class="p">)</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">figure_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">figure_folder</span><span class="p">)</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">figure_folder</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">SingletonLogger</span><span class="p">()</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_decompose_files</span><span class="p">()</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>    <span class="k">def</span> <span class="nf">_get_decompose_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="sd">        Retrieve decomposed mutation data files.</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="sd">        Returns:</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="sd">            dict: A dictionary containing decomposed mutation data DataFrames for different mutation context sizes.</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a><span class="sd">        This method reads the decomposed mutation data for different mutation contexts from the NMF folder and returns a dictionary containing DataFrames for each size.</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>        <span class="n">decompose_dict</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>            <span class="n">size</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmf_folder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;decompose.</span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">.txt&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>            <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">helpers</span><span class="o">.</span><span class="n">MutationalSigantures</span><span class="o">.</span><span class="n">SIZES</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>        <span class="p">}</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>        <span class="k">return</span> <span class="n">decompose_dict</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>    <span class="k">def</span> <span class="nf">create_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a><span class="sd">        Create signature plots based on mutation data.</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="sd">        This method reads the decomposed mutation data for different mutation contexts</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="sd">        from the NMF folder and generates signature plots. It checks the size of the</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="sd">        mutation context and chooses the appropriate plotting function accordingly.</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="sd">        The results are saved in the &#39;figures&#39; folder within the result directory.</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>        <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">helpers</span><span class="o">.</span><span class="n">MutationalSigantures</span><span class="o">.</span><span class="n">SIZES</span><span class="p">:</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">log_info</span><span class="p">(</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>                <span class="sa">f</span><span class="s2">&quot;Creating siganture plots for context file: &#39;</span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>            <span class="p">)</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span><span class="p">[</span><span class="n">size</span><span class="p">]</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>            <span class="n">barplots</span><span class="o">.</span><span class="n">signature_pdf_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_folder</span><span class="p">)</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>    <span class="k">def</span> <span class="nf">create_expected_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sbs</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a><span class="sd">        Create signature plots based on a list that those SBS are having the benefit of a larger context.</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a><span class="sd">        Args:</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a><span class="sd">        sbs (list, optional): List of SBS types to create signature plots for.</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a><span class="sd">            If not provided, defaults to the predefined list in SigPlots.EXPECTED_SBS.</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>        <span class="k">if</span> <span class="n">sbs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>            <span class="n">sbs</span> <span class="o">=</span> <span class="n">SigPlots</span><span class="o">.</span><span class="n">EXPECTED_SBS</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>        <span class="n">barplots</span><span class="o">.</span><span class="n">create_expected_larger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span><span class="p">,</span> <span class="n">sbs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_folder</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -162,61 +178,80 @@ signature plots for different mutation contexts.</p>
 
     </div>
     <a class="headerlink" href="#SigPlots"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SigPlots-17"><a href="#SigPlots-17"><span class="linenos">17</span></a><span class="k">class</span> <span class="nc">SigPlots</span><span class="p">:</span>
-</span><span id="SigPlots-18"><a href="#SigPlots-18"><span class="linenos">18</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SigPlots-19"><a href="#SigPlots-19"><span class="linenos">19</span></a><span class="sd">    This method sets up the SigPlots object with the provided project path. It initializes</span>
-</span><span id="SigPlots-20"><a href="#SigPlots-20"><span class="linenos">20</span></a><span class="sd">    attributes for project, NMF folder, figures folder, and a SingletonLogger for logging.</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SigPlots-16"><a href="#SigPlots-16"><span class="linenos">16</span></a><span class="k">class</span> <span class="nc">SigPlots</span><span class="p">:</span>
+</span><span id="SigPlots-17"><a href="#SigPlots-17"><span class="linenos">17</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SigPlots-18"><a href="#SigPlots-18"><span class="linenos">18</span></a><span class="sd">    SigPlots class is responsible for creating signature plots based on mutation data.</span>
+</span><span id="SigPlots-19"><a href="#SigPlots-19"><span class="linenos">19</span></a><span class="sd">    It utilizes the SBS class (provide import statement or explanation) for accessing genome information and logging using SingletonLogger.</span>
+</span><span id="SigPlots-20"><a href="#SigPlots-20"><span class="linenos">20</span></a><span class="sd">    The class provides methods to generate signature plots for different mutation contexts.</span>
 </span><span id="SigPlots-21"><a href="#SigPlots-21"><span class="linenos">21</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="SigPlots-22"><a href="#SigPlots-22"><span class="linenos">22</span></a>
-</span><span id="SigPlots-23"><a href="#SigPlots-23"><span class="linenos">23</span></a>    <span class="n">EXPECTED_SBS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;SBS2&quot;</span><span class="p">,</span> <span class="s2">&quot;SBS7a&quot;</span><span class="p">,</span> <span class="s2">&quot;SBS10a&quot;</span><span class="p">,</span> <span class="s2">&quot;SBS13&quot;</span><span class="p">,</span> <span class="s2">&quot;SBS17a&quot;</span><span class="p">,</span> <span class="s2">&quot;SBS17b&quot;</span><span class="p">]</span>
+</span><span id="SigPlots-23"><a href="#SigPlots-23"><span class="linenos">23</span></a>    <span class="n">EXPECTED_SBS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;SBS2&quot;</span><span class="p">,</span> <span class="s2">&quot;SBS7a&quot;</span><span class="p">,</span> <span class="s2">&quot;SBS10a&quot;</span><span class="p">,</span> <span class="s2">&quot;SBS13&quot;</span><span class="p">,</span> <span class="s2">&quot;SBS17b&quot;</span><span class="p">,</span> <span class="s2">&quot;SBS22a&quot;</span><span class="p">]</span>
 </span><span id="SigPlots-24"><a href="#SigPlots-24"><span class="linenos">24</span></a>
 </span><span id="SigPlots-25"><a href="#SigPlots-25"><span class="linenos">25</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nmf_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">figure_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="SigPlots-26"><a href="#SigPlots-26"><span class="linenos">26</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">nmf_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">nmf_folder</span><span class="p">)</span>
-</span><span id="SigPlots-27"><a href="#SigPlots-27"><span class="linenos">27</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">figures</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">figure_folder</span><span class="p">)</span>
-</span><span id="SigPlots-28"><a href="#SigPlots-28"><span class="linenos">28</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="SigPlots-29"><a href="#SigPlots-29"><span class="linenos">29</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">SingletonLogger</span><span class="p">()</span>
-</span><span id="SigPlots-30"><a href="#SigPlots-30"><span class="linenos">30</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="SigPlots-31"><a href="#SigPlots-31"><span class="linenos">31</span></a>
-</span><span id="SigPlots-32"><a href="#SigPlots-32"><span class="linenos">32</span></a>    <span class="k">def</span> <span class="nf">create_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="SigPlots-33"><a href="#SigPlots-33"><span class="linenos">33</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SigPlots-34"><a href="#SigPlots-34"><span class="linenos">34</span></a><span class="sd">        Create signature plots based on mutation data.</span>
-</span><span id="SigPlots-35"><a href="#SigPlots-35"><span class="linenos">35</span></a>
-</span><span id="SigPlots-36"><a href="#SigPlots-36"><span class="linenos">36</span></a><span class="sd">        This method reads the decomposed mutation data for different mutation contexts</span>
-</span><span id="SigPlots-37"><a href="#SigPlots-37"><span class="linenos">37</span></a><span class="sd">        from the NMF folder and generates signature plots. It checks the size of the</span>
-</span><span id="SigPlots-38"><a href="#SigPlots-38"><span class="linenos">38</span></a><span class="sd">        mutation context and chooses the appropriate plotting function accordingly.</span>
-</span><span id="SigPlots-39"><a href="#SigPlots-39"><span class="linenos">39</span></a><span class="sd">        The results are saved in the &#39;figures&#39; folder within the result directory.</span>
-</span><span id="SigPlots-40"><a href="#SigPlots-40"><span class="linenos">40</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SigPlots-41"><a href="#SigPlots-41"><span class="linenos">41</span></a>        <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">helpers</span><span class="o">.</span><span class="n">MutationalSigantures</span><span class="o">.</span><span class="n">SIZES</span><span class="p">:</span>
-</span><span id="SigPlots-42"><a href="#SigPlots-42"><span class="linenos">42</span></a>            <span class="n">decompose_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nmf_folder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;decompose.</span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">.txt&quot;</span>
-</span><span id="SigPlots-43"><a href="#SigPlots-43"><span class="linenos">43</span></a>            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">decompose_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="SigPlots-44"><a href="#SigPlots-44"><span class="linenos">44</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span>
-</span><span id="SigPlots-45"><a href="#SigPlots-45"><span class="linenos">45</span></a>            <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">96</span><span class="p">:</span>
-</span><span id="SigPlots-46"><a href="#SigPlots-46"><span class="linenos">46</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">log_info</span><span class="p">(</span>
-</span><span id="SigPlots-47"><a href="#SigPlots-47"><span class="linenos">47</span></a>                    <span class="sa">f</span><span class="s2">&quot;Creating siganture plots for context file: &#39;</span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
-</span><span id="SigPlots-48"><a href="#SigPlots-48"><span class="linenos">48</span></a>                <span class="p">)</span>
-</span><span id="SigPlots-49"><a href="#SigPlots-49"><span class="linenos">49</span></a>                <span class="n">barplots</span><span class="o">.</span><span class="n">larger_context_barplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
-</span><span id="SigPlots-50"><a href="#SigPlots-50"><span class="linenos">50</span></a>            <span class="k">else</span><span class="p">:</span>
-</span><span id="SigPlots-51"><a href="#SigPlots-51"><span class="linenos">51</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">log_info</span><span class="p">(</span><span class="s2">&quot;Creating siganture plots for context file: &#39;96&#39;&quot;</span><span class="p">)</span>
-</span><span id="SigPlots-52"><a href="#SigPlots-52"><span class="linenos">52</span></a>                <span class="n">barplots</span><span class="o">.</span><span class="n">create_96_barplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
-</span><span id="SigPlots-53"><a href="#SigPlots-53"><span class="linenos">53</span></a>
-</span><span id="SigPlots-54"><a href="#SigPlots-54"><span class="linenos">54</span></a>    <span class="k">def</span> <span class="nf">create_expected_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sbs</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span id="SigPlots-55"><a href="#SigPlots-55"><span class="linenos">55</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SigPlots-56"><a href="#SigPlots-56"><span class="linenos">56</span></a><span class="sd">        Create signature plots based on a list that</span>
-</span><span id="SigPlots-57"><a href="#SigPlots-57"><span class="linenos">57</span></a><span class="sd">        those SBS are having the benefit of a larger context.</span>
-</span><span id="SigPlots-58"><a href="#SigPlots-58"><span class="linenos">58</span></a>
-</span><span id="SigPlots-59"><a href="#SigPlots-59"><span class="linenos">59</span></a><span class="sd">        This method utilizes the pre-processed mutation data stored in the &#39;_dfs&#39;</span>
-</span><span id="SigPlots-60"><a href="#SigPlots-60"><span class="linenos">60</span></a><span class="sd">        attribute and generates signature plots for the SBS types specified in</span>
-</span><span id="SigPlots-61"><a href="#SigPlots-61"><span class="linenos">61</span></a><span class="sd">        &#39;EXPECTED_SBS&#39;. The results are saved in the &#39;figures&#39; folder within the</span>
-</span><span id="SigPlots-62"><a href="#SigPlots-62"><span class="linenos">62</span></a><span class="sd">        result directory.</span>
-</span><span id="SigPlots-63"><a href="#SigPlots-63"><span class="linenos">63</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SigPlots-64"><a href="#SigPlots-64"><span class="linenos">64</span></a>        <span class="k">if</span> <span class="n">sbs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="SigPlots-65"><a href="#SigPlots-65"><span class="linenos">65</span></a>            <span class="n">sbs</span> <span class="o">=</span> <span class="n">SigPlots</span><span class="o">.</span><span class="n">EXPECTED_SBS</span>
-</span><span id="SigPlots-66"><a href="#SigPlots-66"><span class="linenos">66</span></a>        <span class="n">barplots</span><span class="o">.</span><span class="n">create_expected_larger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span><span class="p">,</span> <span class="n">sbs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
+</span><span id="SigPlots-26"><a href="#SigPlots-26"><span class="linenos">26</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SigPlots-27"><a href="#SigPlots-27"><span class="linenos">27</span></a><span class="sd">        Initialize a SigPlots object.</span>
+</span><span id="SigPlots-28"><a href="#SigPlots-28"><span class="linenos">28</span></a>
+</span><span id="SigPlots-29"><a href="#SigPlots-29"><span class="linenos">29</span></a><span class="sd">        Args:</span>
+</span><span id="SigPlots-30"><a href="#SigPlots-30"><span class="linenos">30</span></a><span class="sd">            nmf_folder (Path): Path to the folder containing decomposed mutation data.</span>
+</span><span id="SigPlots-31"><a href="#SigPlots-31"><span class="linenos">31</span></a><span class="sd">            figure_folder (Path): Path to the folder where generated plots will be saved.</span>
+</span><span id="SigPlots-32"><a href="#SigPlots-32"><span class="linenos">32</span></a>
+</span><span id="SigPlots-33"><a href="#SigPlots-33"><span class="linenos">33</span></a><span class="sd">        This method sets up the SigPlots object with the provided project path.</span>
+</span><span id="SigPlots-34"><a href="#SigPlots-34"><span class="linenos">34</span></a><span class="sd">        It initializes attributes for the project, NMF folder, figures folder, and a SingletonLogger for logging.</span>
+</span><span id="SigPlots-35"><a href="#SigPlots-35"><span class="linenos">35</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SigPlots-36"><a href="#SigPlots-36"><span class="linenos">36</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">nmf_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">nmf_folder</span><span class="p">)</span>
+</span><span id="SigPlots-37"><a href="#SigPlots-37"><span class="linenos">37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">figure_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">figure_folder</span><span class="p">)</span>
+</span><span id="SigPlots-38"><a href="#SigPlots-38"><span class="linenos">38</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">figure_folder</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="SigPlots-39"><a href="#SigPlots-39"><span class="linenos">39</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">SingletonLogger</span><span class="p">()</span>
+</span><span id="SigPlots-40"><a href="#SigPlots-40"><span class="linenos">40</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_decompose_files</span><span class="p">()</span>
+</span><span id="SigPlots-41"><a href="#SigPlots-41"><span class="linenos">41</span></a>
+</span><span id="SigPlots-42"><a href="#SigPlots-42"><span class="linenos">42</span></a>    <span class="k">def</span> <span class="nf">_get_decompose_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="SigPlots-43"><a href="#SigPlots-43"><span class="linenos">43</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SigPlots-44"><a href="#SigPlots-44"><span class="linenos">44</span></a><span class="sd">        Retrieve decomposed mutation data files.</span>
+</span><span id="SigPlots-45"><a href="#SigPlots-45"><span class="linenos">45</span></a>
+</span><span id="SigPlots-46"><a href="#SigPlots-46"><span class="linenos">46</span></a><span class="sd">        Returns:</span>
+</span><span id="SigPlots-47"><a href="#SigPlots-47"><span class="linenos">47</span></a><span class="sd">            dict: A dictionary containing decomposed mutation data DataFrames for different mutation context sizes.</span>
+</span><span id="SigPlots-48"><a href="#SigPlots-48"><span class="linenos">48</span></a>
+</span><span id="SigPlots-49"><a href="#SigPlots-49"><span class="linenos">49</span></a><span class="sd">        This method reads the decomposed mutation data for different mutation contexts from the NMF folder and returns a dictionary containing DataFrames for each size.</span>
+</span><span id="SigPlots-50"><a href="#SigPlots-50"><span class="linenos">50</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SigPlots-51"><a href="#SigPlots-51"><span class="linenos">51</span></a>        <span class="n">decompose_dict</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="SigPlots-52"><a href="#SigPlots-52"><span class="linenos">52</span></a>            <span class="n">size</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmf_folder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;decompose.</span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">.txt&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="SigPlots-53"><a href="#SigPlots-53"><span class="linenos">53</span></a>            <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">helpers</span><span class="o">.</span><span class="n">MutationalSigantures</span><span class="o">.</span><span class="n">SIZES</span>
+</span><span id="SigPlots-54"><a href="#SigPlots-54"><span class="linenos">54</span></a>        <span class="p">}</span>
+</span><span id="SigPlots-55"><a href="#SigPlots-55"><span class="linenos">55</span></a>        <span class="k">return</span> <span class="n">decompose_dict</span>
+</span><span id="SigPlots-56"><a href="#SigPlots-56"><span class="linenos">56</span></a>
+</span><span id="SigPlots-57"><a href="#SigPlots-57"><span class="linenos">57</span></a>    <span class="k">def</span> <span class="nf">create_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="SigPlots-58"><a href="#SigPlots-58"><span class="linenos">58</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SigPlots-59"><a href="#SigPlots-59"><span class="linenos">59</span></a><span class="sd">        Create signature plots based on mutation data.</span>
+</span><span id="SigPlots-60"><a href="#SigPlots-60"><span class="linenos">60</span></a>
+</span><span id="SigPlots-61"><a href="#SigPlots-61"><span class="linenos">61</span></a><span class="sd">        This method reads the decomposed mutation data for different mutation contexts</span>
+</span><span id="SigPlots-62"><a href="#SigPlots-62"><span class="linenos">62</span></a><span class="sd">        from the NMF folder and generates signature plots. It checks the size of the</span>
+</span><span id="SigPlots-63"><a href="#SigPlots-63"><span class="linenos">63</span></a><span class="sd">        mutation context and chooses the appropriate plotting function accordingly.</span>
+</span><span id="SigPlots-64"><a href="#SigPlots-64"><span class="linenos">64</span></a><span class="sd">        The results are saved in the &#39;figures&#39; folder within the result directory.</span>
+</span><span id="SigPlots-65"><a href="#SigPlots-65"><span class="linenos">65</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SigPlots-66"><a href="#SigPlots-66"><span class="linenos">66</span></a>        <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">helpers</span><span class="o">.</span><span class="n">MutationalSigantures</span><span class="o">.</span><span class="n">SIZES</span><span class="p">:</span>
+</span><span id="SigPlots-67"><a href="#SigPlots-67"><span class="linenos">67</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">log_info</span><span class="p">(</span>
+</span><span id="SigPlots-68"><a href="#SigPlots-68"><span class="linenos">68</span></a>                <span class="sa">f</span><span class="s2">&quot;Creating siganture plots for context file: &#39;</span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+</span><span id="SigPlots-69"><a href="#SigPlots-69"><span class="linenos">69</span></a>            <span class="p">)</span>
+</span><span id="SigPlots-70"><a href="#SigPlots-70"><span class="linenos">70</span></a>            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span><span class="p">[</span><span class="n">size</span><span class="p">]</span>
+</span><span id="SigPlots-71"><a href="#SigPlots-71"><span class="linenos">71</span></a>            <span class="n">barplots</span><span class="o">.</span><span class="n">signature_pdf_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_folder</span><span class="p">)</span>
+</span><span id="SigPlots-72"><a href="#SigPlots-72"><span class="linenos">72</span></a>
+</span><span id="SigPlots-73"><a href="#SigPlots-73"><span class="linenos">73</span></a>    <span class="k">def</span> <span class="nf">create_expected_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sbs</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="SigPlots-74"><a href="#SigPlots-74"><span class="linenos">74</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SigPlots-75"><a href="#SigPlots-75"><span class="linenos">75</span></a><span class="sd">        Create signature plots based on a list that those SBS are having the benefit of a larger context.</span>
+</span><span id="SigPlots-76"><a href="#SigPlots-76"><span class="linenos">76</span></a>
+</span><span id="SigPlots-77"><a href="#SigPlots-77"><span class="linenos">77</span></a><span class="sd">        Args:</span>
+</span><span id="SigPlots-78"><a href="#SigPlots-78"><span class="linenos">78</span></a><span class="sd">        sbs (list, optional): List of SBS types to create signature plots for.</span>
+</span><span id="SigPlots-79"><a href="#SigPlots-79"><span class="linenos">79</span></a><span class="sd">            If not provided, defaults to the predefined list in SigPlots.EXPECTED_SBS.</span>
+</span><span id="SigPlots-80"><a href="#SigPlots-80"><span class="linenos">80</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SigPlots-81"><a href="#SigPlots-81"><span class="linenos">81</span></a>        <span class="k">if</span> <span class="n">sbs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="SigPlots-82"><a href="#SigPlots-82"><span class="linenos">82</span></a>            <span class="n">sbs</span> <span class="o">=</span> <span class="n">SigPlots</span><span class="o">.</span><span class="n">EXPECTED_SBS</span>
+</span><span id="SigPlots-83"><a href="#SigPlots-83"><span class="linenos">83</span></a>        <span class="n">barplots</span><span class="o">.</span><span class="n">create_expected_larger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span><span class="p">,</span> <span class="n">sbs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_folder</span><span class="p">)</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>This method sets up the SigPlots object with the provided project path. It initializes
-attributes for project, NMF folder, figures folder, and a SingletonLogger for logging.</p>
+            <div class="docstring"><p>SigPlots class is responsible for creating signature plots based on mutation data.
+It utilizes the SBS class (provide import statement or explanation) for accessing genome information and logging using SingletonLogger.
+The class provides methods to generate signature plots for different mutation contexts.</p>
 </div>
 
 
@@ -231,21 +266,40 @@ attributes for project, NMF folder, figures folder, and a SingletonLogger for lo
     </div>
     <a class="headerlink" href="#SigPlots.__init__"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="SigPlots.__init__-25"><a href="#SigPlots.__init__-25"><span class="linenos">25</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nmf_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">figure_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="SigPlots.__init__-26"><a href="#SigPlots.__init__-26"><span class="linenos">26</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">nmf_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">nmf_folder</span><span class="p">)</span>
-</span><span id="SigPlots.__init__-27"><a href="#SigPlots.__init__-27"><span class="linenos">27</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">figures</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">figure_folder</span><span class="p">)</span>
-</span><span id="SigPlots.__init__-28"><a href="#SigPlots.__init__-28"><span class="linenos">28</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="SigPlots.__init__-29"><a href="#SigPlots.__init__-29"><span class="linenos">29</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">SingletonLogger</span><span class="p">()</span>
-</span><span id="SigPlots.__init__-30"><a href="#SigPlots.__init__-30"><span class="linenos">30</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="SigPlots.__init__-26"><a href="#SigPlots.__init__-26"><span class="linenos">26</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SigPlots.__init__-27"><a href="#SigPlots.__init__-27"><span class="linenos">27</span></a><span class="sd">        Initialize a SigPlots object.</span>
+</span><span id="SigPlots.__init__-28"><a href="#SigPlots.__init__-28"><span class="linenos">28</span></a>
+</span><span id="SigPlots.__init__-29"><a href="#SigPlots.__init__-29"><span class="linenos">29</span></a><span class="sd">        Args:</span>
+</span><span id="SigPlots.__init__-30"><a href="#SigPlots.__init__-30"><span class="linenos">30</span></a><span class="sd">            nmf_folder (Path): Path to the folder containing decomposed mutation data.</span>
+</span><span id="SigPlots.__init__-31"><a href="#SigPlots.__init__-31"><span class="linenos">31</span></a><span class="sd">            figure_folder (Path): Path to the folder where generated plots will be saved.</span>
+</span><span id="SigPlots.__init__-32"><a href="#SigPlots.__init__-32"><span class="linenos">32</span></a>
+</span><span id="SigPlots.__init__-33"><a href="#SigPlots.__init__-33"><span class="linenos">33</span></a><span class="sd">        This method sets up the SigPlots object with the provided project path.</span>
+</span><span id="SigPlots.__init__-34"><a href="#SigPlots.__init__-34"><span class="linenos">34</span></a><span class="sd">        It initializes attributes for the project, NMF folder, figures folder, and a SingletonLogger for logging.</span>
+</span><span id="SigPlots.__init__-35"><a href="#SigPlots.__init__-35"><span class="linenos">35</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SigPlots.__init__-36"><a href="#SigPlots.__init__-36"><span class="linenos">36</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">nmf_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">nmf_folder</span><span class="p">)</span>
+</span><span id="SigPlots.__init__-37"><a href="#SigPlots.__init__-37"><span class="linenos">37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">figure_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">figure_folder</span><span class="p">)</span>
+</span><span id="SigPlots.__init__-38"><a href="#SigPlots.__init__-38"><span class="linenos">38</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">figure_folder</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="SigPlots.__init__-39"><a href="#SigPlots.__init__-39"><span class="linenos">39</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">SingletonLogger</span><span class="p">()</span>
+</span><span id="SigPlots.__init__-40"><a href="#SigPlots.__init__-40"><span class="linenos">40</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_decompose_files</span><span class="p">()</span>
 </span></pre></div>
 
 
-    
+            <div class="docstring"><p>Initialize a SigPlots object.</p>
+
+<p>Args:
+    nmf_folder (Path): Path to the folder containing decomposed mutation data.
+    figure_folder (Path): Path to the folder where generated plots will be saved.</p>
+
+<p>This method sets up the SigPlots object with the provided project path.
+It initializes attributes for the project, NMF folder, figures folder, and a SingletonLogger for logging.</p>
+</div>
+
 
                             </div>
                             <div id="SigPlots.EXPECTED_SBS" class="classattr">
                                 <div class="attr variable">
             <span class="name">EXPECTED_SBS</span>        =
-<span class="default_value">[&#39;SBS2&#39;, &#39;SBS7a&#39;, &#39;SBS10a&#39;, &#39;SBS13&#39;, &#39;SBS17a&#39;, &#39;SBS17b&#39;]</span>
+<span class="default_value">[&#39;SBS2&#39;, &#39;SBS7a&#39;, &#39;SBS10a&#39;, &#39;SBS13&#39;, &#39;SBS17b&#39;, &#39;SBS22a&#39;]</span>
 
         
     </div>
@@ -265,13 +319,13 @@ attributes for project, NMF folder, figures folder, and a SingletonLogger for lo
     
 
                             </div>
-                            <div id="SigPlots.figures" class="classattr">
+                            <div id="SigPlots.figure_folder" class="classattr">
                                 <div class="attr variable">
-            <span class="name">figures</span>
+            <span class="name">figure_folder</span>
 
         
     </div>
-    <a class="headerlink" href="#SigPlots.figures"></a>
+    <a class="headerlink" href="#SigPlots.figure_folder"></a>
     
     
 
@@ -281,33 +335,27 @@ attributes for project, NMF folder, figures folder, and a SingletonLogger for lo
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">create_plots</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+        <span class="name">create_plots</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
                 <label class="view-source-button" for="SigPlots.create_plots-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#SigPlots.create_plots"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SigPlots.create_plots-32"><a href="#SigPlots.create_plots-32"><span class="linenos">32</span></a>    <span class="k">def</span> <span class="nf">create_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="SigPlots.create_plots-33"><a href="#SigPlots.create_plots-33"><span class="linenos">33</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SigPlots.create_plots-34"><a href="#SigPlots.create_plots-34"><span class="linenos">34</span></a><span class="sd">        Create signature plots based on mutation data.</span>
-</span><span id="SigPlots.create_plots-35"><a href="#SigPlots.create_plots-35"><span class="linenos">35</span></a>
-</span><span id="SigPlots.create_plots-36"><a href="#SigPlots.create_plots-36"><span class="linenos">36</span></a><span class="sd">        This method reads the decomposed mutation data for different mutation contexts</span>
-</span><span id="SigPlots.create_plots-37"><a href="#SigPlots.create_plots-37"><span class="linenos">37</span></a><span class="sd">        from the NMF folder and generates signature plots. It checks the size of the</span>
-</span><span id="SigPlots.create_plots-38"><a href="#SigPlots.create_plots-38"><span class="linenos">38</span></a><span class="sd">        mutation context and chooses the appropriate plotting function accordingly.</span>
-</span><span id="SigPlots.create_plots-39"><a href="#SigPlots.create_plots-39"><span class="linenos">39</span></a><span class="sd">        The results are saved in the &#39;figures&#39; folder within the result directory.</span>
-</span><span id="SigPlots.create_plots-40"><a href="#SigPlots.create_plots-40"><span class="linenos">40</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SigPlots.create_plots-41"><a href="#SigPlots.create_plots-41"><span class="linenos">41</span></a>        <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">helpers</span><span class="o">.</span><span class="n">MutationalSigantures</span><span class="o">.</span><span class="n">SIZES</span><span class="p">:</span>
-</span><span id="SigPlots.create_plots-42"><a href="#SigPlots.create_plots-42"><span class="linenos">42</span></a>            <span class="n">decompose_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nmf_folder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;decompose.</span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">.txt&quot;</span>
-</span><span id="SigPlots.create_plots-43"><a href="#SigPlots.create_plots-43"><span class="linenos">43</span></a>            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">decompose_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="SigPlots.create_plots-44"><a href="#SigPlots.create_plots-44"><span class="linenos">44</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span>
-</span><span id="SigPlots.create_plots-45"><a href="#SigPlots.create_plots-45"><span class="linenos">45</span></a>            <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">96</span><span class="p">:</span>
-</span><span id="SigPlots.create_plots-46"><a href="#SigPlots.create_plots-46"><span class="linenos">46</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">log_info</span><span class="p">(</span>
-</span><span id="SigPlots.create_plots-47"><a href="#SigPlots.create_plots-47"><span class="linenos">47</span></a>                    <span class="sa">f</span><span class="s2">&quot;Creating siganture plots for context file: &#39;</span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
-</span><span id="SigPlots.create_plots-48"><a href="#SigPlots.create_plots-48"><span class="linenos">48</span></a>                <span class="p">)</span>
-</span><span id="SigPlots.create_plots-49"><a href="#SigPlots.create_plots-49"><span class="linenos">49</span></a>                <span class="n">barplots</span><span class="o">.</span><span class="n">larger_context_barplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
-</span><span id="SigPlots.create_plots-50"><a href="#SigPlots.create_plots-50"><span class="linenos">50</span></a>            <span class="k">else</span><span class="p">:</span>
-</span><span id="SigPlots.create_plots-51"><a href="#SigPlots.create_plots-51"><span class="linenos">51</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">log_info</span><span class="p">(</span><span class="s2">&quot;Creating siganture plots for context file: &#39;96&#39;&quot;</span><span class="p">)</span>
-</span><span id="SigPlots.create_plots-52"><a href="#SigPlots.create_plots-52"><span class="linenos">52</span></a>                <span class="n">barplots</span><span class="o">.</span><span class="n">create_96_barplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SigPlots.create_plots-57"><a href="#SigPlots.create_plots-57"><span class="linenos">57</span></a>    <span class="k">def</span> <span class="nf">create_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="SigPlots.create_plots-58"><a href="#SigPlots.create_plots-58"><span class="linenos">58</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SigPlots.create_plots-59"><a href="#SigPlots.create_plots-59"><span class="linenos">59</span></a><span class="sd">        Create signature plots based on mutation data.</span>
+</span><span id="SigPlots.create_plots-60"><a href="#SigPlots.create_plots-60"><span class="linenos">60</span></a>
+</span><span id="SigPlots.create_plots-61"><a href="#SigPlots.create_plots-61"><span class="linenos">61</span></a><span class="sd">        This method reads the decomposed mutation data for different mutation contexts</span>
+</span><span id="SigPlots.create_plots-62"><a href="#SigPlots.create_plots-62"><span class="linenos">62</span></a><span class="sd">        from the NMF folder and generates signature plots. It checks the size of the</span>
+</span><span id="SigPlots.create_plots-63"><a href="#SigPlots.create_plots-63"><span class="linenos">63</span></a><span class="sd">        mutation context and chooses the appropriate plotting function accordingly.</span>
+</span><span id="SigPlots.create_plots-64"><a href="#SigPlots.create_plots-64"><span class="linenos">64</span></a><span class="sd">        The results are saved in the &#39;figures&#39; folder within the result directory.</span>
+</span><span id="SigPlots.create_plots-65"><a href="#SigPlots.create_plots-65"><span class="linenos">65</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SigPlots.create_plots-66"><a href="#SigPlots.create_plots-66"><span class="linenos">66</span></a>        <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">helpers</span><span class="o">.</span><span class="n">MutationalSigantures</span><span class="o">.</span><span class="n">SIZES</span><span class="p">:</span>
+</span><span id="SigPlots.create_plots-67"><a href="#SigPlots.create_plots-67"><span class="linenos">67</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">log_info</span><span class="p">(</span>
+</span><span id="SigPlots.create_plots-68"><a href="#SigPlots.create_plots-68"><span class="linenos">68</span></a>                <span class="sa">f</span><span class="s2">&quot;Creating siganture plots for context file: &#39;</span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+</span><span id="SigPlots.create_plots-69"><a href="#SigPlots.create_plots-69"><span class="linenos">69</span></a>            <span class="p">)</span>
+</span><span id="SigPlots.create_plots-70"><a href="#SigPlots.create_plots-70"><span class="linenos">70</span></a>            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span><span class="p">[</span><span class="n">size</span><span class="p">]</span>
+</span><span id="SigPlots.create_plots-71"><a href="#SigPlots.create_plots-71"><span class="linenos">71</span></a>            <span class="n">barplots</span><span class="o">.</span><span class="n">signature_pdf_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_folder</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -326,35 +374,31 @@ The results are saved in the 'figures' folder within the result directory.</p>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">create_expected_plots</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">sbs</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">):</span></span>
+        <span class="name">create_expected_plots</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">sbs</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
                 <label class="view-source-button" for="SigPlots.create_expected_plots-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#SigPlots.create_expected_plots"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SigPlots.create_expected_plots-54"><a href="#SigPlots.create_expected_plots-54"><span class="linenos">54</span></a>    <span class="k">def</span> <span class="nf">create_expected_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sbs</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span id="SigPlots.create_expected_plots-55"><a href="#SigPlots.create_expected_plots-55"><span class="linenos">55</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SigPlots.create_expected_plots-56"><a href="#SigPlots.create_expected_plots-56"><span class="linenos">56</span></a><span class="sd">        Create signature plots based on a list that</span>
-</span><span id="SigPlots.create_expected_plots-57"><a href="#SigPlots.create_expected_plots-57"><span class="linenos">57</span></a><span class="sd">        those SBS are having the benefit of a larger context.</span>
-</span><span id="SigPlots.create_expected_plots-58"><a href="#SigPlots.create_expected_plots-58"><span class="linenos">58</span></a>
-</span><span id="SigPlots.create_expected_plots-59"><a href="#SigPlots.create_expected_plots-59"><span class="linenos">59</span></a><span class="sd">        This method utilizes the pre-processed mutation data stored in the &#39;_dfs&#39;</span>
-</span><span id="SigPlots.create_expected_plots-60"><a href="#SigPlots.create_expected_plots-60"><span class="linenos">60</span></a><span class="sd">        attribute and generates signature plots for the SBS types specified in</span>
-</span><span id="SigPlots.create_expected_plots-61"><a href="#SigPlots.create_expected_plots-61"><span class="linenos">61</span></a><span class="sd">        &#39;EXPECTED_SBS&#39;. The results are saved in the &#39;figures&#39; folder within the</span>
-</span><span id="SigPlots.create_expected_plots-62"><a href="#SigPlots.create_expected_plots-62"><span class="linenos">62</span></a><span class="sd">        result directory.</span>
-</span><span id="SigPlots.create_expected_plots-63"><a href="#SigPlots.create_expected_plots-63"><span class="linenos">63</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SigPlots.create_expected_plots-64"><a href="#SigPlots.create_expected_plots-64"><span class="linenos">64</span></a>        <span class="k">if</span> <span class="n">sbs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="SigPlots.create_expected_plots-65"><a href="#SigPlots.create_expected_plots-65"><span class="linenos">65</span></a>            <span class="n">sbs</span> <span class="o">=</span> <span class="n">SigPlots</span><span class="o">.</span><span class="n">EXPECTED_SBS</span>
-</span><span id="SigPlots.create_expected_plots-66"><a href="#SigPlots.create_expected_plots-66"><span class="linenos">66</span></a>        <span class="n">barplots</span><span class="o">.</span><span class="n">create_expected_larger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span><span class="p">,</span> <span class="n">sbs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SigPlots.create_expected_plots-73"><a href="#SigPlots.create_expected_plots-73"><span class="linenos">73</span></a>    <span class="k">def</span> <span class="nf">create_expected_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sbs</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="SigPlots.create_expected_plots-74"><a href="#SigPlots.create_expected_plots-74"><span class="linenos">74</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SigPlots.create_expected_plots-75"><a href="#SigPlots.create_expected_plots-75"><span class="linenos">75</span></a><span class="sd">        Create signature plots based on a list that those SBS are having the benefit of a larger context.</span>
+</span><span id="SigPlots.create_expected_plots-76"><a href="#SigPlots.create_expected_plots-76"><span class="linenos">76</span></a>
+</span><span id="SigPlots.create_expected_plots-77"><a href="#SigPlots.create_expected_plots-77"><span class="linenos">77</span></a><span class="sd">        Args:</span>
+</span><span id="SigPlots.create_expected_plots-78"><a href="#SigPlots.create_expected_plots-78"><span class="linenos">78</span></a><span class="sd">        sbs (list, optional): List of SBS types to create signature plots for.</span>
+</span><span id="SigPlots.create_expected_plots-79"><a href="#SigPlots.create_expected_plots-79"><span class="linenos">79</span></a><span class="sd">            If not provided, defaults to the predefined list in SigPlots.EXPECTED_SBS.</span>
+</span><span id="SigPlots.create_expected_plots-80"><a href="#SigPlots.create_expected_plots-80"><span class="linenos">80</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SigPlots.create_expected_plots-81"><a href="#SigPlots.create_expected_plots-81"><span class="linenos">81</span></a>        <span class="k">if</span> <span class="n">sbs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="SigPlots.create_expected_plots-82"><a href="#SigPlots.create_expected_plots-82"><span class="linenos">82</span></a>            <span class="n">sbs</span> <span class="o">=</span> <span class="n">SigPlots</span><span class="o">.</span><span class="n">EXPECTED_SBS</span>
+</span><span id="SigPlots.create_expected_plots-83"><a href="#SigPlots.create_expected_plots-83"><span class="linenos">83</span></a>        <span class="n">barplots</span><span class="o">.</span><span class="n">create_expected_larger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dfs</span><span class="p">,</span> <span class="n">sbs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_folder</span><span class="p">)</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Create signature plots based on a list that
-those SBS are having the benefit of a larger context.</p>
+            <div class="docstring"><p>Create signature plots based on a list that those SBS are having the benefit of a larger context.</p>
 
-<p>This method utilizes the pre-processed mutation data stored in the '_dfs'
-attribute and generates signature plots for the SBS types specified in
-'EXPECTED_SBS'. The results are saved in the 'figures' folder within the
-result directory.</p>
+<p>Args:
+sbs (list, optional): List of SBS types to create signature plots for.
+    If not provided, defaults to the predefined list in <a href="#SigPlots.EXPECTED_SBS">SigPlots.EXPECTED_SBS</a>.</p>
 </div>
 
 

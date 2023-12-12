@@ -285,3 +285,17 @@ class SBSMatrixGenerator:
         if self._samples_df is None:
             return pd.DataFrame()
         return self._samples_df.loc[(self._samples_df != 0).any(axis=1)]
+
+    def __repr__(self) -> str:
+        """
+        Return a string representation of the SBSMatrixGenerator object.
+
+        Returns:
+            str: String representation of the object.
+        """
+        return (
+            f"SBSMatrixGenerator(project={self.project}, "
+            f"vcf_file={self.vcf}, "
+            f"genome={self.genome}, "
+            f"ref_genome={self.ref_genome})"
+        )

@@ -80,3 +80,9 @@ class SigPlots:
         if sbs is None:
             sbs = SigPlots.EXPECTED_SBS
         barplots.create_expected_larger(self._dfs, sbs, self.figure_folder)
+
+    def __repr__(self) -> str:
+        """
+        Return a string representation of the SigPlots class.
+        """
+        return f"SigPlots(nmf_folder={self.nmf_folder}, figure_folder={self.figure_folder})"

@@ -398,7 +398,7 @@ def add_text_lines_to_plot(info: ContextBarInfo, ax: plt.axes, write_sbs_title: 
         )
 
 
-def add_context_96_elements(info: ContextBarInfo, axL plt.axes, df: pd.DataFrame):
+def add_context_96_elements(info: ContextBarInfo, ax: plt.axes, df: pd.DataFrame):
     """
     Add elements to the plot for context 96.
 

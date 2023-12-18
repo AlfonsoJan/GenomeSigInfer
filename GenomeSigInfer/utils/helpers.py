@@ -188,13 +188,13 @@ BETA_LOSS = ["frobenius", "kullback-leibler", "itakura-saito"]
 
 def custom_sort_column_names(column_name: str) -> tuple:
     """
-    Custom sorting function for column names.
+        Custom sorting function for column names.
 
-    Parameters:
-* column_name (str): The column name to be sorted.
+        Parameters:
+    * column_name (str): The column name to be sorted.
 
-    Returns:
-* tuple: A tuple used for sorting, containing (numeric_part, prefix, suffix).
+        Returns:
+    * tuple: A tuple used for sorting, containing (numeric_part, prefix, suffix).
     """
     match = re.match(r"(\D+)(\d+)(\D*)", column_name)
     if match:

@@ -10,6 +10,7 @@ Classes:
 Functions:
 * custom_chromosome_sort: Custom sorting function for sorting chromosome values.
 * generate_sbs_matrix_arg_checker: Decorator function for checking arguments before calling 'generate_sbs_matrix'.
+* generate_single_sbs_matrix: Generate a single SBS matrix.
 * generate_sbs_matrix: Initializes SBS with the specified project path.
 
 Attributes:
@@ -59,7 +60,7 @@ def generate_sbs_matrix_arg_checker(func: callable) -> callable:
     """
 
     @wraps(func)
-    def wrapper(folder, vcf_files, ref_genome, genome):
+    def wrapper(folder, vcf_files, ref_genome, genome, **kwargs):
         # Ensure folder is a Path object
         folder = Path(folder)
         # Correct type
@@ -75,9 +76,51 @@ def generate_sbs_matrix_arg_checker(func: callable) -> callable:
         ref_genome = Path(ref_genome)
         # Check if the genome is supported
         helpers.check_supported_genome(genome)
+        if func.__name__ == "generate_single_sbs_matrix":
+            return func(folder, exist_vcf_files, ref_genome, genome, **kwargs)
         return func(folder, exist_vcf_files, ref_genome, genome)
 
     return wrapper
+
+
+@generate_sbs_matrix_arg_checker
+def generate_single_sbs_matrix(
+    folder: Path,
+    vcf_files: tuple[Path],
+    ref_genome: Path,
+    genome: helpers.MutationalSigantures.REF_GENOMES,
+    max_context: int = helpers.MutationalSigantures.MAX_CONTEXT,
+) -> pd.DataFrame:
+    """
+    Generate a single SBS matrix.
+
+    Args:
+        folder (Path): Path of where the SBS will be saved.
+        vcf_files (tuple[Path]): Tuple of VCF files.
+        ref_genome (Path): Path of the reference genome.
+        genome (MutationalSigantures.REF_GENOMES): Reference genome.
+        max_context (int, optional): Maximum context. Defaults to helpers.MutationalSigantures.MAX_CONTEXT.
+
+    Returns:
+        pd.DataFrame: Samples dataframe containing the SBS matrix.
+    """
+    # Log to the console
+    logger = logging.SingletonLogger()
+    logger.log_info("Creating SBS matrices!")
+    # Create the folder if it does not exist yet
+    folder.mkdir(parents=True, exist_ok=True)
+    logger.log_info(f"Processing VCF files: {', '.join(map(str, vcf_files))}")
+    # Filter the VCF files on chosen genome
+    filtered_vcf = VCFMatrixGenerator.filter_vcf_files(vcf_files, genome)
+    sbsmatrixgen = SBSMatrixGenerator(
+        project=folder,
+        vcf_file=filtered_vcf,
+        genome=genome,
+        ref_genome=ref_genome,
+        max_context=max_context,
+    )
+    sbsmatrixgen.parse_vcf()
+    return sbsmatrixgen.samples_df
 
 
 @generate_sbs_matrix_arg_checker
@@ -127,7 +170,12 @@ class SBSMatrixGenerator:
     """
 
     def __init__(
-        self, project: Path, vcf_file: pd.DataFrame, genome: str, ref_genome: Path
+        self,
+        project: Path,
+        vcf_file: pd.DataFrame,
+        genome: str,
+        ref_genome: Path,
+        max_context: int = helpers.MutationalSigantures.MAX_CONTEXT,
     ) -> None:
         """
         Initialize the class
@@ -144,6 +192,8 @@ class SBSMatrixGenerator:
         self.ref_genome = ref_genome
         self._logger: logging.SingletonLogger = logging.SingletonLogger()
         self._samples_df = None
+        self.max_context = max_context
+        self.context_list = list(range(self.max_context, 2, -2))
 
     def parse_vcf(self) -> None:
         """
@@ -154,7 +204,7 @@ class SBSMatrixGenerator:
         sorted_chr, grouped_chromosomes = self.group_vcf_chromosome()
         # Init of the sampled dataframe
         self._samples_df: pd.DataFrame = matrix_operations.create_mutation_samples_df(
-            self.vcf
+            self.vcf, self.max_context
         )
         # loop over the dataframe based on the chromosome
         for chrom_start in sorted_chr:
@@ -219,17 +269,13 @@ class SBSMatrixGenerator:
         left_context = "".join(
             [
                 helpers.TSB_REF[chrom_string[_]]
-                for _ in range(
-                    pos - helpers.MutationalSigantures.CONTEXT_LIST[0] // 2, pos
-                )
+                for _ in range(pos - self.context_list[0] // 2, pos)
             ]
         )
         right_context = "".join(
             [
                 helpers.TSB_REF[chrom_string[_]]
-                for _ in range(
-                    pos + 1, pos + helpers.MutationalSigantures.CONTEXT_LIST[0] // 2 + 1
-                )
+                for _ in range(pos + 1, pos + self.context_list[0] // 2 + 1)
             ]
         )
         return left_context, right_context

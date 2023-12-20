@@ -88,7 +88,7 @@ def download_tar_url(
         # Extract the contents of the tar.gz file
         with tarfile.open(download_path, "r:gz") as tar:
             tar.extractall(extracted_path)
-        logger.log_info(f"Finished downloading {genome} to '{extracted_path}'!")
+        logger.log_info(f"Finished extracting {genome} to '{extracted_path}'!")
         # Clean up by removing the downloaded tar.gz file
         os.remove(download_path)
     else:

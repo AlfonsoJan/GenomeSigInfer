@@ -7,7 +7,7 @@ Functions:
 * compress_to_96(df: pd.DataFrame) -> pd.DataFrame: Compress the DataFrame to 96 rows
 * compress_matrix_stepwise(project: Path, samples_df: pd.DataFrame) -> None: Compress the SBS data to lower context sizes.
 * compress(df: pd.DataFrame, regex_str: str) -> pd.DataFrame: Compress the dataframe down by grouping rows based on the regular pattern.
-* create_mutation_samples_df(filtered_vcf: pd.DataFrame) -> pd.DataFrame: Initialize the samples mutation DataFrame.
+* create_mutation_samples_df(filtered_vcf: pd.DataFrame, context: int = helpers.MutationalSigantures.CONTEXT_LIST[0]) -> pd.DataFrame: Initialize the samples mutation DataFrame.
 * increase_mutations(context: int) -> list[str]: Increases mutations in a given column based on a specified context.
 
 Author: J.A. Busker
@@ -118,12 +118,16 @@ def compress(df: pd.DataFrame, regex_str: str) -> pd.DataFrame:
     return compressed_df
 
 
-def create_mutation_samples_df(filtered_vcf: pd.DataFrame) -> pd.DataFrame:
+def create_mutation_samples_df(
+    filtered_vcf: pd.DataFrame,
+    context: int = helpers.MutationalSigantures.CONTEXT_LIST[0],
+) -> pd.DataFrame:
     """
     Initialize the samples mutation DataFrame.
 
     Args:
         filtered_vcf (pd.DataFrame): Filtered VCF data.
+        context (int, optional): The context for mutation. Defaults to the first context in the list.
 
     Returns:
         pd.DataFrame: The initialized mutation DataFrame.
@@ -134,7 +138,7 @@ def create_mutation_samples_df(filtered_vcf: pd.DataFrame) -> pd.DataFrame:
     )
     samples = np.unique(samples)
     # Increase the mutations based on the context
-    new_mut = increase_mutations(helpers.MutationalSigantures.CONTEXT_LIST[0])
+    new_mut = increase_mutations(context)
     init_df = pd.DataFrame({"MutationType": new_mut})
     # Create DataFrames for each sample with zero values
     dfs_init = [init_df]

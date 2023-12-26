@@ -24,7 +24,6 @@ Author: J.A. Busker
 """
 from collections import namedtuple
 from pathlib import Path
-from tqdm import tqdm
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -120,7 +119,7 @@ def context_96_barplot(df: pd.DataFrame, figure_folder: Path) -> None:
     # Use PdfPages for creating a multi-page PDF file
     with PdfPages(figure_folder / "signatures.96.pdf") as pdf:
         # Iterate over each column (mutation type) in sorted order
-        for col in tqdm(sorted_columns):
+        for col in sorted_columns:
             # Parse the DataFrame to extract 96 context data for the current column
             df_col = parse_96_df(df, col)
             create_barplot(df_col, col, pdf, write_sbs_title=True)
@@ -146,7 +145,7 @@ def larger_context_barplot(df_multi_context: pd.DataFrame, folder_path: Path) ->
     )
     # Use PdfPages for creating a multi-page PDF file
     with PdfPages(folder_path / f"signatures.{df_multi_context.shape[0]}.pdf") as pdf:
-        for col in tqdm(sorted_columns):
+        for col in sorted_columns:
             # Parse the DataFrame to extract larger context data for the current column
             df_col = parse_lager_context_df(df_multi_context, col)
             create_barplot(df_col, col, pdf, write_sbs_title=True)

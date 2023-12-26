@@ -20,7 +20,6 @@ setup(
         "pandas==1.5.0",
         "pyarrow==14.0.1",
         "fastparquet==2023.10.1",
-        "tqdm==4.66.1",
         "scikit_learn==1.3.1",
         "seaborn==0.13.0",
         "matplotlib==3.7.1",

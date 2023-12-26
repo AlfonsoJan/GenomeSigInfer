@@ -24,7 +24,6 @@ Author: J.A. Busker
 """
 from functools import wraps
 from pathlib import Path
-from tqdm import tqdm
 import pandas as pd
 from ..utils import helpers, logging
 from ..errors import error
@@ -223,7 +222,7 @@ class SBSMatrixGenerator:
         chrom_string = self.get_chromosome_file(chrom_start)
         self._logger.log_info(f"Starting on chromosome {chrom_start}")
         # Iterate over the indices corresponding to mutations on the chromosome
-        for idx in tqdm(indices):
+        for idx in indices:
             # Process each row in the VCF file for the current chromosome
             self.process_vcf_row(idx, chrom_string)
         self._logger.log_info(f"Finished chromosome {chrom_start}\n")

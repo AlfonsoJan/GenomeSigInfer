@@ -12,7 +12,7 @@ Author: J.A. Busker
 """
 
 
-class RefGenomeNotSUpported(Exception):
+class RefGenomeNotSupported(Exception):
     """
     Exception raised when ref genome is not supported.
 

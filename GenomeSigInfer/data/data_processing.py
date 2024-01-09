@@ -27,7 +27,6 @@ class Preprocessing:
 
     Methods:
         normalize(genomes, total_mut, cutoff): Normalize genomic data.
-        denormalize_samples(genomes, original_totals): Denormalize normalized data.
     """
 
     # Lambda function to calculate the cutoff value
@@ -127,30 +126,6 @@ class Preprocessing:
         genomes[:, list(indices)] = norm_genome
         return np.array(genomes)
 
-    @staticmethod
-    def denormalize_samples(
-        genomes: np.ndarray, original_totals: list[int]
-    ) -> np.ndarray:
-        """
-        Denormalize normalized genomic data.
-
-        Args:
-            genomes (np.ndarray): Normalized genomic data to denormalize.
-            original_totals (List[int]): Original total mutations per sample.
-
-        Returns:
-            np.ndarray: Denormalized genomic data.
-        """
-        # Calculate normalized totals from the normalized genomic data
-        normalized_totals = np.sum(genomes, axis=0)
-        # Convert original totals to NumPy array
-        original_totals = np.array(original_totals)
-        # Denormalize the genomic data using the original and normalized totals
-        results = genomes / normalized_totals * original_totals
-        # Round and cast the results to integers for a discrete representation
-        results = np.round(results, 0)
-        results = results.astype(int)
-        return results
 
     def __repr__(self) -> str:
         """

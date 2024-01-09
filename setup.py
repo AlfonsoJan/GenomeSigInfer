@@ -25,6 +25,6 @@ setup(
         "matplotlib==3.7.1",
         "requests==2.31.0",
     ],
-    extras_require={"test": ["pytest==7.4.2", "pylint==3.0.2", "black==23.12.1"], "doc": "pdoc==14.1.0"},
+    extras_require={"test": ["pylint==3.0.2", "black==23.12.1"], "doc": "pdoc==14.1.0"},
     python_requires=">=3.10",
 )

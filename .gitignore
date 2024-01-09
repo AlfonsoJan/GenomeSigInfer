@@ -38,4 +38,6 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-tests/sbs
+
+# Mischellaneous
+project/

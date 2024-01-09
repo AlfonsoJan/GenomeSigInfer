@@ -19,6 +19,7 @@ def cosine_nmf_w(
     Calculate the cosine similarity on the most optimal columns on (decompressed) nmf result.
 
     Args:
+        optimal_columns: (dict): Dictionary containing the most optimal columns.
         df1 (pd.DataFrame): DataFrame containing signature data.
         df2 (pd.DataFrame): DataFrame containing signature data.
 

@@ -13,38 +13,38 @@ Author: J.A. Busker
 
 
 class RefGenomeNotSupported(Exception):
-    """
-    Exception raised when ref genome is not supported.
+	"""
+	Exception raised when ref genome is not supported.
 
-    Attributes:
-        genome (str): The ref genome.
-    """
+	Attributes:
+	    genome (str): The ref genome.
+	"""
 
-    def __init__(self, genome: str) -> None:
-        """
-        Initialize the exception.
+	def __init__(self, genome: str) -> None:
+		"""
+		Initialize the exception.
 
-        Args:
-            genome (str): The ref genome.
-        """
-        self.genome = genome
-        super().__init__(f"The ref genome '{genome}' is not supported!")
+		Args:
+		    genome (str): The ref genome.
+		"""
+		self.genome = genome
+		super().__init__(f"The ref genome '{genome}' is not supported!")
 
 
 class RefGenomeChromosomeNotFound(Exception):
-    """
-    Exception raised when chromosome file is not found.
+	"""
+	Exception raised when chromosome file is not found.
 
-    Attributes:
-        chromosome (str): The chromosome.
-    """
+	Attributes:
+	    chromosome (str): The chromosome.
+	"""
 
-    def __init__(self, chromosome: str) -> None:
-        """
-        Initialize the exception.
+	def __init__(self, chromosome: str) -> None:
+		"""
+		Initialize the exception.
 
-        Args:
-            chromosome (str): The chromosome.
-        """
-        self.chromosome = chromosome
-        super().__init__(f"The chrosome file '{chromosome}' si not found!")
+		Args:
+		    chromosome (str): The chromosome.
+		"""
+		self.chromosome = chromosome
+		super().__init__(f"The chrosome file '{chromosome}' si not found!")

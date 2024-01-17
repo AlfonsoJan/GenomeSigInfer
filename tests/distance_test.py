@@ -6,92 +6,93 @@ import unittest
 import pandas as pd
 from scipy.spatial.distance import jensenshannon
 from GenomeSigInfer.distance.distance import (
-    get_optimal_columns,
-    set_optimal_columns,
-    get_jensen_shannon_distance,
+	get_optimal_columns,
+	set_optimal_columns,
+	get_jensen_shannon_distance,
 )
 
 
 class TestDistance(unittest.TestCase):
-    """
-    A test case for the `Preprocessing` class in the `GenomeSigInfer.distance.distance` module.
-    """
-    def test_get_optimal_columns(self):
-        """
-        Test case for the get_optimal_columns function.
+	"""
+	A test case for the `Preprocessing` class in the `GenomeSigInfer.distance.distance` module.
+	"""
 
-        This test case checks if the get_optimal_columns function correctly assigns optimal columns
-        between two DataFrames.
-        """
-        # Create sample DataFrames
-        df1 = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
-        df2 = pd.DataFrame({"X": [7, 8, 9], "Y": [10, 11, 12]})
+	def test_get_optimal_columns(self):
+		"""
+		Test case for the get_optimal_columns function.
 
-        # Expected optimal column assignments
-        expected_assignments = {"A": "X", "B": "Y"}
+		This test case checks if the get_optimal_columns function correctly assigns optimal columns
+		between two DataFrames.
+		"""
+		# Create sample DataFrames
+		df1 = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
+		df2 = pd.DataFrame({"X": [7, 8, 9], "Y": [10, 11, 12]})
 
-        # Call the function
-        result = get_optimal_columns(df1, df2)
+		# Expected optimal column assignments
+		expected_assignments = {"A": "X", "B": "Y"}
 
-        # Check if the result matches the expected assignments
-        self.assertEqual(result, expected_assignments)
+		# Call the function
+		result = get_optimal_columns(df1, df2)
 
-    def test_set_optimal_columns(self):
-        """
-        Test case for the set_optimal_columns function.
+		# Check if the result matches the expected assignments
+		self.assertEqual(result, expected_assignments)
 
-        This test case checks if the set_optimal_columns function correctly sets the optimal columns
-        based on the control dataframe and the second dataframe.
-        """
-        # Create sample dataframes
-        control_df = pd.DataFrame(
-            {
-                "MutationType": ["A", "B", "C"],
-                "Column1": [1, 2, 3],
-                "Column2": [4, 5, 6],
-            }
-        )
-        df2 = pd.DataFrame(
-            {
-                "MutationType": ["A", "B", "C"],
-                "Column3": [7, 8, 9],
-                "Column4": [10, 11, 12],
-            }
-        )
+	def test_set_optimal_columns(self):
+		"""
+		Test case for the set_optimal_columns function.
 
-        # Call the function
-        result = set_optimal_columns(control_df, df2)
+		This test case checks if the set_optimal_columns function correctly sets the optimal columns
+		based on the control dataframe and the second dataframe.
+		"""
+		# Create sample dataframes
+		control_df = pd.DataFrame(
+			{
+				"MutationType": ["A", "B", "C"],
+				"Column1": [1, 2, 3],
+				"Column2": [4, 5, 6],
+			}
+		)
+		df2 = pd.DataFrame(
+			{
+				"MutationType": ["A", "B", "C"],
+				"Column3": [7, 8, 9],
+				"Column4": [10, 11, 12],
+			}
+		)
 
-        # Assert the expected output
-        expected_columns = ["MutationType", "Column3", "Column4"]
-        self.assertEqual(list(result.columns), expected_columns)
+		# Call the function
+		result = set_optimal_columns(control_df, df2)
 
-    def test_get_jensen_shannon_distance(self):
-        """
-        Test case for the get_jensen_shannon_distance function.
+		# Assert the expected output
+		expected_columns = ["MutationType", "Column3", "Column4"]
+		self.assertEqual(list(result.columns), expected_columns)
 
-        This test case verifies that the calculated Jensen-Shannon distances
-        match the expected result when comparing two dataframes.
-        """
-        # Create sample dataframes
-        df1 = pd.DataFrame({"A": [0.1, 0.2, 0.3], "B": [0.4, 0.5, 0.6]})
-        df2 = pd.DataFrame({"X": [0.7, 0.8, 0.9], "Y": [1.0, 1.1, 1.2]})
+	def test_get_jensen_shannon_distance(self):
+		"""
+		Test case for the get_jensen_shannon_distance function.
 
-        # Define optimal column assignments
-        optimal_columns = {"A": "X", "B": "Y"}
+		This test case verifies that the calculated Jensen-Shannon distances
+		match the expected result when comparing two dataframes.
+		"""
+		# Create sample dataframes
+		df1 = pd.DataFrame({"A": [0.1, 0.2, 0.3], "B": [0.4, 0.5, 0.6]})
+		df2 = pd.DataFrame({"X": [0.7, 0.8, 0.9], "Y": [1.0, 1.1, 1.2]})
 
-        # Calculate Jensen-Shannon distances
-        result = get_jensen_shannon_distance(optimal_columns, df1, df2)
+		# Define optimal column assignments
+		optimal_columns = {"A": "X", "B": "Y"}
 
-        # Define expected result
-        expected_result = {
-            "A": jensenshannon(df1["A"], df2["X"]),
-            "B": jensenshannon(df1["B"], df2["Y"]),
-        }
+		# Calculate Jensen-Shannon distances
+		result = get_jensen_shannon_distance(optimal_columns, df1, df2)
 
-        # Assert the calculated distances match the expected result
-        self.assertEqual(result, expected_result)
+		# Define expected result
+		expected_result = {
+			"A": jensenshannon(df1["A"], df2["X"]),
+			"B": jensenshannon(df1["B"], df2["Y"]),
+		}
+
+		# Assert the calculated distances match the expected result
+		self.assertEqual(result, expected_result)
 
 
 if __name__ == "__main__":
-    unittest.main()
+	unittest.main()

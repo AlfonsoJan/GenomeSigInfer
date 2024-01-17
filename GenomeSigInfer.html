@@ -124,7 +124,7 @@ $<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </sp
 <em>16 (4x4) possible starting nucleotides x 6 pyrimidine variants x 16 (4x4) possible ending nucleotides = 1536 total combinations.</em></p>
 
 <p>The sbs.24576.txt file contains all of the following the pyrimidine single nucleotide variants, NNN[{C &gt; A, G, or T} or {T &gt; A, G, or C}]NNN.
-<em>16 (4x4) possible starting nucleotides x 16 (4x4) nucleotides x 6 pyrimidine variants x 16 (4x4) nucleotides x 16 (4x4) possible ending dinucleotides = 24576 total combinations.</em></p>
+<em>64 (4x4x4) nucleotides x 6 pyrimidine variants x 64 (4x4x4) possible ending dinucleotides = 24576 total combinations.</em></p>
 
 <div class="pdoc-code codehilite">
 <pre><span></span><code><span class="kn">from</span> <span class="nn"><a href="GenomeSigInfer/sbs.html">GenomeSigInfer.sbs</a></span> <span class="kn">import</span> <span class="n">SBSMatrixGenerator</span>
@@ -165,6 +165,7 @@ $<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </sp
 <span class="p">)</span>
 <span class="n">nmf_matrixgenerator</span><span class="o">.</span><span class="n">run_nmf_on_sbs_files</span><span class="p">()</span>
 
+<span class="c1"># Create images of the cosine similarities and Jensen Shannon divergence</span>
 <span class="c1"># The figure folder</span>
 <span class="n">figure_folder</span> <span class="o">=</span> <span class="s2">&quot;../figures/&quot;</span>
 <span class="n">nmf_matrixgenerator</span><span class="o">.</span><span class="n">create_distance_figures</span><span class="p">(</span><span class="n">figure_folder</span><span class="p">)</span>
@@ -179,9 +180,10 @@ $<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </sp
 <pre><span></span><code><span class="kn">from</span> <span class="nn"><a href="GenomeSigInfer/figures.html">GenomeSigInfer.figures</a></span> <span class="kn">import</span> <span class="n">signature_plots</span>
 <span class="n">nmf_folder</span> <span class="o">=</span> <span class="s2">&quot;project/NMF&quot;</span> <span class="c1"># Folder where the NMF files are located</span>
 <span class="n">result_folder</span> <span class="o">=</span> <span class="s2">&quot;project/results&quot;</span> <span class="c1"># Folder where the plots are saved to</span>
-<span class="n">sig_plots</span> <span class="o">=</span> <span class="n">signature_plots</span><span class="o">.</span><span class="n">SigPlots</span><span class="p">(</span><span class="n">nmf_folder</span><span class="p">,</span> <span class="n">result_folder</span><span class="p">)</span>
+<span class="n">sig_plots</span> <span class="o">=</span> <span class="n">signature_plots</span><span class="o">.</span><span class="n">SigPlots</span><span class="p">(</span><span class="n">nmf_folder</span><span class="p">,</span> <span class="n">figure_folder</span><span class="p">)</span>
 <span class="n">sig_plots</span><span class="o">.</span><span class="n">create_plots</span><span class="p">()</span>
-<span class="n">sig_plots</span><span class="o">.</span><span class="n">create_expected_plots</span><span class="p">()</span>
+<span class="c1"># Create plots of all the context for this signature</span>
+<span class="n">sig_plots</span><span class="o">.</span><span class="n">create_expected_plots</span><span class="p">([</span><span class="s2">&quot;SBS7a&quot;</span><span class="p">])</span>
 </code></pre>
 </div>
 </div>

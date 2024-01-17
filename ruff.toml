@@ -2,3 +2,16 @@
 target-version = "py310"
 # Set the maximum line length to 89.
 line-length = 89
+
+[format]
+quote-style = "double"
+indent-style = "tab"
+docstring-code-format = true
+skip-magic-trailing-comma = false
+
+
+[lint]
+extend-select = [
+  "UP",  # pyupgrade
+  "D",   # pydocstyle
+]

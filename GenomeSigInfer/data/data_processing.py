@@ -61,9 +61,7 @@ class Preprocessing:
         # Calculate the sum of each column in the genomic data
         sum_row_genomes = pd.DataFrame(self._genomes.sum(0)).transpose()
         # Create a matrix to repeat the sum values for each sample
-        rep_mat = np.array(
-            sum_row_genomes.values.repeat(self._genomes.shape[0], axis=0)
-        )
+        rep_mat = np.array(sum_row_genomes.values.repeat(self._genomes.shape[0], axis=0))
         # Normalize the genomic data using a random number generator
         n_genomes = self._genomes / rep_mat
         dataframes_list = [
@@ -125,7 +123,6 @@ class Preprocessing:
         )
         genomes[:, list(indices)] = norm_genome
         return np.array(genomes)
-
 
     def __repr__(self) -> str:
         """

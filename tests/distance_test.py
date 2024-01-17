@@ -16,6 +16,7 @@ class TestDistance(unittest.TestCase):
     """
     A test case for the `Preprocessing` class in the `GenomeSigInfer.distance.distance` module.
     """
+
     def test_get_optimal_columns(self):
         """
         Test case for the get_optimal_columns function.

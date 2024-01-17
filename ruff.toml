@@ -1,0 +1,4 @@
+# Support Python 3.10+.
+target-version = "py310"
+# Set the maximum line length to 89.
+line-length = 89

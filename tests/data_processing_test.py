@@ -12,6 +12,7 @@ class PreprocessingTest(unittest.TestCase):
     """
     A test case for the `Preprocessing` class in the `GenomeSigInfer.data.data_processing` module.
     """
+
     def setUp(self):
         """
         Set up the test case by creating a sample genomic data and initializing the Preprocessing object.

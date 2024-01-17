@@ -147,7 +147,10 @@ def generate_sbs_matrix(
     # Filter the VCF files on chosen genome
     filtered_vcf = VCFMatrixGenerator.filter_vcf_files(vcf_files, genome)
     sbsmatrixgen = SBSMatrixGenerator(
-        project=folder, vcf_file=filtered_vcf, genome=genome, ref_genome=ref_genome
+        project=folder,
+        vcf_file=filtered_vcf,
+        genome=genome,
+        ref_genome=ref_genome,
     )
     sbsmatrixgen.parse_vcf()
     # Decrease the context stepwise

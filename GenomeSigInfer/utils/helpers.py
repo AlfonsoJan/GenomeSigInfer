@@ -370,7 +370,10 @@ def get_context_given_size(target_first_value: int) -> tuple[None, int]:
     Returns:
         Optional[int]: The corresponding context size if found, or None if not found.
     """
-    for first_value, second_value in MutationalSigantures.SIZES_CONTEXT_GROUPED:
+    for (
+        first_value,
+        second_value,
+    ) in MutationalSigantures.SIZES_CONTEXT_GROUPED:
         if first_value == target_first_value:
             return second_value
     return None  # Return None if the first value is not found in the list

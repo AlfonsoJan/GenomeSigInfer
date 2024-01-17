@@ -4,7 +4,10 @@ Unit tests for the `GenomeSigInfer.matrix.matrix_operations` module.
 """
 import unittest
 import pandas as pd
-from GenomeSigInfer.matrix.matrix_operations import increase_mutations, compress_to_96
+from GenomeSigInfer.matrix.matrix_operations import (
+    increase_mutations,
+    compress_to_96,
+)
 from GenomeSigInfer.utils import helpers
 
 
@@ -12,6 +15,7 @@ class TestMatrixOperations(unittest.TestCase):
     """
     A test case for the `increase_mutations, compress_to_96` fucntions in the `GenomeSigInfer.matrix.matrix_operations` module.
     """
+
     def test_increase_mutations_value_error(self):
         """
         Test if ValueError is raised when the context is less than 3

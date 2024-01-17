@@ -29,7 +29,10 @@ def download_ref_genome_arg_checker(func: callable) -> callable:
 
     @wraps(func)
     def wrapper(
-        folder: Path, genome: helpers.MutationalSigantures.REF_GENOMES, *args, **kwargs
+        folder: Path,
+        genome: helpers.MutationalSigantures.REF_GENOMES,
+        *args,
+        **kwargs,
     ) -> None:
         folder = Path(folder)
         helpers.check_supported_genome(genome)

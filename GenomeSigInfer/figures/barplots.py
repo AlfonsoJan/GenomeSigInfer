@@ -140,9 +140,7 @@ def larger_context_barplot(df_multi_context: pd.DataFrame, folder_path: Path) ->
     )
     # Sort the columns
     # The SBS name for consistency
-    sorted_columns = sorted(
-        df_multi_context.columns[1:-1], key=custom_sort_column_names
-    )
+    sorted_columns = sorted(df_multi_context.columns[1:-1], key=custom_sort_column_names)
     # Use PdfPages for creating a multi-page PDF file
     with PdfPages(folder_path / f"signatures.{df_multi_context.shape[0]}.pdf") as pdf:
         for col in sorted_columns:
@@ -264,7 +262,12 @@ def parse_lager_context_df(df: pd.DataFrame, col: str) -> pd.DataFrame:
         contex_name_generator = zip(context_index_list, seq)
         for idx, name in contex_name_generator:
             for aa in amino:
-                row = {"name": name, "context": mut, "variable": aa, "sbs": col}
+                row = {
+                    "name": name,
+                    "context": mut,
+                    "variable": aa,
+                    "sbs": col,
+                }
                 if total_sbs_mut == 0:
                     row["value"] = 0
                 else:
@@ -276,7 +279,8 @@ def parse_lager_context_df(df: pd.DataFrame, col: str) -> pd.DataFrame:
                 # eg: C: 0.05
                 # eg: G: 0.1
                 result_df = pd.concat(
-                    [result_df, pd.DataFrame(row, index=[0])], ignore_index=True
+                    [result_df, pd.DataFrame(row, index=[0])],
+                    ignore_index=True,
                 )
     return result_df
 
@@ -299,7 +303,11 @@ def parse_96_df(df: pd.DataFrame, col: str) -> pd.DataFrame:
 
 
 def create_barplot(
-    df, col: str, pdf: PdfPages, ax: plt.axes = None, write_sbs_title: bool = True
+    df,
+    col: str,
+    pdf: PdfPages,
+    ax: plt.axes = None,
+    write_sbs_title: bool = True,
 ) -> None:
     """
     Create a bar plot based on mutation data and save it to a PDF file.
@@ -396,7 +404,10 @@ def add_text_lines_to_plot(
             else indices_list[-1] + 0.5
         )
         ax.axvspan(
-            bg_color_x_min, bg_color_x_max, facecolor=COLOR_BG[index], alpha=0.25
+            bg_color_x_min,
+            bg_color_x_max,
+            facecolor=COLOR_BG[index],
+            alpha=0.25,
         )
         # UNCOMMENT THIS
         # Adds a line between each group
@@ -491,7 +502,13 @@ def add_larger_context_elements(
                 added_labels.add(nucleotide)
             else:
                 # If the label is already added, add a bar without a label
-                ax.bar(x=x, height=height, width=info.w, bottom=bottom, color=color)
+                ax.bar(
+                    x=x,
+                    height=height,
+                    width=info.w,
+                    bottom=bottom,
+                    color=color,
+                )
             bottom += height
 
 
@@ -544,9 +561,7 @@ def plot_context_bar(df: pd.DataFrame, col: str) -> None:
         variable = df.variable.unique()
         # Split indices into sublists for each mutation type in the larger context
         sublist_length = len(x0) // 6
-        indices = [
-            x0[i : i + sublist_length] for i in range(0, len(x0), sublist_length)
-        ]
+        indices = [x0[i : i + sublist_length] for i in range(0, len(x0), sublist_length)]
         # Extract unique mutation types from the larger context
         mutation_types = df["context"].str.extract(r"\[(.*?)\]")[0].unique()
         groups = zip(mutation_types, indices)

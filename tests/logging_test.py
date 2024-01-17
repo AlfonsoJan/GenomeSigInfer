@@ -3,7 +3,6 @@
 Unit tests for the `GenomeSigInfer.utils.logging` module.
 """
 import unittest
-import logging
 from GenomeSigInfer.utils.logging import SingletonLogger
 
 

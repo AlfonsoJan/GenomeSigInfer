@@ -40,7 +40,8 @@ class SingletonLogger:
 
     def _configure_logger(self):
         formatter = logging.Formatter(
-            fmt="%(asctime)s - %(levelname)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
+            fmt="%(asctime)s - %(levelname)s - %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
         )
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)

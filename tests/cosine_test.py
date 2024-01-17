@@ -11,6 +11,7 @@ class TestCosineNMFW(unittest.TestCase):
     """
     A test case for the `cosine_nmf_w` function in the `GenomeSigInfer.distance.cosine` module.
     """
+
     def setUp(self):
         """
         Set up the test case by creating sample dataframes and an optimal_columns dictionary for testing.

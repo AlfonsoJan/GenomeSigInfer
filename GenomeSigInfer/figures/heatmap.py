@@ -60,13 +60,12 @@ def heatmap_cosine(cosine_df_list: list[pd.DataFrame], figure_folder: Path) -> s
         axes[index].set_title(f"Context of {context}")
     # Save the generated heatmaps as an imag
     plt.savefig(
-        figure_folder / "cosine.similarity.increased.context.png", bbox_inches="tight"
+        figure_folder / "cosine.similarity.increased.context.png",
+        bbox_inches="tight",
     )
 
 
-def heatmap_jens_shan(
-    jens_shan_df_list: list[pd.DataFrame], figure_folder: Path
-) -> str:
+def heatmap_jens_shan(jens_shan_df_list: list[pd.DataFrame], figure_folder: Path) -> str:
     """
     Generate a set of heatmaps based on Jensen Shannon Distance for different contexts.
 
@@ -108,5 +107,6 @@ def heatmap_jens_shan(
         axes[index].set_title(f"Context of {context}")
     # Save the generated heatmaps as an image
     plt.savefig(
-        figure_folder / "jens_shannon.dist.increased.context.png", bbox_inches="tight"
+        figure_folder / "jens_shannon.dist.increased.context.png",
+        bbox_inches="tight",
     )

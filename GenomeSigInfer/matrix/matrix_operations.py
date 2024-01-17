@@ -83,14 +83,13 @@ def compress_matrix_stepwise(sbs_folder: Path, samples_df: pd.DataFrame) -> None
             sampled_one_down = samples_df
         else:
             sampled_one_down = compress(
-                sampled_one_down, helpers.MutationalSigantures.SORT_REGEX[context]
+                sampled_one_down,
+                helpers.MutationalSigantures.SORT_REGEX[context],
             )
         # Write the compressed SBS matrix to a parquet file
         filename = sbs_folder / f"sbs.{sampled_one_down.shape[0]}.parquet"
         sampled_one_down.to_parquet(filename, compression="gzip")
-        logger.log_info(
-            f"Written the SBS matrix with context {context} to '{filename}'"
-        )
+        logger.log_info(f"Written the SBS matrix with context {context} to '{filename}'")
 
 
 def compress(df: pd.DataFrame, regex_str: str) -> pd.DataFrame:

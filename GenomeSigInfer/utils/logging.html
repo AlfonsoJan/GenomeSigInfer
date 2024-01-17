@@ -101,73 +101,74 @@
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="k">class</span> <span class="nc">SingletonLogger</span><span class="p">:</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">    A singleton logger class for consistent logging configuration.</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">	A singleton logger class for consistent logging configuration.</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">    Attributes:</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">        _instance (SingletonLogger): The singleton instance of the logger.</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">	Attributes:</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">	    _instance (SingletonLogger): The singleton instance of the logger.</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">    Methods:</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">        log_info(message: str)</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">        log_warning(message: str)</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">        log_error(message: str)</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">        log_exception(message: str, exc_info: bool = True)</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">	Methods:</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">	    log_info(message: str)</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">	    log_warning(message: str)</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">	    log_error(message: str)</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">	    log_exception(message: str, exc_info: bool = True)</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">	&quot;&quot;&quot;</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>    <span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>	<span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="p">:</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">_configure_logger</span><span class="p">()</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>	<span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>		<span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="p">:</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>			<span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>			<span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">_configure_logger</span><span class="p">()</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>		<span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>    <span class="k">def</span> <span class="nf">_configure_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>        <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>            <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">datefmt</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>        <span class="p">)</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>        <span class="n">stream_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="n">stream_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">stream_handler</span><span class="p">)</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>    <span class="k">def</span> <span class="nf">log_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="sd">        Log an INFO-level message.</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="sd">        Args:</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="sd">            message (str): Log message.</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>    <span class="k">def</span> <span class="nf">log_warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="sd">        Log a WARNING-level message.</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a><span class="sd">        Args:</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a><span class="sd">            message (str): Log message.</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>
-</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>    <span class="k">def</span> <span class="nf">log_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a><span class="sd">        Log an ERROR-level message.</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>
-</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a><span class="sd">        Args:</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a><span class="sd">            message (str): Log message.</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>
-</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>    <span class="k">def</span> <span class="nf">log_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a><span class="sd">        Log an ERROR-level message with exception details.</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>
-</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a><span class="sd">        Args:</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a><span class="sd">            message (str): Log message.</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a><span class="sd">            exc_info (bool): Whether to include exception details (default is True).</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">exc_info</span><span class="p">)</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>	<span class="k">def</span> <span class="nf">_configure_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>		<span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>			<span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>			<span class="n">datefmt</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">,</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>		<span class="p">)</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>		<span class="n">stream_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>		<span class="n">stream_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">stream_handler</span><span class="p">)</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>	<span class="k">def</span> <span class="nf">log_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="sd">		Log an INFO-level message.</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="sd">		Args:</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="sd">		    message (str): Log message.</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a><span class="sd">		&quot;&quot;&quot;</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>	<span class="k">def</span> <span class="nf">log_warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="sd">		Log a WARNING-level message.</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a><span class="sd">		Args:</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a><span class="sd">		    message (str): Log message.</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a><span class="sd">		&quot;&quot;&quot;</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>	<span class="k">def</span> <span class="nf">log_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a><span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a><span class="sd">		Log an ERROR-level message.</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a><span class="sd">		Args:</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a><span class="sd">		    message (str): Log message.</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a><span class="sd">		&quot;&quot;&quot;</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>	<span class="k">def</span> <span class="nf">log_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a><span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a><span class="sd">		Log an ERROR-level message with exception details.</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a><span class="sd">		Args:</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a><span class="sd">		    message (str): Log message.</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a><span class="sd">		    exc_info (bool): Whether to include exception details (default is True).</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a><span class="sd">		&quot;&quot;&quot;</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">exc_info</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -184,73 +185,74 @@
     </div>
     <a class="headerlink" href="#SingletonLogger"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="SingletonLogger-20"><a href="#SingletonLogger-20"><span class="linenos">20</span></a><span class="k">class</span> <span class="nc">SingletonLogger</span><span class="p">:</span>
-</span><span id="SingletonLogger-21"><a href="#SingletonLogger-21"><span class="linenos">21</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SingletonLogger-22"><a href="#SingletonLogger-22"><span class="linenos">22</span></a><span class="sd">    A singleton logger class for consistent logging configuration.</span>
+</span><span id="SingletonLogger-21"><a href="#SingletonLogger-21"><span class="linenos">21</span></a><span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SingletonLogger-22"><a href="#SingletonLogger-22"><span class="linenos">22</span></a><span class="sd">	A singleton logger class for consistent logging configuration.</span>
 </span><span id="SingletonLogger-23"><a href="#SingletonLogger-23"><span class="linenos">23</span></a>
-</span><span id="SingletonLogger-24"><a href="#SingletonLogger-24"><span class="linenos">24</span></a><span class="sd">    Attributes:</span>
-</span><span id="SingletonLogger-25"><a href="#SingletonLogger-25"><span class="linenos">25</span></a><span class="sd">        _instance (SingletonLogger): The singleton instance of the logger.</span>
+</span><span id="SingletonLogger-24"><a href="#SingletonLogger-24"><span class="linenos">24</span></a><span class="sd">	Attributes:</span>
+</span><span id="SingletonLogger-25"><a href="#SingletonLogger-25"><span class="linenos">25</span></a><span class="sd">	    _instance (SingletonLogger): The singleton instance of the logger.</span>
 </span><span id="SingletonLogger-26"><a href="#SingletonLogger-26"><span class="linenos">26</span></a>
-</span><span id="SingletonLogger-27"><a href="#SingletonLogger-27"><span class="linenos">27</span></a><span class="sd">    Methods:</span>
-</span><span id="SingletonLogger-28"><a href="#SingletonLogger-28"><span class="linenos">28</span></a><span class="sd">        log_info(message: str)</span>
-</span><span id="SingletonLogger-29"><a href="#SingletonLogger-29"><span class="linenos">29</span></a><span class="sd">        log_warning(message: str)</span>
-</span><span id="SingletonLogger-30"><a href="#SingletonLogger-30"><span class="linenos">30</span></a><span class="sd">        log_error(message: str)</span>
-</span><span id="SingletonLogger-31"><a href="#SingletonLogger-31"><span class="linenos">31</span></a><span class="sd">        log_exception(message: str, exc_info: bool = True)</span>
-</span><span id="SingletonLogger-32"><a href="#SingletonLogger-32"><span class="linenos">32</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="SingletonLogger-27"><a href="#SingletonLogger-27"><span class="linenos">27</span></a><span class="sd">	Methods:</span>
+</span><span id="SingletonLogger-28"><a href="#SingletonLogger-28"><span class="linenos">28</span></a><span class="sd">	    log_info(message: str)</span>
+</span><span id="SingletonLogger-29"><a href="#SingletonLogger-29"><span class="linenos">29</span></a><span class="sd">	    log_warning(message: str)</span>
+</span><span id="SingletonLogger-30"><a href="#SingletonLogger-30"><span class="linenos">30</span></a><span class="sd">	    log_error(message: str)</span>
+</span><span id="SingletonLogger-31"><a href="#SingletonLogger-31"><span class="linenos">31</span></a><span class="sd">	    log_exception(message: str, exc_info: bool = True)</span>
+</span><span id="SingletonLogger-32"><a href="#SingletonLogger-32"><span class="linenos">32</span></a><span class="sd">	&quot;&quot;&quot;</span>
 </span><span id="SingletonLogger-33"><a href="#SingletonLogger-33"><span class="linenos">33</span></a>
-</span><span id="SingletonLogger-34"><a href="#SingletonLogger-34"><span class="linenos">34</span></a>    <span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="SingletonLogger-34"><a href="#SingletonLogger-34"><span class="linenos">34</span></a>	<span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="SingletonLogger-35"><a href="#SingletonLogger-35"><span class="linenos">35</span></a>
-</span><span id="SingletonLogger-36"><a href="#SingletonLogger-36"><span class="linenos">36</span></a>    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span id="SingletonLogger-37"><a href="#SingletonLogger-37"><span class="linenos">37</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="p">:</span>
-</span><span id="SingletonLogger-38"><a href="#SingletonLogger-38"><span class="linenos">38</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
-</span><span id="SingletonLogger-39"><a href="#SingletonLogger-39"><span class="linenos">39</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">_configure_logger</span><span class="p">()</span>
-</span><span id="SingletonLogger-40"><a href="#SingletonLogger-40"><span class="linenos">40</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+</span><span id="SingletonLogger-36"><a href="#SingletonLogger-36"><span class="linenos">36</span></a>	<span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="SingletonLogger-37"><a href="#SingletonLogger-37"><span class="linenos">37</span></a>		<span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="p">:</span>
+</span><span id="SingletonLogger-38"><a href="#SingletonLogger-38"><span class="linenos">38</span></a>			<span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+</span><span id="SingletonLogger-39"><a href="#SingletonLogger-39"><span class="linenos">39</span></a>			<span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">_configure_logger</span><span class="p">()</span>
+</span><span id="SingletonLogger-40"><a href="#SingletonLogger-40"><span class="linenos">40</span></a>		<span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
 </span><span id="SingletonLogger-41"><a href="#SingletonLogger-41"><span class="linenos">41</span></a>
-</span><span id="SingletonLogger-42"><a href="#SingletonLogger-42"><span class="linenos">42</span></a>    <span class="k">def</span> <span class="nf">_configure_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="SingletonLogger-43"><a href="#SingletonLogger-43"><span class="linenos">43</span></a>        <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
-</span><span id="SingletonLogger-44"><a href="#SingletonLogger-44"><span class="linenos">44</span></a>            <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">datefmt</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span>
-</span><span id="SingletonLogger-45"><a href="#SingletonLogger-45"><span class="linenos">45</span></a>        <span class="p">)</span>
-</span><span id="SingletonLogger-46"><a href="#SingletonLogger-46"><span class="linenos">46</span></a>        <span class="n">stream_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
-</span><span id="SingletonLogger-47"><a href="#SingletonLogger-47"><span class="linenos">47</span></a>        <span class="n">stream_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
-</span><span id="SingletonLogger-48"><a href="#SingletonLogger-48"><span class="linenos">48</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-</span><span id="SingletonLogger-49"><a href="#SingletonLogger-49"><span class="linenos">49</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
-</span><span id="SingletonLogger-50"><a href="#SingletonLogger-50"><span class="linenos">50</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">stream_handler</span><span class="p">)</span>
-</span><span id="SingletonLogger-51"><a href="#SingletonLogger-51"><span class="linenos">51</span></a>
-</span><span id="SingletonLogger-52"><a href="#SingletonLogger-52"><span class="linenos">52</span></a>    <span class="k">def</span> <span class="nf">log_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-</span><span id="SingletonLogger-53"><a href="#SingletonLogger-53"><span class="linenos">53</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SingletonLogger-54"><a href="#SingletonLogger-54"><span class="linenos">54</span></a><span class="sd">        Log an INFO-level message.</span>
-</span><span id="SingletonLogger-55"><a href="#SingletonLogger-55"><span class="linenos">55</span></a>
-</span><span id="SingletonLogger-56"><a href="#SingletonLogger-56"><span class="linenos">56</span></a><span class="sd">        Args:</span>
-</span><span id="SingletonLogger-57"><a href="#SingletonLogger-57"><span class="linenos">57</span></a><span class="sd">            message (str): Log message.</span>
-</span><span id="SingletonLogger-58"><a href="#SingletonLogger-58"><span class="linenos">58</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SingletonLogger-59"><a href="#SingletonLogger-59"><span class="linenos">59</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-</span><span id="SingletonLogger-60"><a href="#SingletonLogger-60"><span class="linenos">60</span></a>
-</span><span id="SingletonLogger-61"><a href="#SingletonLogger-61"><span class="linenos">61</span></a>    <span class="k">def</span> <span class="nf">log_warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-</span><span id="SingletonLogger-62"><a href="#SingletonLogger-62"><span class="linenos">62</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SingletonLogger-63"><a href="#SingletonLogger-63"><span class="linenos">63</span></a><span class="sd">        Log a WARNING-level message.</span>
-</span><span id="SingletonLogger-64"><a href="#SingletonLogger-64"><span class="linenos">64</span></a>
-</span><span id="SingletonLogger-65"><a href="#SingletonLogger-65"><span class="linenos">65</span></a><span class="sd">        Args:</span>
-</span><span id="SingletonLogger-66"><a href="#SingletonLogger-66"><span class="linenos">66</span></a><span class="sd">            message (str): Log message.</span>
-</span><span id="SingletonLogger-67"><a href="#SingletonLogger-67"><span class="linenos">67</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SingletonLogger-68"><a href="#SingletonLogger-68"><span class="linenos">68</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-</span><span id="SingletonLogger-69"><a href="#SingletonLogger-69"><span class="linenos">69</span></a>
-</span><span id="SingletonLogger-70"><a href="#SingletonLogger-70"><span class="linenos">70</span></a>    <span class="k">def</span> <span class="nf">log_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-</span><span id="SingletonLogger-71"><a href="#SingletonLogger-71"><span class="linenos">71</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SingletonLogger-72"><a href="#SingletonLogger-72"><span class="linenos">72</span></a><span class="sd">        Log an ERROR-level message.</span>
-</span><span id="SingletonLogger-73"><a href="#SingletonLogger-73"><span class="linenos">73</span></a>
-</span><span id="SingletonLogger-74"><a href="#SingletonLogger-74"><span class="linenos">74</span></a><span class="sd">        Args:</span>
-</span><span id="SingletonLogger-75"><a href="#SingletonLogger-75"><span class="linenos">75</span></a><span class="sd">            message (str): Log message.</span>
-</span><span id="SingletonLogger-76"><a href="#SingletonLogger-76"><span class="linenos">76</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SingletonLogger-77"><a href="#SingletonLogger-77"><span class="linenos">77</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-</span><span id="SingletonLogger-78"><a href="#SingletonLogger-78"><span class="linenos">78</span></a>
-</span><span id="SingletonLogger-79"><a href="#SingletonLogger-79"><span class="linenos">79</span></a>    <span class="k">def</span> <span class="nf">log_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-</span><span id="SingletonLogger-80"><a href="#SingletonLogger-80"><span class="linenos">80</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SingletonLogger-81"><a href="#SingletonLogger-81"><span class="linenos">81</span></a><span class="sd">        Log an ERROR-level message with exception details.</span>
-</span><span id="SingletonLogger-82"><a href="#SingletonLogger-82"><span class="linenos">82</span></a>
-</span><span id="SingletonLogger-83"><a href="#SingletonLogger-83"><span class="linenos">83</span></a><span class="sd">        Args:</span>
-</span><span id="SingletonLogger-84"><a href="#SingletonLogger-84"><span class="linenos">84</span></a><span class="sd">            message (str): Log message.</span>
-</span><span id="SingletonLogger-85"><a href="#SingletonLogger-85"><span class="linenos">85</span></a><span class="sd">            exc_info (bool): Whether to include exception details (default is True).</span>
-</span><span id="SingletonLogger-86"><a href="#SingletonLogger-86"><span class="linenos">86</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SingletonLogger-87"><a href="#SingletonLogger-87"><span class="linenos">87</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">exc_info</span><span class="p">)</span>
+</span><span id="SingletonLogger-42"><a href="#SingletonLogger-42"><span class="linenos">42</span></a>	<span class="k">def</span> <span class="nf">_configure_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SingletonLogger-43"><a href="#SingletonLogger-43"><span class="linenos">43</span></a>		<span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
+</span><span id="SingletonLogger-44"><a href="#SingletonLogger-44"><span class="linenos">44</span></a>			<span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="SingletonLogger-45"><a href="#SingletonLogger-45"><span class="linenos">45</span></a>			<span class="n">datefmt</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">,</span>
+</span><span id="SingletonLogger-46"><a href="#SingletonLogger-46"><span class="linenos">46</span></a>		<span class="p">)</span>
+</span><span id="SingletonLogger-47"><a href="#SingletonLogger-47"><span class="linenos">47</span></a>		<span class="n">stream_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+</span><span id="SingletonLogger-48"><a href="#SingletonLogger-48"><span class="linenos">48</span></a>		<span class="n">stream_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+</span><span id="SingletonLogger-49"><a href="#SingletonLogger-49"><span class="linenos">49</span></a>		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+</span><span id="SingletonLogger-50"><a href="#SingletonLogger-50"><span class="linenos">50</span></a>		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+</span><span id="SingletonLogger-51"><a href="#SingletonLogger-51"><span class="linenos">51</span></a>		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">stream_handler</span><span class="p">)</span>
+</span><span id="SingletonLogger-52"><a href="#SingletonLogger-52"><span class="linenos">52</span></a>
+</span><span id="SingletonLogger-53"><a href="#SingletonLogger-53"><span class="linenos">53</span></a>	<span class="k">def</span> <span class="nf">log_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+</span><span id="SingletonLogger-54"><a href="#SingletonLogger-54"><span class="linenos">54</span></a><span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SingletonLogger-55"><a href="#SingletonLogger-55"><span class="linenos">55</span></a><span class="sd">		Log an INFO-level message.</span>
+</span><span id="SingletonLogger-56"><a href="#SingletonLogger-56"><span class="linenos">56</span></a>
+</span><span id="SingletonLogger-57"><a href="#SingletonLogger-57"><span class="linenos">57</span></a><span class="sd">		Args:</span>
+</span><span id="SingletonLogger-58"><a href="#SingletonLogger-58"><span class="linenos">58</span></a><span class="sd">		    message (str): Log message.</span>
+</span><span id="SingletonLogger-59"><a href="#SingletonLogger-59"><span class="linenos">59</span></a><span class="sd">		&quot;&quot;&quot;</span>
+</span><span id="SingletonLogger-60"><a href="#SingletonLogger-60"><span class="linenos">60</span></a>		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</span><span id="SingletonLogger-61"><a href="#SingletonLogger-61"><span class="linenos">61</span></a>
+</span><span id="SingletonLogger-62"><a href="#SingletonLogger-62"><span class="linenos">62</span></a>	<span class="k">def</span> <span class="nf">log_warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+</span><span id="SingletonLogger-63"><a href="#SingletonLogger-63"><span class="linenos">63</span></a><span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SingletonLogger-64"><a href="#SingletonLogger-64"><span class="linenos">64</span></a><span class="sd">		Log a WARNING-level message.</span>
+</span><span id="SingletonLogger-65"><a href="#SingletonLogger-65"><span class="linenos">65</span></a>
+</span><span id="SingletonLogger-66"><a href="#SingletonLogger-66"><span class="linenos">66</span></a><span class="sd">		Args:</span>
+</span><span id="SingletonLogger-67"><a href="#SingletonLogger-67"><span class="linenos">67</span></a><span class="sd">		    message (str): Log message.</span>
+</span><span id="SingletonLogger-68"><a href="#SingletonLogger-68"><span class="linenos">68</span></a><span class="sd">		&quot;&quot;&quot;</span>
+</span><span id="SingletonLogger-69"><a href="#SingletonLogger-69"><span class="linenos">69</span></a>		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</span><span id="SingletonLogger-70"><a href="#SingletonLogger-70"><span class="linenos">70</span></a>
+</span><span id="SingletonLogger-71"><a href="#SingletonLogger-71"><span class="linenos">71</span></a>	<span class="k">def</span> <span class="nf">log_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+</span><span id="SingletonLogger-72"><a href="#SingletonLogger-72"><span class="linenos">72</span></a><span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SingletonLogger-73"><a href="#SingletonLogger-73"><span class="linenos">73</span></a><span class="sd">		Log an ERROR-level message.</span>
+</span><span id="SingletonLogger-74"><a href="#SingletonLogger-74"><span class="linenos">74</span></a>
+</span><span id="SingletonLogger-75"><a href="#SingletonLogger-75"><span class="linenos">75</span></a><span class="sd">		Args:</span>
+</span><span id="SingletonLogger-76"><a href="#SingletonLogger-76"><span class="linenos">76</span></a><span class="sd">		    message (str): Log message.</span>
+</span><span id="SingletonLogger-77"><a href="#SingletonLogger-77"><span class="linenos">77</span></a><span class="sd">		&quot;&quot;&quot;</span>
+</span><span id="SingletonLogger-78"><a href="#SingletonLogger-78"><span class="linenos">78</span></a>		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</span><span id="SingletonLogger-79"><a href="#SingletonLogger-79"><span class="linenos">79</span></a>
+</span><span id="SingletonLogger-80"><a href="#SingletonLogger-80"><span class="linenos">80</span></a>	<span class="k">def</span> <span class="nf">log_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span id="SingletonLogger-81"><a href="#SingletonLogger-81"><span class="linenos">81</span></a><span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SingletonLogger-82"><a href="#SingletonLogger-82"><span class="linenos">82</span></a><span class="sd">		Log an ERROR-level message with exception details.</span>
+</span><span id="SingletonLogger-83"><a href="#SingletonLogger-83"><span class="linenos">83</span></a>
+</span><span id="SingletonLogger-84"><a href="#SingletonLogger-84"><span class="linenos">84</span></a><span class="sd">		Args:</span>
+</span><span id="SingletonLogger-85"><a href="#SingletonLogger-85"><span class="linenos">85</span></a><span class="sd">		    message (str): Log message.</span>
+</span><span id="SingletonLogger-86"><a href="#SingletonLogger-86"><span class="linenos">86</span></a><span class="sd">		    exc_info (bool): Whether to include exception details (default is True).</span>
+</span><span id="SingletonLogger-87"><a href="#SingletonLogger-87"><span class="linenos">87</span></a><span class="sd">		&quot;&quot;&quot;</span>
+</span><span id="SingletonLogger-88"><a href="#SingletonLogger-88"><span class="linenos">88</span></a>		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">exc_info</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -278,14 +280,14 @@
 
     </div>
     <a class="headerlink" href="#SingletonLogger.log_info"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SingletonLogger.log_info-52"><a href="#SingletonLogger.log_info-52"><span class="linenos">52</span></a>    <span class="k">def</span> <span class="nf">log_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-</span><span id="SingletonLogger.log_info-53"><a href="#SingletonLogger.log_info-53"><span class="linenos">53</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SingletonLogger.log_info-54"><a href="#SingletonLogger.log_info-54"><span class="linenos">54</span></a><span class="sd">        Log an INFO-level message.</span>
-</span><span id="SingletonLogger.log_info-55"><a href="#SingletonLogger.log_info-55"><span class="linenos">55</span></a>
-</span><span id="SingletonLogger.log_info-56"><a href="#SingletonLogger.log_info-56"><span class="linenos">56</span></a><span class="sd">        Args:</span>
-</span><span id="SingletonLogger.log_info-57"><a href="#SingletonLogger.log_info-57"><span class="linenos">57</span></a><span class="sd">            message (str): Log message.</span>
-</span><span id="SingletonLogger.log_info-58"><a href="#SingletonLogger.log_info-58"><span class="linenos">58</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SingletonLogger.log_info-59"><a href="#SingletonLogger.log_info-59"><span class="linenos">59</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SingletonLogger.log_info-53"><a href="#SingletonLogger.log_info-53"><span class="linenos">53</span></a>	<span class="k">def</span> <span class="nf">log_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+</span><span id="SingletonLogger.log_info-54"><a href="#SingletonLogger.log_info-54"><span class="linenos">54</span></a><span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SingletonLogger.log_info-55"><a href="#SingletonLogger.log_info-55"><span class="linenos">55</span></a><span class="sd">		Log an INFO-level message.</span>
+</span><span id="SingletonLogger.log_info-56"><a href="#SingletonLogger.log_info-56"><span class="linenos">56</span></a>
+</span><span id="SingletonLogger.log_info-57"><a href="#SingletonLogger.log_info-57"><span class="linenos">57</span></a><span class="sd">		Args:</span>
+</span><span id="SingletonLogger.log_info-58"><a href="#SingletonLogger.log_info-58"><span class="linenos">58</span></a><span class="sd">		    message (str): Log message.</span>
+</span><span id="SingletonLogger.log_info-59"><a href="#SingletonLogger.log_info-59"><span class="linenos">59</span></a><span class="sd">		&quot;&quot;&quot;</span>
+</span><span id="SingletonLogger.log_info-60"><a href="#SingletonLogger.log_info-60"><span class="linenos">60</span></a>		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -308,14 +310,14 @@
 
     </div>
     <a class="headerlink" href="#SingletonLogger.log_warning"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SingletonLogger.log_warning-61"><a href="#SingletonLogger.log_warning-61"><span class="linenos">61</span></a>    <span class="k">def</span> <span class="nf">log_warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-</span><span id="SingletonLogger.log_warning-62"><a href="#SingletonLogger.log_warning-62"><span class="linenos">62</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SingletonLogger.log_warning-63"><a href="#SingletonLogger.log_warning-63"><span class="linenos">63</span></a><span class="sd">        Log a WARNING-level message.</span>
-</span><span id="SingletonLogger.log_warning-64"><a href="#SingletonLogger.log_warning-64"><span class="linenos">64</span></a>
-</span><span id="SingletonLogger.log_warning-65"><a href="#SingletonLogger.log_warning-65"><span class="linenos">65</span></a><span class="sd">        Args:</span>
-</span><span id="SingletonLogger.log_warning-66"><a href="#SingletonLogger.log_warning-66"><span class="linenos">66</span></a><span class="sd">            message (str): Log message.</span>
-</span><span id="SingletonLogger.log_warning-67"><a href="#SingletonLogger.log_warning-67"><span class="linenos">67</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SingletonLogger.log_warning-68"><a href="#SingletonLogger.log_warning-68"><span class="linenos">68</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SingletonLogger.log_warning-62"><a href="#SingletonLogger.log_warning-62"><span class="linenos">62</span></a>	<span class="k">def</span> <span class="nf">log_warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+</span><span id="SingletonLogger.log_warning-63"><a href="#SingletonLogger.log_warning-63"><span class="linenos">63</span></a><span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SingletonLogger.log_warning-64"><a href="#SingletonLogger.log_warning-64"><span class="linenos">64</span></a><span class="sd">		Log a WARNING-level message.</span>
+</span><span id="SingletonLogger.log_warning-65"><a href="#SingletonLogger.log_warning-65"><span class="linenos">65</span></a>
+</span><span id="SingletonLogger.log_warning-66"><a href="#SingletonLogger.log_warning-66"><span class="linenos">66</span></a><span class="sd">		Args:</span>
+</span><span id="SingletonLogger.log_warning-67"><a href="#SingletonLogger.log_warning-67"><span class="linenos">67</span></a><span class="sd">		    message (str): Log message.</span>
+</span><span id="SingletonLogger.log_warning-68"><a href="#SingletonLogger.log_warning-68"><span class="linenos">68</span></a><span class="sd">		&quot;&quot;&quot;</span>
+</span><span id="SingletonLogger.log_warning-69"><a href="#SingletonLogger.log_warning-69"><span class="linenos">69</span></a>		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -338,14 +340,14 @@
 
     </div>
     <a class="headerlink" href="#SingletonLogger.log_error"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SingletonLogger.log_error-70"><a href="#SingletonLogger.log_error-70"><span class="linenos">70</span></a>    <span class="k">def</span> <span class="nf">log_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-</span><span id="SingletonLogger.log_error-71"><a href="#SingletonLogger.log_error-71"><span class="linenos">71</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SingletonLogger.log_error-72"><a href="#SingletonLogger.log_error-72"><span class="linenos">72</span></a><span class="sd">        Log an ERROR-level message.</span>
-</span><span id="SingletonLogger.log_error-73"><a href="#SingletonLogger.log_error-73"><span class="linenos">73</span></a>
-</span><span id="SingletonLogger.log_error-74"><a href="#SingletonLogger.log_error-74"><span class="linenos">74</span></a><span class="sd">        Args:</span>
-</span><span id="SingletonLogger.log_error-75"><a href="#SingletonLogger.log_error-75"><span class="linenos">75</span></a><span class="sd">            message (str): Log message.</span>
-</span><span id="SingletonLogger.log_error-76"><a href="#SingletonLogger.log_error-76"><span class="linenos">76</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SingletonLogger.log_error-77"><a href="#SingletonLogger.log_error-77"><span class="linenos">77</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SingletonLogger.log_error-71"><a href="#SingletonLogger.log_error-71"><span class="linenos">71</span></a>	<span class="k">def</span> <span class="nf">log_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+</span><span id="SingletonLogger.log_error-72"><a href="#SingletonLogger.log_error-72"><span class="linenos">72</span></a><span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SingletonLogger.log_error-73"><a href="#SingletonLogger.log_error-73"><span class="linenos">73</span></a><span class="sd">		Log an ERROR-level message.</span>
+</span><span id="SingletonLogger.log_error-74"><a href="#SingletonLogger.log_error-74"><span class="linenos">74</span></a>
+</span><span id="SingletonLogger.log_error-75"><a href="#SingletonLogger.log_error-75"><span class="linenos">75</span></a><span class="sd">		Args:</span>
+</span><span id="SingletonLogger.log_error-76"><a href="#SingletonLogger.log_error-76"><span class="linenos">76</span></a><span class="sd">		    message (str): Log message.</span>
+</span><span id="SingletonLogger.log_error-77"><a href="#SingletonLogger.log_error-77"><span class="linenos">77</span></a><span class="sd">		&quot;&quot;&quot;</span>
+</span><span id="SingletonLogger.log_error-78"><a href="#SingletonLogger.log_error-78"><span class="linenos">78</span></a>		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -368,15 +370,15 @@
 
     </div>
     <a class="headerlink" href="#SingletonLogger.log_exception"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SingletonLogger.log_exception-79"><a href="#SingletonLogger.log_exception-79"><span class="linenos">79</span></a>    <span class="k">def</span> <span class="nf">log_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-</span><span id="SingletonLogger.log_exception-80"><a href="#SingletonLogger.log_exception-80"><span class="linenos">80</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SingletonLogger.log_exception-81"><a href="#SingletonLogger.log_exception-81"><span class="linenos">81</span></a><span class="sd">        Log an ERROR-level message with exception details.</span>
-</span><span id="SingletonLogger.log_exception-82"><a href="#SingletonLogger.log_exception-82"><span class="linenos">82</span></a>
-</span><span id="SingletonLogger.log_exception-83"><a href="#SingletonLogger.log_exception-83"><span class="linenos">83</span></a><span class="sd">        Args:</span>
-</span><span id="SingletonLogger.log_exception-84"><a href="#SingletonLogger.log_exception-84"><span class="linenos">84</span></a><span class="sd">            message (str): Log message.</span>
-</span><span id="SingletonLogger.log_exception-85"><a href="#SingletonLogger.log_exception-85"><span class="linenos">85</span></a><span class="sd">            exc_info (bool): Whether to include exception details (default is True).</span>
-</span><span id="SingletonLogger.log_exception-86"><a href="#SingletonLogger.log_exception-86"><span class="linenos">86</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SingletonLogger.log_exception-87"><a href="#SingletonLogger.log_exception-87"><span class="linenos">87</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">exc_info</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SingletonLogger.log_exception-80"><a href="#SingletonLogger.log_exception-80"><span class="linenos">80</span></a>	<span class="k">def</span> <span class="nf">log_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span id="SingletonLogger.log_exception-81"><a href="#SingletonLogger.log_exception-81"><span class="linenos">81</span></a><span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SingletonLogger.log_exception-82"><a href="#SingletonLogger.log_exception-82"><span class="linenos">82</span></a><span class="sd">		Log an ERROR-level message with exception details.</span>
+</span><span id="SingletonLogger.log_exception-83"><a href="#SingletonLogger.log_exception-83"><span class="linenos">83</span></a>
+</span><span id="SingletonLogger.log_exception-84"><a href="#SingletonLogger.log_exception-84"><span class="linenos">84</span></a><span class="sd">		Args:</span>
+</span><span id="SingletonLogger.log_exception-85"><a href="#SingletonLogger.log_exception-85"><span class="linenos">85</span></a><span class="sd">		    message (str): Log message.</span>
+</span><span id="SingletonLogger.log_exception-86"><a href="#SingletonLogger.log_exception-86"><span class="linenos">86</span></a><span class="sd">		    exc_info (bool): Whether to include exception details (default is True).</span>
+</span><span id="SingletonLogger.log_exception-87"><a href="#SingletonLogger.log_exception-87"><span class="linenos">87</span></a><span class="sd">		&quot;&quot;&quot;</span>
+</span><span id="SingletonLogger.log_exception-88"><a href="#SingletonLogger.log_exception-88"><span class="linenos">88</span></a>		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">exc_info</span><span class="p">)</span>
 </span></pre></div>
 
 

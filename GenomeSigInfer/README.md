@@ -51,7 +51,7 @@ The sbs.1536.txt file contains all of the following the pyrimidine single nucleo
 *16 (4x4) possible starting nucleotides x 6 pyrimidine variants x 16 (4x4) possible ending nucleotides = 1536 total combinations.*
 
 The sbs.24576.txt file contains all of the following the pyrimidine single nucleotide variants, NNN[{C > A, G, or T} or {T > A, G, or C}]NNN.
-*16 (4x4) possible starting nucleotides x 16 (4x4) nucleotides x 6 pyrimidine variants x 16 (4x4) nucleotides x 16 (4x4) possible ending dinucleotides = 24576 total combinations.*
+*64 (4x4x4) nucleotides x 6 pyrimidine variants x 64 (4x4x4) possible ending dinucleotides = 24576 total combinations.*
 
 ```python
 from GenomeSigInfer.sbs import SBSMatrixGenerator
@@ -91,6 +91,7 @@ nmf_matrixgenerator = NMFMatrixGenerator.generate_nmf_matrix(
 )
 nmf_matrixgenerator.run_nmf_on_sbs_files()
 
+# Create images of the cosine similarities and Jensen Shannon divergence
 # The figure folder
 figure_folder = "../figures/"
 nmf_matrixgenerator.create_distance_figures(figure_folder)
@@ -104,7 +105,8 @@ Create signature plots for all the decomposed signatures files.
 from GenomeSigInfer.figures import signature_plots
 nmf_folder = "project/NMF" # Folder where the NMF files are located
 result_folder = "project/results" # Folder where the plots are saved to
-sig_plots = signature_plots.SigPlots(nmf_folder, result_folder)
+sig_plots = signature_plots.SigPlots(nmf_folder, figure_folder)
 sig_plots.create_plots()
-sig_plots.create_expected_plots()
+# Create plots of all the context for this signature
+sig_plots.create_expected_plots(["SBS7a"])
 ```

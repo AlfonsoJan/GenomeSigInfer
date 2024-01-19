@@ -32,7 +32,7 @@ def heatmap_cosine(cosine_df_list: list[pd.DataFrame], figure_folder: Path) -> s
 	    str: Image name of the saved heatmap.
 	"""
 	# Create subplots for multiple heatmaps
-	_, axes = plt.subplots(1, len(cosine_df_list), figsize=(15, 15))
+	fig, axes = plt.subplots(1, len(cosine_df_list), figsize=(15, 15))
 	# Iterate through the provided DataFrame list
 	for index, data_set in enumerate(cosine_df_list):
 		cosine_df = data_set["data"]
@@ -57,12 +57,21 @@ def heatmap_cosine(cosine_df_list: list[pd.DataFrame], figure_folder: Path) -> s
 			vmin=-1,
 			vmax=1,
 		)
-		axes[index].set_title(f"Context of {context}")
-	# Save the generated heatmaps as an imag
-	plt.savefig(
-		figure_folder / "cosine.similarity.increased.context.png",
-		bbox_inches="tight",
+		axes[index].set_title(f"Context of {context} nucleotides")
+		axes[index].set_ylabel("Signatures", fontweight="bold")
+	fig.suptitle("Cosine Similarity for Different Contexts", fontsize=24, fontweight="bold", y=0.85)
+    # Add a subsubtitle
+	fig.text(
+		0.5,
+		0.815,
+		"Cosine similarity betweeen the larger and the smaller ('96') context",
+		ha="center",
+		fontsize=14,
 	)
+    # Save the generated heatmaps as an imag
+	plt.savefig(
+        figure_folder / "cosine.similarity.increased.context.png", bbox_inches="tight"
+    )
 
 
 def heatmap_jens_shan(jens_shan_df_list: list[pd.DataFrame], figure_folder: Path) -> str:
@@ -77,7 +86,7 @@ def heatmap_jens_shan(jens_shan_df_list: list[pd.DataFrame], figure_folder: Path
 	    str: Image name of the saved heatmap.
 	"""
 	# Create subplots for multiple heatmaps
-	_, axes = plt.subplots(1, len(jens_shan_df_list), figsize=(15, 15))
+	fig, axes = plt.subplots(1, len(jens_shan_df_list), figsize=(15, 15))
 	# Iterate through the provided DataFrame list
 	for index, data_set in enumerate(jens_shan_df_list):
 		dist_df = data_set["data"]
@@ -104,9 +113,18 @@ def heatmap_jens_shan(jens_shan_df_list: list[pd.DataFrame], figure_folder: Path
 			vmin=0,
 			vmax=1,
 		)
-		axes[index].set_title(f"Context of {context}")
-	# Save the generated heatmaps as an image
-	plt.savefig(
-		figure_folder / "jens_shannon.dist.increased.context.png",
-		bbox_inches="tight",
+		axes[index].set_title(f"Context of {context} nucleotides")
+		axes[index].set_ylabel("Signatures", fontweight="bold")
+	fig.suptitle("Jensen Shannon Distance for Different Contexts", fontsize=24, fontweight="bold", y=0.85)
+    # Add a subsubtitle
+	fig.text(
+		0.5,
+		0.815,
+		"Jensen Shannon Distance betweeen the larger and the smaller ('96') context",
+		ha="center",
+		fontsize=14,
 	)
+    # Save the generated heatmaps as an image
+	plt.savefig(
+        figure_folder / "jens_shannon.dist.increased.context.png", bbox_inches="tight"
+    )

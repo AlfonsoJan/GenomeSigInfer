@@ -63,7 +63,7 @@ class SigPlots:
 		The results are saved in the 'figures' folder within the result directory.
 		"""
 		for size in helpers.MutationalSigantures.SIZES:
-			self._logger.log_info(f"Creating siganture plots for context file: '{size}'")
+			self._logger.log_info(f"Creating siganture plots for context: '{size}'")
 			df = self._dfs[size]
 			barplots.signature_pdf_plot(df, self.figure_folder)
 

@@ -86,9 +86,9 @@ def formatted_y_labels(x: float, _: int) -> str:
 	Returns:
 	    str: The formatted string.
 	"""
-	# Uncomment this for percentage
-	# return f"{x:.0%}"
-	return f"{x:.2f}"
+	return f"{x:.0%}"
+	# Uncomment this for real values
+	# return f"{x:.2f}"
 
 
 def signature_pdf_plot(df: pd.DataFrame, figure_folder: Path) -> None:
@@ -161,7 +161,7 @@ def add_title_to_axe(ax: plt.axes, context: int) -> None:
 	ax.text(
 		48,
 		0.8,
-		f"Context of: {get_context_given_size(context)}",
+		f"Context of: {get_context_given_size(context)} nucleotides",
 		rotation=0,
 		ha="center",
 		va="center",
@@ -200,7 +200,7 @@ def create_expected_larger(
 			logger.log_info(f"Creating Signature plot for {sbs}")
 			# Create a grid for subplots using GridSpec
 			gs = GridSpec(2, 2, height_ratios=[0.8, 0.8])
-			_ = plt.figure(figsize=(30, 20))
+			fig = plt.figure(figsize=(30, 20))
 			# Create for every context a plot and add it to the page
 			for index, size in enumerate(df_dict.keys()):
 				# Custom Subplot Creation with Matplotlib
@@ -219,6 +219,16 @@ def create_expected_larger(
 					data["context"] = data["MutationType"].str.extract(r"(\w\[.*\]\w)")
 					df = parse_lager_context_df(data, sbs)
 					create_barplot(df, sbs, pdf, ax=ax, write_sbs_title=False)
+			# Set the title for the entire figure
+			fig.suptitle(f"Signature {sbs}", fontsize=40, fontweight="bold", y=1.05)
+			# Add a subsubtitle
+			fig.text(
+				0.5,
+				1,
+				"Probability Distribution of Mutation Contexts for Each Substitution Type",
+				ha="center",
+				fontsize=30,
+			)
 			# Save the plots to the PDF page
 			plt.tight_layout()
 			pdf.savefig(bbox_inches="tight")
@@ -359,7 +369,7 @@ def add_to_plot(
 	ax.set_xticks(info.x0)
 	ax.set_xticklabels(x_labels_ticks, rotation=90, ha="center", fontfamily="monospace")
 	ax.legend(loc="upper right")
-	ax.set_xlabel("Context", weight="bold")
+	ax.set_xlabel("Trinucleotide Contexts", weight="bold")
 	ax.set_ylabel("Percentage OF Single Base Substitution", weight="bold")
 	plt.xlim(-1, len(info.labels))
 	plt.ylim(0, 1)
@@ -418,13 +428,21 @@ def add_text_lines_to_plot(
 	if write_sbs_title:
 		# SBS NAME ON THE PLOT
 		plt.text(
-			0.00,
-			0.99,
+			0.5,
+			1.07,
 			info.title,
 			rotation=0,
 			ha="left",
 			va="top",
 			fontsize=24,
+			fontweight="heavy",
+		)
+		plt.text(
+			0.5,
+			1.01,
+			"Probability Distribution of Mutation Contexts for Each Substitution Type",
+			ha="left",
+			fontsize=14,
 			fontweight="heavy",
 		)
 

@@ -59,8 +59,13 @@ def heatmap_cosine(cosine_df_list: list[pd.DataFrame], figure_folder: Path) -> s
 		)
 		axes[index].set_title(f"Context of {context} nucleotides")
 		axes[index].set_ylabel("Signatures", fontweight="bold")
-	fig.suptitle("Cosine Similarity for Different Contexts", fontsize=24, fontweight="bold", y=0.85)
-    # Add a subsubtitle
+	fig.suptitle(
+		"Cosine Similarity for Different Contexts",
+		fontsize=24,
+		fontweight="bold",
+		y=0.85,
+	)
+	# Add a subsubtitle
 	fig.text(
 		0.5,
 		0.815,
@@ -68,10 +73,10 @@ def heatmap_cosine(cosine_df_list: list[pd.DataFrame], figure_folder: Path) -> s
 		ha="center",
 		fontsize=14,
 	)
-    # Save the generated heatmaps as an imag
+	# Save the generated heatmaps as an imag
 	plt.savefig(
-        figure_folder / "cosine.similarity.increased.context.png", bbox_inches="tight"
-    )
+		figure_folder / "cosine.similarity.increased.context.png", bbox_inches="tight"
+	)
 
 
 def heatmap_jens_shan(jens_shan_df_list: list[pd.DataFrame], figure_folder: Path) -> str:
@@ -115,8 +120,13 @@ def heatmap_jens_shan(jens_shan_df_list: list[pd.DataFrame], figure_folder: Path
 		)
 		axes[index].set_title(f"Context of {context} nucleotides")
 		axes[index].set_ylabel("Signatures", fontweight="bold")
-	fig.suptitle("Jensen Shannon Distance for Different Contexts", fontsize=24, fontweight="bold", y=0.85)
-    # Add a subsubtitle
+	fig.suptitle(
+		"Jensen Shannon Distance for Different Contexts",
+		fontsize=24,
+		fontweight="bold",
+		y=0.85,
+	)
+	# Add a subsubtitle
 	fig.text(
 		0.5,
 		0.815,
@@ -124,7 +134,7 @@ def heatmap_jens_shan(jens_shan_df_list: list[pd.DataFrame], figure_folder: Path
 		ha="center",
 		fontsize=14,
 	)
-    # Save the generated heatmaps as an image
+	# Save the generated heatmaps as an image
 	plt.savefig(
-        figure_folder / "jens_shannon.dist.increased.context.png", bbox_inches="tight"
-    )
+		figure_folder / "jens_shannon.dist.increased.context.png", bbox_inches="tight"
+	)

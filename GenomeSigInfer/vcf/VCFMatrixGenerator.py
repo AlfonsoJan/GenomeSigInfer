@@ -17,21 +17,18 @@ from pathlib import Path
 from ..utils import helpers, logging
 
 
-def filter_vcf_files(
-	vcf_files: tuple[Path], genome: helpers.MutationalSigantures.REF_GENOMES
-) -> pd.DataFrame:
+def filter_vcf_files(vcf_files: tuple[Path]) -> pd.DataFrame:
 	"""
 	Filters VCF files based on specified criteria.
 
 	Args:
 	    vcf_files (tuple[Path]): tuple of VCF files.
-	    genome (MutationalSigantures.REF_GENOMES): Reference genome.
 
 	Returns:
 	    pd.DataFrame: Filtered VCF data of all the files as a DataFrame.
 	"""
 	# Reading and filtering individual VCF files
-	dfs = [read_vcf_file(vcf_file, genome) for vcf_file in vcf_files]
+	dfs = [read_vcf_file(vcf_file) for vcf_file in vcf_files]
 	# Combining dataframes from individual files into one large dataframe
 	filtered_vcf = pd.concat(dfs, ignore_index=True)
 	logger = logging.SingletonLogger()
@@ -39,15 +36,12 @@ def filter_vcf_files(
 	return filtered_vcf
 
 
-def read_vcf_file(
-	vcf_file: Path, genome: helpers.MutationalSigantures.REF_GENOMES
-) -> pd.DataFrame:
+def read_vcf_file(vcf_file: Path) -> pd.DataFrame:
 	"""
 	Reads and filters a single VCF file.
 
 	Args:
 	    vcf_file (Path): Path object representing the input VCF file.
-	    genome (MutationalSigantures.REF_GENOMES): Reference genome.
 
 	Returns:
 	    pd.DataFrame: Filtered VCF data as a DataFrame.
@@ -57,10 +51,17 @@ def read_vcf_file(
 	with warnings.catch_warnings():
 		warnings.filterwarnings("ignore", category=pd.errors.DtypeWarning)
 		df = pd.read_csv(vcf_file, sep="\t", header=None)
+	# Change every purine mutation to a pyrimidine mutation
+	translate_purine_to_pyrimidine = {"A": "T", "G": "C"}
+	translate_nucleotide = {"A": "T", "C": "G", "G": "C", "T": "A"}
+	condition = df[8].isin(["A", "G"]) & df[9].isin(["A", "C", "G", "T"])
+	df[9] = np.where(condition, df[9].map(translate_nucleotide), df[9])
+	df[8] = df[8].map(translate_purine_to_pyrimidine).fillna(df[8])
+	mutations = np.array(df[8].astype(str) + ">" + df[9].astype(str))
 	# Extracting mutation information and filtering the dataframe
 	mutations = np.array(df[8].astype(str) + ">" + df[9].astype(str))
 	filtered_df = df[
-		(df.iloc[:, 3] == genome)
+		((df.iloc[:, 3] == "GRCh37") | (df.iloc[:, 3] == "GRCh38"))
 		& (
 			np.isin(mutations, helpers.MUTATION_TYPES)
 			& ((df[4] == "SNP") | (df[4] == "SNV"))

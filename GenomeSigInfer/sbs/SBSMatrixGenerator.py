@@ -22,6 +22,7 @@ Attributes:
 
 Author: J.A. Busker
 """
+import mmap
 from functools import wraps
 from pathlib import Path
 import pandas as pd
@@ -47,6 +48,17 @@ def custom_chromosome_sort(value: str) -> int | float:
 	return float("inf")
 
 
+def read_genome_position(genome_version, chromosome_number, position, context, folder):
+	genome_path = folder / genome_version / f"{chromosome_number}.txt"
+	with open(genome_path, "rb") as file:
+		with mmap.mmap(file.fileno(), length=0, access=mmap.ACCESS_READ) as mm:
+			start = max(position - context // 2, 0)
+			end = position + context // 2 + 1
+			mm.seek(start)
+			sequence = mm.read(end - start)
+	return "".join([helpers.TSB_REF[_] for _ in sequence])
+
+
 def generate_sbs_matrix_arg_checker(func: callable) -> callable:
 	"""
 	Decorator function for checking arguments before calling the 'generate_sbs_matrix' function.
@@ -59,7 +71,7 @@ def generate_sbs_matrix_arg_checker(func: callable) -> callable:
 	"""
 
 	@wraps(func)
-	def wrapper(folder, vcf_files, ref_genome, genome, **kwargs):
+	def wrapper(folder, vcf_files, ref_genome, **kwargs):
 		# Ensure folder is a Path object
 		folder = Path(folder)
 		# Correct type
@@ -73,11 +85,9 @@ def generate_sbs_matrix_arg_checker(func: callable) -> callable:
 			raise FileNotFoundError(f"None of {', '.join(map(str, vcf_files))} exist!")
 		# Ensure ref_genome is a Path object
 		ref_genome = Path(ref_genome)
-		# Check if the genome is supported
-		helpers.check_supported_genome(genome)
 		if func.__name__ == "generate_single_sbs_matrix":
-			return func(folder, exist_vcf_files, ref_genome, genome, **kwargs)
-		return func(folder, exist_vcf_files, ref_genome, genome)
+			return func(folder, exist_vcf_files, ref_genome, **kwargs)
+		return func(folder, exist_vcf_files, ref_genome)
 
 	return wrapper
 
@@ -87,7 +97,6 @@ def generate_single_sbs_matrix(
 	folder: Path,
 	vcf_files: tuple[Path],
 	ref_genome: Path,
-	genome: helpers.MutationalSigantures.REF_GENOMES,
 	max_context: int = helpers.MutationalSigantures.MAX_CONTEXT,
 ) -> pd.DataFrame:
 	"""
@@ -96,8 +105,7 @@ def generate_single_sbs_matrix(
 	Args:
 	    folder (Path): Path of where the SBS will be saved.
 	    vcf_files (tuple[Path]): Tuple of VCF files.
-	    ref_genome (Path): Path of the reference genome.
-	    genome (MutationalSigantures.REF_GENOMES): Reference genome.
+	    ref_genome (Path): Path of the reference genome(s).
 	    max_context (int, optional): Maximum context. Defaults to helpers.MutationalSigantures.MAX_CONTEXT.
 
 	Returns:
@@ -110,11 +118,10 @@ def generate_single_sbs_matrix(
 	folder.mkdir(parents=True, exist_ok=True)
 	logger.log_info(f"Processing VCF files: {', '.join(map(str, vcf_files))}")
 	# Filter the VCF files on chosen genome
-	filtered_vcf = VCFMatrixGenerator.filter_vcf_files(vcf_files, genome)
+	filtered_vcf = VCFMatrixGenerator.filter_vcf_files(vcf_files)
 	sbsmatrixgen = SBSMatrixGenerator(
 		project=folder,
 		vcf_file=filtered_vcf,
-		genome=genome,
 		ref_genome=ref_genome,
 		max_context=max_context,
 	)
@@ -127,7 +134,6 @@ def generate_sbs_matrix(
 	folder: Path,
 	vcf_files: tuple[Path],
 	ref_genome: Path,
-	genome: helpers.MutationalSigantures.REF_GENOMES,
 ):
 	"""
 	Initialize SBS with the specified project path.
@@ -135,8 +141,7 @@ def generate_sbs_matrix(
 	Args:
 	    folder (Path): Path of where the SBS will be saved.
 	    vcf_files (tuple[Path]): tuple of VCF files.
-	    ref_genome (Path): Path of the reference genome.
-	    genome (MutationalSigantures.REF_GENOMES): Reference genome.
+	    ref_genome (Path): Path of the reference genome(s).
 	"""
 	# Log to the console
 	logger = logging.SingletonLogger()
@@ -145,16 +150,17 @@ def generate_sbs_matrix(
 	folder.mkdir(parents=True, exist_ok=True)
 	logger.log_info(f"Processing VCF files: {', '.join(map(str, vcf_files))}")
 	# Filter the VCF files on chosen genome
-	filtered_vcf = VCFMatrixGenerator.filter_vcf_files(vcf_files, genome)
+	filtered_vcf = VCFMatrixGenerator.filter_vcf_files(vcf_files)
 	sbsmatrixgen = SBSMatrixGenerator(
 		project=folder,
 		vcf_file=filtered_vcf,
-		genome=genome,
 		ref_genome=ref_genome,
 	)
 	sbsmatrixgen.parse_vcf()
 	# Decrease the context stepwise
-	matrix_operations.compress_matrix_stepwise(folder, sbsmatrixgen.samples_df)
+	matrix_operations.compress_matrix_stepwise(
+		folder, sbsmatrixgen.samples_df, helpers.MutationalSigantures.MAX_CONTEXT
+	)
 
 
 class SBSMatrixGenerator:
@@ -165,7 +171,6 @@ class SBSMatrixGenerator:
 	Attributes:
 	    - project: Path object representing the project directory.
 	    - vcf_file: Filtered VCF files for parsing.
-	    - genome: String specifying the reference genome.
 	    - samples_df: DataFrame containing information about samples.
 	    - ref_genome_folder: Path object representing the reference genome folder.
 	    - _samples_df: Private attribute storing processed sample data.
@@ -175,7 +180,6 @@ class SBSMatrixGenerator:
 		self,
 		project: Path,
 		vcf_file: pd.DataFrame,
-		genome: str,
 		ref_genome: Path,
 		max_context: int = helpers.MutationalSigantures.MAX_CONTEXT,
 	) -> None:
@@ -190,7 +194,6 @@ class SBSMatrixGenerator:
 		"""
 		self.project = Path(project)
 		self.vcf = vcf_file
-		self.genome = genome
 		self.ref_genome = ref_genome
 		self._logger: logging.SingletonLogger = logging.SingletonLogger()
 		self._samples_df = None
@@ -202,125 +205,31 @@ class SBSMatrixGenerator:
 		Parses the VCF file and processes mutations,
 		creating a max context SBS file.
 		"""
-		# Group the VCF per chromosome
-		sorted_chr, grouped_chromosomes = self.group_vcf_chromosome()
 		# Init of the sampled dataframe
 		self._samples_df: pd.DataFrame = matrix_operations.create_mutation_samples_df(
 			self.vcf, self.max_context
 		)
-		# loop over the dataframe based on the chromosome
-		for chrom_start in sorted_chr:
-			indices = grouped_chromosomes[chrom_start]
-			self.process_chromosome(chrom_start, indices)
-
-	def process_chromosome(self, chrom_start: str, indices: list[int]) -> None:
-		"""
-		Process mutations on a specific chromosome.
-
-		Args:
-		    chrom_start (str): Start position of the chromosome.
-		    indices (List[int]): List of indices corresponding to the chromosome.
-		"""
-		# Retrieve the content of the chromosome file as bytes
-		chrom_string = self.get_chromosome_file(chrom_start)
-		self._logger.log_info(f"Starting on chromosome {chrom_start}")
-		# Iterate over the indices corresponding to mutations on the chromosome
-		for idx in indices:
-			# Process each row in the VCF file for the current chromosome
-			self.process_vcf_row(idx, chrom_string)
-		self._logger.log_info(f"Finished chromosome {chrom_start}\n")
-
-	def process_vcf_row(self, idx: int, chrom_string: bytes) -> None:
-		"""
-		Process a single row from the VCF file.
-
-		Args:
-		    idx (int): Index of the row in the VCF file.
-		    chrom_string (bytes): Content of the chromosome file as bytes.
-		"""
-		# Retrieve the VCF row data at the specified index
-		df_row = self.vcf.loc[idx]
-		# Construct a unique identifier for the sample (e.g., "ALL::PD3954a")
-		sample = f"{df_row[0]}::{df_row[1]}"
-		# Adjust the mutation position to 0-based indexing
-		pos = df_row[6] - 1
-		# Extract mutation information
-		mut = df_row[8] + ">" + df_row[9]
-		# Create left and right mutation context
-		left_context, right_context = self.create_mutation_context(pos, chrom_string)
-		# Form the complete mutation type string
-		mutation_type = f"{left_context}[{mut}]{right_context}"
-		# Increment the corresponding count in the samples DataFrame
-		self._samples_df.loc[
-			self._samples_df["MutationType"] == mutation_type, sample
-		] += 1
-
-	def create_mutation_context(self, pos: int, chrom_string: bytes) -> tuple[str, str]:
-		"""
-		Create mutation context for a given position in the chromosome.
-		Create the mutation in the style of eg: A[C>A]A
-
-		Args:
-		    pos (int): Position of the mutation.
-		    chrom_string (bytes): Content of the chromosome file as bytes.
-
-		Returns:
-		    Tuple[str, str]: Left and right mutation context.
-		"""
-		# Extract the left and right context around the mutation position
-		left_context = "".join(
-			[
-				helpers.TSB_REF[chrom_string[_]]
-				for _ in range(pos - self.context_list[0] // 2, pos)
-			]
-		)
-		right_context = "".join(
-			[
-				helpers.TSB_REF[chrom_string[_]]
-				for _ in range(pos + 1, pos + self.context_list[0] // 2 + 1)
-			]
-		)
-		return left_context, right_context
-
-	def get_chromosome_file(self, chromosome: str) -> bytes:
-		"""
-		Retrieve the content of a chromosome file.
-
-		Args:
-		    chromosome (str): The chromosome number.
-
-		Returns:
-		    bytes: The content of the chromosome file as bytes.
-
-		Raises:
-		    FileNotFoundError: If the chromosome file does not exist.
-		"""
-		# Construct the filename for the chromosome
-		file_name = self.ref_genome / f"{chromosome}.txt"
-		chrom_string = None
-		try:
-			# Read the content of the chromosome file as bytes
-			with open(file_name, "rb") as open_file:
-				chrom_string = open_file.read()
-		except FileNotFoundError:
-			# Raise an error if the chromosome file is not found
-			raise error.RefGenomeChromosomeNotFound(chromosome) from FileNotFoundError
-		return chrom_string
-
-	def group_vcf_chromosome(self) -> tuple[list[str], dict]:
-		"""
-		Group the VCF DataFrame by chromosome.
-
-		Returns:
-		    tuple[list[str], dict]: Tuple containing sorted chromosomes, and grouped chromosomes.
-		"""
-		# Group the VCF DataFrame by the CHROM column (column with index 5)
-		grouped_chromosomes: dict = self.vcf.groupby(5).groups
-		# Extract the chromosome names
-		chromosomes: list[str] = list(grouped_chromosomes.keys())
-		# Sort the chromosomes using the custom sorting function
-		sorted_chr: list[str] = sorted(chromosomes, key=custom_chromosome_sort)
-		return sorted_chr, grouped_chromosomes
+		for index, row in self.vcf.iterrows():
+			if index % 100000 == 0:
+				progress = (index + 1) / self.vcf.shape[0] * 100
+				print(f"Processed {progress:.2f}%", end="\r")
+			sample = f"{row[0]}::{row[1]}"
+			genome_version = row[3]
+			chromosome_number = row[5]
+			pos = row[6] - 1
+			mut = row[8] + ">" + row[9]
+			context_seq = read_genome_position(
+				genome_version, chromosome_number, pos, self.max_context, self.ref_genome
+			)
+			left_context, right_context = (
+				context_seq[: self.max_context // 2],
+				context_seq[self.max_context // 2 + 1 :],
+			)
+			mutation_type = f"{left_context}[{mut}]{right_context}"
+			self._samples_df.loc[
+				self._samples_df["MutationType"] == mutation_type, sample
+			] += 1
+		print(f"Processed {100:.2f}%", end="\r")
 
 	@property
 	def samples_df(self) -> None | pd.DataFrame:

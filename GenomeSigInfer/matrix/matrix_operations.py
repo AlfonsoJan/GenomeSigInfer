@@ -61,35 +61,38 @@ def compress_to_96(df: pd.DataFrame) -> pd.DataFrame:
 	)
 
 
-def compress_matrix_stepwise(sbs_folder: Path, samples_df: pd.DataFrame) -> None:
+def compress_matrix_stepwise(
+	sbs_folder: Path, samples_df: pd.DataFrame, context: int
+) -> None:
 	"""
 	Compress the SBS data to lower context sizes.
 
 	Args:
 	    sbs_folder (Path): The sbs folder path.
 	    samples_df (pd.DataFrame): The max context SBS dataframe.
+	        context (int): The context for mutation.
 	"""
 	# Initialize the logger
 	logger = logging.SingletonLogger()
-	sampled_one_down = pd.DataFrame()
+	sampled_one_down = None
 	# Create the output folder if it doesn't exist
 	if not sbs_folder.is_dir():
 		sbs_folder.mkdir(parents=True, exist_ok=True)
 	# Iterate through different contexts
-	for context in helpers.MutationalSigantures.CONTEXT_LIST:
-		logger.log_info(f"Creating a SBS matrix with context: {context}")
+	for c in list(range(context, 2, -2)):
+		logger.log_info(f"Creating a SBS matrix with context: {c}")
 		# Update the sampled DataFrame based on the context
-		if context == helpers.MutationalSigantures.MAX_CONTEXT:
+		if c == context:
 			sampled_one_down = samples_df
 		else:
 			sampled_one_down = compress(
 				sampled_one_down,
-				helpers.MutationalSigantures.SORT_REGEX[context],
+				helpers.MutationalSigantures.SORT_REGEX[c],
 			)
 		# Write the compressed SBS matrix to a parquet file
 		filename = sbs_folder / f"sbs.{sampled_one_down.shape[0]}.parquet"
 		sampled_one_down.to_parquet(filename, compression="gzip")
-		logger.log_info(f"Written the SBS matrix with context {context} to '{filename}'")
+		logger.log_info(f"Written the SBS matrix with context {c} to '{filename}'")
 
 
 def compress(df: pd.DataFrame, regex_str: str) -> pd.DataFrame:
@@ -117,16 +120,13 @@ def compress(df: pd.DataFrame, regex_str: str) -> pd.DataFrame:
 	return compressed_df
 
 
-def create_mutation_samples_df(
-	filtered_vcf: pd.DataFrame,
-	context: int = helpers.MutationalSigantures.CONTEXT_LIST[0],
-) -> pd.DataFrame:
+def create_mutation_samples_df(filtered_vcf: pd.DataFrame, context: int) -> pd.DataFrame:
 	"""
 	Initialize the samples mutation DataFrame.
 
 	Args:
 	    filtered_vcf (pd.DataFrame): Filtered VCF data.
-	    context (int, optional): The context for mutation. Defaults to the first context in the list.
+	    context (int): The context for mutation.
 
 	Returns:
 	    pd.DataFrame: The initialized mutation DataFrame.

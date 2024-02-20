@@ -79,6 +79,9 @@ TSB_REF = {
 	19: "N",
 }
 
+PURINE = ('A', 'G')
+PYRIMIDINE = ('C', 'T')
+
 # MUTATION TYPES random order
 MUTATION_TYPES = np.array(["C>G", "C>A", "C>T", "T>G", "T>C", "T>A"])
 

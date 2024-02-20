@@ -22,8 +22,9 @@ Attributes:
 
 Author: J.A. Busker
 """
+from operator import add
 import mmap
-from functools import wraps
+from functools import reduce, wraps
 from pathlib import Path
 import pandas as pd
 from ..utils import helpers, logging
@@ -128,6 +129,31 @@ def generate_single_sbs_matrix(
 	sbsmatrixgen.parse_vcf()
 	return sbsmatrixgen.samples_df
 
+def complement(sequence: str) -> str:
+	"""Complement nucleotide sequence."""
+	c_map = {"A": "T", "C": "G", "T": "A", "G": "C"}
+	complement = map(lambda k: c_map[k], sequence.upper())
+	return reduce(add, complement)
+
+def reverse_complement(sequence: str) -> str:
+	"""Reverse complement of nucleotide sequence."""
+	reverse = sequence[::-1]
+	return complement(reverse)
+
+def apply_pyrimidine_first_convention(
+	left_context: str, ref: str, alt: str, right_context: str
+) -> str:
+	"""Convert nucleotides on strand containing purine ref to complementary strand."""
+	# Apply pyrimidine first convention.
+	three_prime_context = left_context
+	five_prime_context = right_context
+	if ref in helpers.PURINE:
+		ref = complement(ref)
+		alt = complement(alt)
+		three_prime_context = reverse_complement(right_context)
+		five_prime_context = reverse_complement(left_context)
+	mutation_class = f"{three_prime_context}[{ref}>{alt}]{five_prime_context}"
+	return mutation_class
 
 @generate_sbs_matrix_arg_checker
 def generate_sbs_matrix(
@@ -217,7 +243,6 @@ class SBSMatrixGenerator:
 			genome_version = row[3]
 			chromosome_number = row[5]
 			pos = row[6] - 1
-			mut = row[8] + ">" + row[9]
 			context_seq = read_genome_position(
 				genome_version, chromosome_number, pos, self.max_context, self.ref_genome
 			)
@@ -225,7 +250,11 @@ class SBSMatrixGenerator:
 				context_seq[: self.max_context // 2],
 				context_seq[self.max_context // 2 + 1 :],
 			)
-			mutation_type = f"{left_context}[{mut}]{right_context}"
+			ref = row[8]
+			alt = row[9]
+			mutation_type = apply_pyrimidine_first_convention(
+				left_context, ref, alt, right_context,
+			)
 			self._samples_df.loc[
 				self._samples_df["MutationType"] == mutation_type, sample
 			] += 1

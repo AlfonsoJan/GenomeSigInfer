@@ -51,20 +51,11 @@ def read_vcf_file(vcf_file: Path) -> pd.DataFrame:
 	with warnings.catch_warnings():
 		warnings.filterwarnings("ignore", category=pd.errors.DtypeWarning)
 		df = pd.read_csv(vcf_file, sep="\t", header=None)
-	# Change every purine mutation to a pyrimidine mutation
-	translate_purine_to_pyrimidine = {"A": "T", "G": "C"}
-	translate_nucleotide = {"A": "T", "C": "G", "G": "C", "T": "A"}
-	condition = df[8].isin(["A", "G"]) & df[9].isin(["A", "C", "G", "T"])
-	df[9] = np.where(condition, df[9].map(translate_nucleotide), df[9])
-	df[8] = df[8].map(translate_purine_to_pyrimidine).fillna(df[8])
-	mutations = np.array(df[8].astype(str) + ">" + df[9].astype(str))
 	# Extracting mutation information and filtering the dataframe
-	mutations = np.array(df[8].astype(str) + ">" + df[9].astype(str))
 	filtered_df = df[
 		((df.iloc[:, 3] == "GRCh37") | (df.iloc[:, 3] == "GRCh38"))
 		& (
-			np.isin(mutations, helpers.MUTATION_TYPES)
-			& ((df[4] == "SNP") | (df[4] == "SNV"))
+			((df[4] == "SNP") | (df[4] == "SNV"))
 		)
 	]
 	# Converting the chromosome column to string type
